@@ -3,7 +3,7 @@ from databases import Database
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
-DATABASE_URL = "sqlite:///./sqlite"
+DATABASE_URL = "sqlite:///../sqlite"
 database = Database(DATABASE_URL)
 metadata = MetaData()
 

@@ -1,0 +1,5 @@
+# COMPANY_INFO
+INSERT INTO COMPANY_INFO (회사명, 주소, 사업자등록번호, 지역, HASH)
+SELECT DISTINCT 사업장명, 사업장지번상세주소, 사업자등록번호, substr(사업장지번상세주소, 1, instr(사업장지번상세주소 || ' ', ' ') - 1), HASH
+FROM GUKMIN_YUNGUM_DATA;
+
