@@ -2,13 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from database import database, metadata, engine, SessionLocal
 import models
 import logging
-from fastapi.logger import logger as fastapi_logger
 from pydantic import BaseModel
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import and_, case
-from typing import List
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
 
 
 logging.basicConfig(
@@ -17,10 +13,9 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 logger = logging.getLogger(__name__)
-
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 app = FastAPI()
 metadata.create_all(engine)
-
 
 
 # Pydantic 모델 (응답 모델)
@@ -32,16 +27,6 @@ class GukminYungumDataOut(BaseModel):
         from_attributes = True
 
 
-# 데이터베이스 세션 의존성
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -51,19 +36,20 @@ async def root():
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
+
 @app.get("/search_business")
-async def search_business(business_name: str, region: str = None, db: Session = Depends(get_db)):
-    conditions = [models.CompanyInfo.business_name.ilike(f"%{business_name}%")]
+async def search_business(business_name: str, location: str = None):
+    conditions = [models.CompanyInfo.company_nm.ilike(f"%{business_name}%")]
 
-    if region:
-        conditions.append(models.CompanyInfo.region == region)
+    if location:
+        conditions.append(models.CompanyInfo.location == location)
 
-    query = (db.query(models.CompanyInfo)
+    query = (SessionLocal().query(models.CompanyInfo)
              .filter(and_(*conditions))
              .order_by(
                 case(
-                    (models.CompanyInfo.business_name.ilike(f'{business_name}%'), 1),
-                    (models.CompanyInfo.business_name.ilike(f'%{business_name}'), 2),
+                    (models.CompanyInfo.company_nm.ilike(f'{business_name}%'), 1),
+                    (models.CompanyInfo.company_nm.ilike(f'%{business_name}'), 2),
                     else_=3
                 ))
              .limit(30))
