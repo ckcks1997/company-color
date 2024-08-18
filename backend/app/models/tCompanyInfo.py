@@ -4,7 +4,7 @@ from typing import Optional
 class CompanyInfo(SQLModel, table=True):
     __tablename__ = 'COMPANY_INFO'
 
-    id: int
+    id: Optional[int] = Field(default=None, primary_key=True)
     company_nm: str
     address: str
     business_num: str

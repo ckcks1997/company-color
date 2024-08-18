@@ -24,6 +24,13 @@ Base = declarative_base()
 # 세션 팩토리 생성
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 # test
 if __name__ == "__main__":
     # 데이터베이스 연결 테스트
