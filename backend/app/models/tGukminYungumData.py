@@ -5,13 +5,13 @@ class GukminYungumData(SQLModel, table=True):
     __tablename__ = 'GUKMIN_YUNGUM_DATA'
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: str
+    created_dt: str
     company_nm: str
     business_num: str
     business_reg_status: int
     business_location: str
     business_location_specific: str
-    business_type_code: str
+    business_type_code: int
     business_code: str
     industry_code: str
     applied_date: str

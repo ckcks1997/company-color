@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
-import { Flex, Input, Button, Box } from '@chakra-ui/react';
+import { Flex, Input, Button, Box, Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = async () => {
+    if (!searchTerm.trim()) return;
+
+    setIsLoading(true);
     try {
-      const response = await fetch(`https://company-color.kro.kr/api/search_business?business_name=${searchTerm}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/search_business?business_name=${searchTerm}`);
       const data = await response.json();
-      console.log(data)
       navigate('/result', { state: { searchResult: data } });
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -33,13 +43,15 @@ function Home() {
           mb={4}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <Button
           onClick={handleSearch}
           colorScheme="blue"
           width="100%"
+          disabled={isLoading}
         >
-          검색
+          {isLoading ? <Spinner size="sm" /> : '검색'}
         </Button>
       </Box>
     </Flex>

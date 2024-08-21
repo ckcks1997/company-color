@@ -5,8 +5,8 @@ function Navbar() {
     <Box bg="gray.100" py={4} position="sticky" bottom="0" width="100%">
       <Flex maxW="container.lg" mx="auto" alignItems="center">
         <Box>
-          <Link href="/" fontWeight="bold">
-            Black or Gold
+          <Link href="/" fontWeight="bold" ml={4}>
+            <span>COMPANY</span><span style={{color: 'green'}}>COLOR</span>
           </Link>
         </Box>
         <Spacer />
