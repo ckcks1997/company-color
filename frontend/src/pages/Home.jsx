@@ -30,6 +30,9 @@ function Home() {
 
   return (
     <Flex
+      backgroundImage="url('/images/main.jpg')"
+      backgroundSize="cover"
+      backgroundPosition="left"
       direction="column"
       minHeight="calc(100vh - 112px)"
       justifyContent="center"
@@ -38,6 +41,8 @@ function Home() {
     >
       <Box width="100%" maxWidth="500px">
         <Input
+          background={'rgba(255,255,255,0.95)'}
+          borderRadius="full"
           placeholder="검색어를 입력하세요"
           size="lg"
           mb={4}
