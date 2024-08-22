@@ -1,13 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Box, Heading, SimpleGrid, Text, VStack, Flex} from '@chakra-ui/react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Result() {
   const location = useLocation();
   const { searchResult } = location.state || {};
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const clickResult = async(value) =>{
-    alert(value)
+  const clickResult = async(hash) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
+      const data = await response.json();
+      navigate('/businessInfo', { state: { businessData: data } });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -21,6 +32,7 @@ function Result() {
                       maxWidth="1200px"
                       spacing='40px'
                       px={{ base: '20px', md: '40px' }}
+
           >
             {Object.entries(searchResult).map(([key, value]) => (
               <Box key={value.hash}
@@ -28,8 +40,8 @@ function Result() {
                    borderRadius="md"
                    p={4}
                    width="100%"
-                    maxW="100%"
-                    onClick={() => clickResult(value.hash) }>
+                   maxW="100%"
+                   onClick={() => clickResult(value.hash) }>
                 <Text fontWeight="bold">{value.company_nm} <small>{value.location}</small></Text>
                 <Text>{value.address}</Text>
               </Box>

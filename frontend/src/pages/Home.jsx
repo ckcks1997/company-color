@@ -30,9 +30,6 @@ function Home() {
 
   return (
     <Flex
-      backgroundImage="url('/images/main.jpg')"
-      backgroundSize="cover"
-      backgroundPosition="left"
       direction="column"
       minHeight="calc(100vh - 112px)"
       justifyContent="center"
