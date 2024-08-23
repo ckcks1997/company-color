@@ -41,6 +41,7 @@ function Result() {
                    p={4}
                    width="100%"
                    maxW="100%"
+                   background="white"
                    onClick={() => clickResult(value.hash) }>
                 <Text fontWeight="bold">{value.company_nm} <small>{value.location}</small></Text>
                 <Text>{value.address}</Text>

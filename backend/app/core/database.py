@@ -3,6 +3,7 @@ from databases import Database
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv, find_dotenv
+from sqlalchemy.pool import QueuePool
 
 # .env 환경변수 load
 import os
@@ -17,7 +18,7 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 database = Database(DATABASE_URL)
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, poolclass=QueuePool, pool_size=5, max_overflow=10, pool_timeout=30, pool_pre_ping=True)
 metadata = MetaData()
 Base = declarative_base()
 
