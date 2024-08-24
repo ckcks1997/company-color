@@ -5,9 +5,16 @@ from app.api.endpoints import search
 from dotenv import load_dotenv
 
 # .env 환경변수 load
-load_dotenv(dotenv_path="app/.env")
+load_dotenv()
 
-app = FastAPI()
+# 환경 변수로 운영 환경 여부 확인
+IS_PRODUCTION = os.environ.get("ENVIRONMENT", "development").lower() == "production"
+
+# 운영환경에서 swagger 비활성화
+docs_url = None if IS_PRODUCTION else "/docs"
+redoc_url = None if IS_PRODUCTION else "/redoc"
+
+app = FastAPI(docs_url=docs_url, redoc_url=redoc_url)
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,8 +26,6 @@ app.add_middleware(
 
 app.include_router(search.router)
 
-def start():
+if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
-start()
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Box, Heading, SimpleGrid, Text, VStack, Flex} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Heading, SimpleGrid, Text, Flex, Spinner } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function Result() {
@@ -8,7 +8,7 @@ function Result() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const clickResult = async(hash) => {
+  const clickResult = async (hash) => {
     setIsLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
@@ -21,10 +21,18 @@ function Result() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Spinner size="xl" />
+      </Flex>
+    );
+  }
+
   return (
     <Box p={8}>
       <Heading mb={4}>검색 결과</Heading>
-      {searchResult ? (
+      {searchResult && Object.keys(searchResult).length > 0 ? (
         <Flex justifyContent="center" width="100%">
           <SimpleGrid columns={[1, 2]}
                       justifyItems="center"
@@ -32,7 +40,6 @@ function Result() {
                       maxWidth="1200px"
                       spacing='40px'
                       px={{ base: '20px', md: '40px' }}
-
           >
             {Object.entries(searchResult).map(([key, value]) => (
               <Box key={value.hash}
@@ -42,7 +49,10 @@ function Result() {
                    width="100%"
                    maxW="100%"
                    background="white"
-                   onClick={() => clickResult(value.hash) }>
+                   onClick={() => clickResult(value.hash)}
+                   cursor="pointer"
+                   _hover={{ boxShadow: 'md' }}
+              >
                 <Text fontWeight="bold">{value.company_nm} <small>{value.location}</small></Text>
                 <Text>{value.address}</Text>
               </Box>

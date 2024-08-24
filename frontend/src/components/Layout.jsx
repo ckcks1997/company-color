@@ -12,7 +12,7 @@ function Layout() {
           backgroundAttachment="fixed"
           backgroundPosition="left">
       <Navbar />
-      <Box height='100%' overflow="auto">
+      <Box minHeight='100%' overflow="auto">
         <Outlet />
       </Box>
       <Footer />

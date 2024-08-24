@@ -7,7 +7,7 @@ from sqlalchemy.pool import QueuePool
 
 # .env 환경변수 load
 import os
-load_dotenv(dotenv_path=".env")
+load_dotenv()
 
 # 데이터베이스 연결 정보
 DB_HOST = os.getenv('DB_HOST')

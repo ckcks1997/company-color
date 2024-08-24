@@ -23,9 +23,6 @@ async def search_business(business_name: str, location: str = None, db: Session 
                 ))
              .limit(30))
     results = query.all()
-
-    if not results:
-        raise HTTPException(status_code=404, detail="No matching businesses found")
     return results
 
 
@@ -34,8 +31,5 @@ async def get_business_info(hash: str, db: Session = Depends(get_db)):
     query = (db.query(GukminYungumData)
              .filter(GukminYungumData.hash == hash)
              .order_by(GukminYungumData.created_dt))
-
     results = query.all()
-    if not results:
-        raise HTTPException(status_code=404, detail="No matching businesses info found")
     return results
