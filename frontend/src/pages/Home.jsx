@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
    const regions = [
@@ -33,20 +32,12 @@ function Home() {
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
 
-    setIsLoading(true);
-    try {
-      let searchUrl = `${import.meta.env.VITE_API_URL}/search_business?business_name=${searchTerm}`
-      if (selectedRegion !== '') {
-        searchUrl += `&location=${selectedRegion}`;
-      }
-      let response = await fetch(searchUrl);
-      const data = await response.json();
-      navigate('/result', { state: { searchResult: data } });
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
+    const searchParams = new URLSearchParams();
+    searchParams.append('business_name', searchTerm);
+    if (selectedRegion !== '') {
+      searchParams.append('location', selectedRegion);
     }
+    navigate(`/result?${searchParams.toString()}`);
   };
 
   const handleKeyPress = (e) => {
@@ -55,64 +46,55 @@ function Home() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Flex justify="center" align="center" height="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }else {
-    return (
-      <Flex
-        direction="column"
-        minHeight="calc(100vh - 112px)"
-        justifyContent="center"
-        alignItems="center"
-        p={8}
-      >
-        <Box width="100%" maxWidth="500px">
-          <Flex mb={4}>
-            <Input
-              background={'rgba(255,255,255,0.95)'}
-              borderRadius="full"
-              placeholder="검색어를 입력하세요"
-              size="md"
-              mb={1}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleKeyPress}
-              fontSize="xs"
-            />
-            <Select
-              placeholder="지역 선택"
-              size="md"
-              width="200px"
-              ml={1}
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              background={'rgba(255,255,255,0.95)'}
-              borderRadius="full"
-              fontSize="xs"
-            >
-              {regions.map((region) => (
-                <option key={region.value} value={region.value}>
-                  {region.key}
-                </option>
-              ))}
-            </Select>
-          </Flex>
-          <Button
-            onClick={handleSearch}
-            colorScheme="blue"
-            width="100%"
-            disabled={isLoading}
+  return (
+    <Flex
+      direction="column"
+      minHeight="calc(100vh - 112px)"
+      justifyContent="center"
+      alignItems="center"
+      p={8}
+    >
+      <Box width="100%" maxWidth="500px">
+        <Flex mb={4}>
+          <Input
+            background={'rgba(255,255,255,0.95)'}
+            borderRadius="full"
+            placeholder="회사명을 입력하세요"
+            size="md"
+            mb={1}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+            fontSize="xs"
+          />
+          <Select
+            size="md"
+            width="200px"
+            ml={1}
+            value={selectedRegion}
+            defaultValue={regions[0].value}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            background={'rgba(255,255,255,0.95)'}
+            borderRadius="full"
+            fontSize="xs"
           >
-            {isLoading ? <Spinner size="sm"/> : '검색'}
-          </Button>
-        </Box>
-      </Flex>
-    );
-  }
+            {regions.map((region) => (
+              <option key={region.value} value={region.value}>
+                {region.key}
+              </option>
+            ))}
+          </Select>
+        </Flex>
+        <Button
+          onClick={handleSearch}
+          colorScheme="blue"
+          width="100%"
+        >
+          검색
+        </Button>
+      </Box>
+    </Flex>
+  );
 }
 
 export default Home;

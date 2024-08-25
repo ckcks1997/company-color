@@ -3,61 +3,156 @@ import {
   Box,
   Heading,
   Text,
-  Stack,
+  VStack,
   Card,
   CardBody,
-  StackDivider,
-  CardHeader
+  CardHeader,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  SimpleGrid,
+  Divider,
+  useColorModeValue, Center,
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
+import { ClockLoader } from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
 
 function BusinessInfo() {
-  // businessData 최신순으로 정렬 후 state 저장
   const location = useLocation();
-  const [businessData, setBusinessData] = useState(location.state.businessData?.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt)) || {})
-  // businessData 중 최신데이터 1개 가져와서 state 저장
-  const [latestBusinessData, setLatestBusinessData] = useState(businessData[0] ?? '')
+  const [businessData, setBusinessData] = useState([]);
+  const [latestBusinessData, setLatestBusinessData] = useState({});
+  const [quitRate, setQuitRate] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bgColor, setBgColor] = useState('gray.50');
+  const [finalBgColor, setFinalBgColor] = useState('');
 
-  // 신규입사자, 퇴직자, 퇴사율 계산
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchBusinessData = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      const hash = searchParams.get('hash');
+
+      if (hash) {
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
+          const data = await response.json();
+          const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt));
+          setBusinessData(sortedData);
+          setLatestBusinessData(sortedData[0] || {});
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error fetching business data:', error);
+        }
+      }
+    };
+    fetchBusinessData();
+    window.scrollTo(0, 0);
+
+  }, [location.search]);
+
   const totalNew = useMemo(() => {
     return businessData?.reduce((sum, item) => sum + item.subscriber_new, 0);
-  }, [businessData])
+  }, [businessData]);
+
   const totalQuit = useMemo(() => {
     return businessData?.reduce((sum, item) => sum + item.subscriber_quit, 0);
-  }, [businessData])
-  const quitRate = useMemo(() => {
-    // subscriber_cnt 혹은 totalQuit가 없는경우 그냥 0 반환
-    if (!latestBusinessData?.subscriber_cnt || !totalQuit) {
-      return 0;
+  }, [businessData]);
+
+  useEffect(() => {
+    if (latestBusinessData?.subscriber_cnt && totalQuit) {
+      // 퇴사율 계산
+      const rate = (totalQuit / latestBusinessData.subscriber_cnt) * 100;
+      setQuitRate(Number(rate.toFixed(2)));
+
+      // 배경색 트랜지션
+      const newBgColor = getBgColor(rate, latestBusinessData.subscriber_cnt);
+      setFinalBgColor(newBgColor);
+
+      // 약간의 지연 후 배경색 변경
+      setTimeout(() => {
+        setBgColor(newBgColor);
+      }, 50);
+
+    } else {
+      setQuitRate(0);
     }
-    const rate = (totalQuit / latestBusinessData.subscriber_cnt) * 100;
-    return Number(rate.toFixed(2));
-  }, [latestBusinessData, totalQuit])
+  }, [latestBusinessData, totalQuit]);
+
+  const getBgColor = (rate, totalSubscriber) => {
+    if(totalSubscriber < 20) return '';
+    else if (rate < 20) return 'green.50';
+    else if (rate < 30) return 'yellow.50';
+    else if (rate < 50) return 'orange.50';
+    else if (rate < 70) return 'red.50';
+    return '#333';
+  };
+    const getBgGradientColor = (rate, totalSubscriber) => {
+      if (totalSubscriber > 50 && rate < 10) return 'linear(to-t, #FFD1DC, #FFE5B4, #E1FFB1, #B1FFFD, #CAB1FF)';
+      else return '';
+  };
+
+  const bgGradientColor = getBgGradientColor(quitRate, latestBusinessData.subscriber_cnt);
+
+  if (isLoading) {
+    return (
+      <Center minHeight="100vh">
+        <ClockLoader color="#3182CE" />
+      </Center>
+    );
+  }
 
   return (
-    <Card maxW='md'>
-      <CardHeader>
-        <Heading size='md'>회사 정보</Heading>
-      </CardHeader>
+    <Box bg={bgColor} bgGradient={bgGradientColor} minHeight="100vh" transition="all 2s ease">
+      <Box maxWidth="1000px" margin="auto" p={5}>
+        <Card>
+          <CardHeader>
+            <Heading size='lg' color="blue.600">{latestBusinessData.company_nm}</Heading>
+            <Text color="gray.500">최근 업데이트: {latestBusinessData.created_dt}</Text>
+          </CardHeader>
 
-      <CardBody>
-        <Stack divider={<StackDivider />} spacing='4'>
-          <Box>
-            <Heading size='xs' textTransform='uppercase'>
-              {latestBusinessData.company_nm}<small>({latestBusinessData.created_dt})</small>
-            </Heading>
-            <Text pt='2' fontSize='sm'>
-              <p>전체 가입자수 :  {latestBusinessData.subscriber_cnt}</p>
-              <p>12개월 입사자 수 : {totalNew}</p>
-              <p>12개월 퇴사자 수 : {totalQuit}</p>
-              <p>퇴사율: {quitRate} %</p>
-            </Text>
-          </Box>
-          {businessData ? <EmployeeChart data={businessData} /> : '데이터가 없습니다.'}
-        </Stack>
-      </CardBody>
-    </Card>
+          <CardBody>
+            <VStack spacing={6} align="stretch">
+              <SimpleGrid columns={[1, 2, 4]} spacing={4}>
+                <Stat>
+                  <StatLabel>전체 가입자 수</StatLabel>
+                  <StatNumber>{latestBusinessData.subscriber_cnt?.toLocaleString()}</StatNumber>
+                </Stat>
+                <Stat>
+                  <StatLabel>12개월 입사자 수</StatLabel>
+                  <StatNumber>{totalNew?.toLocaleString()}</StatNumber>
+                  <StatHelpText>
+                    <StatArrow type='increase' />
+                    {((totalNew / latestBusinessData.subscriber_cnt) * 100).toFixed(2)}%
+                  </StatHelpText>
+                </Stat>
+                <Stat>
+                  <StatLabel>12개월 퇴사자 수</StatLabel>
+                  <StatNumber>{totalQuit?.toLocaleString()}</StatNumber>
+                  <StatHelpText>
+                    <StatArrow type='decrease' />
+                    {quitRate}%
+                  </StatHelpText>
+                </Stat>
+                <Stat>
+                  <StatLabel>퇴사율</StatLabel>
+                  <StatNumber>{quitRate}%</StatNumber>
+                </Stat>
+              </SimpleGrid>
+
+              <Divider />
+
+              <Box>
+                <Heading size='md' mb={4}>직원 변동 추이</Heading>
+                {businessData.length > 0 ? <EmployeeChart data={businessData} /> : <Text>데이터가 없습니다.</Text>}
+              </Box>
+            </VStack>
+          </CardBody>
+        </Card>
+      </Box>
+    </Box>
   );
 }
 

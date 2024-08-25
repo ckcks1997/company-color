@@ -3,45 +3,29 @@ import ReactApexChart from 'react-apexcharts';
 
 const EmployeeChart = ({ data }) => {
 
-  // yAxis max값 조절 함수
   const calculateYAxisProps = (maxValue) => {
     let roundedMax = 0;
-    if (maxValue <= 10) {
-      roundedMax = 20;
-    }
-    else if (maxValue <= 30) {
-      roundedMax = 50;
-    }
-    else if (maxValue <= 50) {
-      roundedMax = 80;
-    }
-    else if (maxValue <= 100) {
-      roundedMax = 150;
-    }
-    else if (maxValue <= 500) {
-      roundedMax = 800;
-    }
-    else if (maxValue <= 1000) {
-      roundedMax = 1500;
-    }
-    else {
-      roundedMax = Math.round(maxValue*2/100)*100;
-    }
-    return { max: roundedMax};
+    if (maxValue <= 10) roundedMax = 20;
+    else if (maxValue <= 30) roundedMax = 50;
+    else if (maxValue <= 50) roundedMax = 80;
+    else if (maxValue <= 100) roundedMax = 150;
+    else if (maxValue <= 500) roundedMax = 800;
+    else if (maxValue <= 1000) roundedMax = 1500;
+    else roundedMax = Math.ceil(maxValue / 1000) * 1200;
+    return { max: roundedMax };
   };
-
 
   const [chartOptions, setChartOptions] = useState({
     chart: {
-      height: 350,
+      height: 380,
       type: 'line',
       zoom: { enabled: false },
     },
     dataLabels: { enabled: false },
     stroke: {
-      width: [5, 5],
+      width: [4, 4, 2],
       curve: 'straight',
-      dashArray: [0, 0]
+      dashArray: [0, 0, 0]
     },
     title: {
       text: '월별 입/퇴사자 현황',
@@ -56,16 +40,19 @@ const EmployeeChart = ({ data }) => {
       size: 0,
       hover: { sizeOffset: 6 }
     },
-    xaxis: { categories: [] },
+    xaxis: {
+      type: 'category',
+      categories: []
+    },
     yaxis: [
       {
         title: {
           text: "입/퇴사자 수",
         },
+        seriesName: ["입사자","퇴사자"],
         labels: {
           formatter: (val) => Math.round(val)
         },
-        tickAmount:8
       },
       {
         opposite: true,
@@ -75,18 +62,20 @@ const EmployeeChart = ({ data }) => {
         labels: {
           formatter: (val) => Math.round(val)
         },
-        tickAmount:8
       }
     ],
     tooltip: {
       shared: true,
       intersect: false,
-      y: [
-        { title: { formatter: (val) => `${val}명` } },
-        { title: { formatter: (val) => `${val}명` } }
-      ]
-    },
-    grid: { borderColor: '#f1f1f1' }
+      y: {
+        formatter: function (y) {
+          if(typeof y !== "undefined") {
+            return y.toFixed(0) + " 명";
+          }
+          return y;
+        }
+      }
+    }
   });
 
   const [chartSeries, setChartSeries] = useState([]);
@@ -106,25 +95,28 @@ const EmployeeChart = ({ data }) => {
 
       setChartOptions(prevOptions => ({
         ...prevOptions,
-        xaxis: { ...prevOptions.xaxis, categories: months },
-         yaxis: [
+        xaxis: {
+          ...prevOptions.xaxis,
+          categories: months,
+        },
+        yaxis: [
           {
             ...prevOptions.yaxis[0],
-            min:0,
+            min: 0,
             ...newQuitAxisProps,
           },
           {
             ...prevOptions.yaxis[1],
-            min:0,
+            min: 0,
             ...totalAxisProps,
           }
         ]
       }));
 
       setChartSeries([
-        { name: "입사자", data: newEmployees },
-        { name: "퇴사자", data: quitEmployees },
-        { name: "전체인원", data: totalEmployees },
+        { name: "입사자", type: 'line', data: newEmployees },
+        { name: "퇴사자", type: 'line', data: quitEmployees },
+        { name: "전체인원", type: 'line', data: totalEmployees }
       ]);
     }
   }, [data]);

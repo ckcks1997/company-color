@@ -3,3 +3,6 @@
     padding: 0;
     box-sizing: border-box;
 }
+body {
+  font-family: "Pretendard", -apple-system, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR";
+}
