@@ -14,9 +14,12 @@ import {
   StatArrow,
   SimpleGrid,
   Divider,
-  useColorModeValue, Center,
+  useColorModeValue,
+  Center,
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
+import { Tooltip, Flex } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { ClockLoader } from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
 
@@ -50,7 +53,6 @@ function BusinessInfo() {
     };
     fetchBusinessData();
     window.scrollTo(0, 0);
-
   }, [location.search]);
 
   const totalNew = useMemo(() => {
@@ -60,6 +62,32 @@ function BusinessInfo() {
   const totalQuit = useMemo(() => {
     return businessData?.reduce((sum, item) => sum + item.subscriber_quit, 0);
   }, [businessData]);
+
+  const prevMonthNew = useMemo(() => {
+    return businessData[1]?.subscriber_new || 0;
+  }, [businessData]);
+
+  const prevMonthQuit = useMemo(() => {
+    return businessData[1]?.subscriber_quit || 0;
+  }, [businessData]);
+
+  const calculatePercentChange = (current, previous) => {
+    if (previous === 0) {
+      if (current === 0) return 0;
+      return 100 * current;
+    }
+    if (current === 0) return -100;
+    return ((current - previous) / previous) * 100;
+  };
+
+  const newPercentChange = useMemo(() => {
+    return calculatePercentChange(latestBusinessData.subscriber_new, prevMonthNew);
+  }, [latestBusinessData, prevMonthNew]);
+
+  const quitPercentChange = useMemo(() => {
+    return calculatePercentChange(latestBusinessData.subscriber_quit, prevMonthQuit);
+  }, [latestBusinessData, prevMonthQuit]);
+
 
   useEffect(() => {
     if (latestBusinessData?.subscriber_cnt && totalQuit) {
@@ -89,9 +117,10 @@ function BusinessInfo() {
     else if (rate < 70) return 'red.50';
     return '#333';
   };
-    const getBgGradientColor = (rate, totalSubscriber) => {
-      if (totalSubscriber > 50 && rate < 10) return 'linear(to-t, #FFD1DC, #FFE5B4, #E1FFB1, #B1FFFD, #CAB1FF)';
-      else return '';
+
+  const getBgGradientColor = (rate, totalSubscriber) => {
+    if (totalSubscriber > 50 && rate < 10) return 'linear(to-t, #FFD1DC, #FFE5B4, #E1FFB1, #B1FFFD, #CAB1FF)';
+    else return '';
   };
 
   const bgGradientColor = getBgGradientColor(quitRate, latestBusinessData.subscriber_cnt);
@@ -118,27 +147,41 @@ function BusinessInfo() {
               <SimpleGrid columns={[1, 2, 4]} spacing={4}>
                 <Stat>
                   <StatLabel>전체 가입자 수</StatLabel>
-                  <StatNumber>{latestBusinessData.subscriber_cnt?.toLocaleString()}</StatNumber>
+                  <StatNumber>{latestBusinessData.subscriber_cnt.toLocaleString()}</StatNumber>
                 </Stat>
                 <Stat>
-                  <StatLabel>12개월 입사자 수</StatLabel>
-                  <StatNumber>{totalNew?.toLocaleString()}</StatNumber>
+                  <StatLabel>당월 / 12개월 입사자 수</StatLabel>
+                  <StatNumber>{latestBusinessData.subscriber_new}/{totalNew?.toLocaleString()}</StatNumber>
                   <StatHelpText>
-                    <StatArrow type='increase' />
-                    {((totalNew / latestBusinessData.subscriber_cnt) * 100).toFixed(2)}%
+                    <StatArrow type={newPercentChange >= 0 ? 'increase' : 'decrease'} />
+                    전월 대비 {newPercentChange.toFixed(2)}%
                   </StatHelpText>
                 </Stat>
                 <Stat>
-                  <StatLabel>12개월 퇴사자 수</StatLabel>
-                  <StatNumber>{totalQuit?.toLocaleString()}</StatNumber>
+                  <StatLabel>당월 / 12개월 퇴사자 수</StatLabel>
+                  <StatNumber>{latestBusinessData.subscriber_quit}/{totalQuit?.toLocaleString()}</StatNumber>
                   <StatHelpText>
-                    <StatArrow type='decrease' />
-                    {quitRate}%
+                    <StatArrow type={quitPercentChange >= 0 ? 'increase' : 'decrease'} />
+                    전월 대비 {quitPercentChange.toFixed(2)}%
                   </StatHelpText>
                 </Stat>
                 <Stat>
-                  <StatLabel>퇴사율</StatLabel>
+                  <Flex alignItems="center">
+                    <StatLabel>퇴사율</StatLabel>
+                    <Tooltip label="퇴사율 = (12개월 퇴사자 수 / 전체 가입자 수) * 100" fontSize="sm">
+                      <InfoOutlineIcon boxSize={3} ml={1} />
+                    </Tooltip>
+                  </Flex>
                   <StatNumber>{quitRate}%</StatNumber>
+                </Stat>
+                <Stat>
+                  <Flex alignItems="center">
+                    <StatLabel>추정 연봉 평균</StatLabel>
+                    <Tooltip label="국민연금 납부 금액을 기준으로 계산한 추정치이며, 이는 정확한 금액을 반영한 값이 아닙니다." fontSize="sm">
+                      <InfoOutlineIcon boxSize={3} ml={1} />
+                    </Tooltip>
+                  </Flex>
+                  <StatNumber>{(latestBusinessData.monthly_payment_amt / latestBusinessData.subscriber_cnt / 0.09 * 12 / 10000).toFixed(1)}만원</StatNumber>
                 </Stat>
               </SimpleGrid>
 

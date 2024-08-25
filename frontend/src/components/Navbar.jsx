@@ -12,7 +12,7 @@ function Navbar() {
         <Spacer />
         <Box>
           <Link mr={4} href="/">검색</Link>
-          <Link mr={4} href="/info">Info</Link>
+          <Link mr={4} href="https://github.com/ckcks1997/company-color">Info</Link>
         </Box>
       </Flex>
     </Box>

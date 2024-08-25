@@ -5,10 +5,11 @@ const EmployeeChart = ({ data }) => {
 
   const calculateYAxisProps = (maxValue) => {
     let roundedMax = 0;
-    if (maxValue <= 10) roundedMax = 20;
+    if (maxValue <= 10) roundedMax = 16;
     else if (maxValue <= 30) roundedMax = 50;
     else if (maxValue <= 50) roundedMax = 80;
     else if (maxValue <= 100) roundedMax = 150;
+    else if (maxValue <= 300) roundedMax = 500;
     else if (maxValue <= 500) roundedMax = 800;
     else if (maxValue <= 1000) roundedMax = 1500;
     else roundedMax = Math.ceil(maxValue / 1000) * 1200;
@@ -21,6 +22,7 @@ const EmployeeChart = ({ data }) => {
       type: 'line',
       zoom: { enabled: false },
     },
+    colors: ['#269bda', '#FF4560', '#fab62e'],
     dataLabels: { enabled: false },
     stroke: {
       width: [4, 4, 2],
@@ -42,7 +44,12 @@ const EmployeeChart = ({ data }) => {
     },
     xaxis: {
       type: 'category',
-      categories: []
+      categories: [],
+       labels: {
+          rotate: -45,
+          rotateAlways: false,
+          hideOverlappingLabels: true,
+       }
     },
     yaxis: [
       {
@@ -75,7 +82,25 @@ const EmployeeChart = ({ data }) => {
           return y;
         }
       }
-    }
+    },
+    responsive: [{
+      breakpoint: 600,
+      options: {
+        chart: {
+          height: 280
+        },
+        legend: {
+          show: false
+        },
+        xaxis: {
+          labels: {
+            rotate: -90,
+            offsetY: 0,
+          },
+          tickAmount: 4
+        }
+      }
+    }]
   });
 
   const [chartSeries, setChartSeries] = useState([]);

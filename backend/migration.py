@@ -4,6 +4,10 @@ from mysql.connector import Error
 import re
 import os
 
+# hash 업데이트
+#UPDATE GUKMIN_YUNGUM_DATA
+#SET hash = MD5(CONCAT(COMPANY_NM, '|', BUSINESS_NUM, '|', BUSINESS_LOCATION))
+#where hash = null;
 
 # SQLite -> Maria 이동 관련 코드
 def sqlite_connect(db_file):

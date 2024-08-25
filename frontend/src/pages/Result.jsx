@@ -19,6 +19,7 @@ function Result() {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const businessName = searchParams.get('business_name');
+    const locationParam = searchParams.get('location');
 
     if (businessName) {
       setSearchTerm(businessName);
@@ -28,7 +29,7 @@ function Result() {
           window.scrollTo(0, globalScrollPosition);
         }, 0);
       } else {
-        fetchSearchResult(businessName);
+        fetchSearchResult(businessName, locationParam);
       }
     }
   }, [location.search]);
@@ -41,10 +42,13 @@ function Result() {
     };
   }, []);
 
-  const fetchSearchResult = async (businessName) => {
+  const fetchSearchResult = async (businessName, locationParam) => {
     setIsLoading(true);
     try {
-      const searchUrl = `${import.meta.env.VITE_API_URL}/search_business?business_name=${businessName}`;
+      let searchUrl = `${import.meta.env.VITE_API_URL}/search_business?business_name=${businessName}`;
+      if(locationParam){
+        searchUrl += `&location=${locationParam}`
+      }
       const response = await fetch(searchUrl);
       const data = await response.json();
       setSearchResult(data);
