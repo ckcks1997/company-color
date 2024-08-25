@@ -45,11 +45,11 @@ const EmployeeChart = ({ data }) => {
     xaxis: {
       type: 'category',
       categories: [],
-       labels: {
-          rotate: -45,
-          rotateAlways: false,
-          hideOverlappingLabels: true,
-       }
+      labels: {
+        rotate: -45,
+        rotateAlways: false,
+        hideOverlappingLabels: true,
+      }
     },
     yaxis: [
       {
@@ -98,7 +98,37 @@ const EmployeeChart = ({ data }) => {
             offsetY: 0,
           },
           tickAmount: 4
-        }
+        },
+        yaxis: [
+          {
+            title: {
+              text: undefined  // 모바일에서 타이틀 제거
+            },
+            seriesName: ["입사자","퇴사자"],
+            labels: {
+              formatter: (val) => Math.round(val),
+              style: {
+                fontSize: '10px'
+              }
+            },
+            forceNiceScale: true,  // y축 스케일 강제 조정
+            tickAmount: 5,  // y축 눈금 수 지정
+          },
+          {
+            opposite: true,
+            title: {
+              text: undefined  // 모바일에서 타이틀 제거
+            },
+            labels: {
+              formatter: (val) => Math.round(val),
+              style: {
+                fontSize: '10px'
+              }
+            },
+            forceNiceScale: true,  // y축 스케일 강제 조정
+            tickAmount: 5,  // y축 눈금 수 지정
+          }
+        ]
       }
     }]
   });
@@ -134,6 +164,30 @@ const EmployeeChart = ({ data }) => {
             ...prevOptions.yaxis[1],
             min: 0,
             ...totalAxisProps,
+          }
+        ],
+        responsive: [
+          {
+            ...prevOptions.responsive[0],
+            options: {
+              ...prevOptions.responsive[0].options,
+              xaxis: {
+                ...prevOptions.responsive[0].options.xaxis,
+                categories: months,
+              },
+              yaxis: [
+                {
+                  ...prevOptions.responsive[0].options.yaxis[0],
+                  min: 0,
+                  ...newQuitAxisProps,
+                },
+                {
+                  ...prevOptions.responsive[0].options.yaxis[1],
+                  min: 0,
+                  ...totalAxisProps,
+                }
+              ],
+            }
           }
         ]
       }));
