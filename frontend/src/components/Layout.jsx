@@ -7,7 +7,6 @@ function Layout() {
   return (
     <Flex direction="column"
           minHeight="100vh"
-          // backgroundImage="url('/images/main.jpg')"
           backgroundSize="cover"
           backgroundAttachment="fixed"
           backgroundPosition="left">
