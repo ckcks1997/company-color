@@ -14,14 +14,13 @@ import {
   StatArrow,
   SimpleGrid,
   Divider,
-  useColorModeValue,
-  Center,
+  Center
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
-import { Tooltip, Flex } from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { Flex } from '@chakra-ui/react';
 import { ClockLoader } from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
+import InfoPopover from "../components/InfoPopover.jsx";
 
 function BusinessInfo() {
   const location = useLocation();
@@ -168,18 +167,18 @@ function BusinessInfo() {
                 <Stat>
                   <Flex alignItems="center">
                     <StatLabel>퇴사율</StatLabel>
-                    <Tooltip label="퇴사율 = (12개월 퇴사자 수 / 전체 가입자 수) * 100" fontSize="sm">
-                      <InfoOutlineIcon boxSize={3} ml={1} />
-                    </Tooltip>
+                     <InfoPopover
+                      content="퇴사율 = (12개월 퇴사자 수 / 전체 가입자 수) * 100"
+                    />
                   </Flex>
                   <StatNumber>{quitRate}%</StatNumber>
                 </Stat>
                 <Stat>
                   <Flex alignItems="center">
                     <StatLabel>추정 연봉 평균</StatLabel>
-                    <Tooltip label="국민연금 납부 금액을 기준으로 계산한 추정치이며, 이는 정확한 금액을 반영한 값이 아닙니다." fontSize="sm">
-                      <InfoOutlineIcon boxSize={3} ml={1} />
-                    </Tooltip>
+                    <InfoPopover
+                      content="국민연금 납부 금액을 기준으로 계산한 추정치이며, 이는 정확한 금액을 반영한 값이 아닙니다."
+                    />
                   </Flex>
                   <StatNumber>{(latestBusinessData.monthly_payment_amt / latestBusinessData.subscriber_cnt / 0.09 * 12 / 10000).toFixed(1)}만원</StatNumber>
                 </Stat>
