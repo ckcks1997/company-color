@@ -21,6 +21,7 @@ import { Flex } from '@chakra-ui/react';
 import { ClockLoader } from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
 import InfoPopover from "../components/InfoPopover.jsx";
+import BounceText from "../components/BounceText.jsx";
 
 function BusinessInfo() {
   const location = useLocation();
@@ -110,11 +111,12 @@ function BusinessInfo() {
 
   const getBgColor = (rate, totalSubscriber) => {
     if(totalSubscriber < 20) return '';
-    else if (rate < 20) return 'green.50';
-    else if (rate < 30) return 'yellow.50';
-    else if (rate < 50) return 'orange.50';
-    else if (rate < 70) return 'red.50';
-    return '#333';
+    else if (rate < 20) return 'green.100';
+    else if (rate < 30) return 'yellow.100';
+    else if (rate < 50) return 'orange.100';
+    else if (rate < 70) return 'red.100';
+    else if (rate < 100) return '#333';
+    return '#111';
   };
 
   const getBgGradientColor = (rate, totalSubscriber) => {
@@ -134,6 +136,7 @@ function BusinessInfo() {
 
   return (
     <Box bg={bgColor} bgGradient={bgGradientColor} minHeight="100vh" transition="all 2s ease">
+      {quitRate > 100 && <BounceText />}
       <Box maxWidth="1000px" margin="auto" p={5}>
         <Card>
           <CardHeader>
