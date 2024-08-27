@@ -1,13 +1,22 @@
-import { Box, Flex, Spacer, Link } from '@chakra-ui/react';
-
+import {Box, Flex, Spacer, Link, Image} from '@chakra-ui/react';
+import {useNavigate} from "react-router-dom";
 function Navbar() {
+
+  const navigate = useNavigate();
+  const handleMainClick = () => {
+    navigate('/');
+  };
+
   return (
     <Box py={4} position="sticky" bottom="0" width="100%">
       <Flex maxW="1150px" mx="auto" alignItems="center">
-        <Box>
-          <Link href="/" fontWeight="bold" ml={4}>
-            <span>COMPANY</span><span style={{color: 'green'}}>COLOR</span>
-          </Link>
+        <Box onClick={handleMainClick}>
+          <Flex alignItems="center">
+            <Image src="/icon.png" alt="logo" maxH='30px' />
+            <Box fontWeight="bold" ml={1}>
+              <span>COMPANY</span><span style={{color: 'green'}}>COLOR</span>
+            </Box>
+          </Flex>
         </Box>
         <Spacer />
         <Box>

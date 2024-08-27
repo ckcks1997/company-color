@@ -111,11 +111,12 @@ function BusinessInfo() {
 
   const getBgColor = (rate, totalSubscriber) => {
     if(totalSubscriber < 20) return '';
+    else if (rate < 15) return 'blue.400';
     else if (rate < 20) return 'green.100';
-    else if (rate < 30) return 'yellow.100';
-    else if (rate < 50) return 'orange.100';
-    else if (rate < 70) return 'red.100';
-    else if (rate < 100) return '#333';
+    else if (rate < 30) return 'orange.100';
+    else if (rate < 50) return 'red.200';
+    else if (rate < 70) return 'red.300';
+    else if (rate < 100) return 'red.400';
     return '#111';
   };
 

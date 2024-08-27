@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Box, Heading, SimpleGrid, Text, Flex, Input, Button, VStack, HStack, Badge, Select, InputGroup, InputRightElement, IconButton } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ClockLoader } from "react-spinners";
@@ -38,26 +38,15 @@ function Result() {
     { key: '충청북도', value: '충청북도' },
   ];
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const businessName = searchParams.get('business_name');
-    const locationParam = searchParams.get('location');
-    const pageParam = searchParams.get('page');
-
-    if (businessName) {
-      setSearchTerm(businessName);
-      setSelectedRegion(locationParam || '');
-      setCurrentPage(pageParam ? parseInt(pageParam) : 1);
-      fetchSearchResult();
-    }
-  }, [location.search]);
-
-  const fetchSearchResult = async () => {
+  const fetchSearchResult = useCallback(async (businessName, locationParam, pageParam) => {
     setIsLoading(true);
     try {
-      let searchUrl = `${import.meta.env.VITE_API_URL}/search_business?business_name=${searchTerm}`;
-      if(selectedRegion){
-        searchUrl += `&location=${selectedRegion}`;
+      let searchUrl = `${import.meta.env.VITE_API_URL}/search_business?business_name=${businessName}`;
+      if(locationParam){
+        searchUrl += `&location=${locationParam}`;
+      }
+      if(pageParam){
+        searchUrl += `&page=${pageParam}`;
       }
       const response = await fetch(searchUrl);
       const data = await response.json();
@@ -71,9 +60,23 @@ function Result() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleSearch = () => {
+   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const businessName = searchParams.get('business_name');
+    const locationParam = searchParams.get('location');
+    const pageParam = searchParams.get('page');
+
+    if (businessName) {
+      setSearchTerm(businessName);
+      setSelectedRegion(locationParam || '');
+      setCurrentPage(pageParam ? parseInt(pageParam) : 1);
+      fetchSearchResult(businessName, locationParam, pageParam);
+    }
+  }, [location.search, fetchSearchResult]);
+
+  const handleSearch = useCallback(() => {
     const searchParams = new URLSearchParams();
     searchParams.append('business_name', searchTerm);
     if (selectedRegion) {
@@ -81,7 +84,7 @@ function Result() {
     }
     searchParams.append('page', '1');
     navigate(`/result?${searchParams.toString()}`);
-  };
+  }, [searchTerm, selectedRegion, navigate]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
