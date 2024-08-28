@@ -74,7 +74,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
                 fontSize="1.4rem"
                 mb="2"
               >
-                COMPANYINFO 란?
+                COMPANY COLOR 란?
               </Text>
               <Text
                 wordBreak="keep-all"
