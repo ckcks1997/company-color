@@ -1,7 +1,7 @@
 ## COMPANY COLOR
 
 ---
-[!deviceMockup](https://github.com/user-attachments/assets/85f99092-7ffa-4326-9f2c-74c7264a3638)
+![deviceMockup](https://github.com/user-attachments/assets/85f99092-7ffa-4326-9f2c-74c7264a3638)
 COMPANY COLOR 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
   - 기업의 현재 인원 규모<br>
   - 최근 입사자 및 퇴사자 동향<br>
