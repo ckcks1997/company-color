@@ -136,7 +136,7 @@ function BusinessInfo() {
   }
 
   return (
-    <Box bg={bgColor} bgGradient={bgGradientColor} minHeight="100vh" transition="all 2s ease">
+    <Box bg={bgColor} bgGradient={bgGradientColor} minHeight="calc(100vh - 62px)" transition="all 2s ease">
       {quitRate > 100 && <BounceText />}
       <Box maxWidth="1000px" margin="auto" p={5}>
         <Card>

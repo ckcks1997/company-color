@@ -4,6 +4,7 @@ import Result from './pages/Result';
 import ErrorPage from './pages/ErrorPage';
 import BusinessInfo from './pages/BusinessInfo.jsx';
 import Layout from './components/Layout';
+import SiteInfo from "./pages/SiteInfo.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
       },{
         path: 'businessInfo',
         element: <BusinessInfo />,
-      },
+      },{
+        path: 'siteInfo',
+        element: <SiteInfo />,
+      }
+
     ],
   },
 ]);

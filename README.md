@@ -3,7 +3,7 @@
 ---
 <i>이 회사의 색깔은? 검은색? 흰색??</i><br>
 약 600만 건의 데이터를 기반으로 알 수 있는 회사 정보!<br><br>
-<a href='https://company-color.kro.kr/'>바로가기</a>
+<a href='https://companycolor.site'>바로가기</a>
 ### 주요 기능
 
 ---

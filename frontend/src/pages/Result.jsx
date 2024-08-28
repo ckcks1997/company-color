@@ -74,7 +74,7 @@ function Result() {
       setCurrentPage(pageParam ? parseInt(pageParam) : 1);
       fetchSearchResult(businessName, locationParam, pageParam);
     }
-  }, [location.search, fetchSearchResult]);
+  }, [location.search]);
 
   const handleSearch = useCallback(() => {
     const searchParams = new URLSearchParams();
