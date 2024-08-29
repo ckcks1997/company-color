@@ -52,15 +52,14 @@ function Result() {
       const data = await response.json();
 
       setSearchResult(data);
-      setTotalPages(1); //TODO: 페이징
     } catch (error) {
       alert('서버 통신 오류')
-      setSearchResult([]);
-      setTotalPages(1);
+      setSearchResult({ items: [], total_count: 0, page: 1, items_per_page: 30, total_pages: 1 });
     } finally {
       setIsLoading(false);
     }
   }, []);
+
 
    useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -71,7 +70,6 @@ function Result() {
     if (businessName) {
       setSearchTerm(businessName);
       setSelectedRegion(locationParam || '');
-      setCurrentPage(pageParam ? parseInt(pageParam) : 1);
       fetchSearchResult(businessName, locationParam, pageParam);
     }
   }, [location.search]);
@@ -87,18 +85,11 @@ function Result() {
   }, [searchTerm, selectedRegion, navigate]);
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
+    if (newPage >= 1 && newPage <= searchResult.total_pages) {
       const searchParams = new URLSearchParams(location.search);
       searchParams.set('page', newPage.toString());
       navigate(`/result?${searchParams.toString()}`);
-      setCurrentPage(newPage);
     }
-  };
-
-  const getPaginatedData = () => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return searchResult.slice(startIndex, endIndex);
   };
 
   const clickResult = (hash) => {
@@ -166,10 +157,10 @@ function Result() {
           <Flex justify="center" align="center" height="200px">
             <ClockLoader color="#3182CE" />
           </Flex>
-        ) : searchResult.length > 0 ? (
+        ) : searchResult.items && searchResult.items.length > 0 ? (
           <>
             <SimpleGrid columns={[1, null, 2]} spacing={6}>
-              {getPaginatedData().map((value) => (
+              {searchResult.items.map((value) => (
                 <Box
                   key={value.hash}
                   borderWidth={1}
@@ -192,19 +183,22 @@ function Result() {
             </SimpleGrid>
             <HStack justify="center" mt={6}>
               <Button
-                onClick={() => handlePageChange(currentPage - 1)}
-                isDisabled={currentPage === 1}
+                onClick={() => handlePageChange(searchResult.page - 1)}
+                isDisabled={searchResult.page === 1}
               >
                 이전
               </Button>
-              <Text>{currentPage} / {totalPages}</Text>
+              <Text>{searchResult.page} / {searchResult.total_pages}</Text>
               <Button
-                onClick={() => handlePageChange(currentPage + 1)}
-                isDisabled={currentPage === totalPages}
+                onClick={() => handlePageChange(searchResult.page + 1)}
+                isDisabled={searchResult.page === searchResult.total_pages}
               >
                 다음
               </Button>
             </HStack>
+            <Text textAlign="center" color="gray.600">
+              총 {searchResult.total_count}개의 결과
+            </Text>
           </>
         ) : (
           <Text textAlign="center" fontSize="lg" color="gray.600">검색 결과가 없습니다.</Text>
