@@ -6,6 +6,13 @@ function Navbar() {
   const handleMainClick = () => {
     navigate('/');
   };
+  const handleKakaoLogin = async() => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/login/kakao`)
+    const data = await response.json();
+    console.log(data)
+    let kakoLoginUrl = data['url'];
+    window.open(kakoLoginUrl, '_blank');
+  }
 
   return (
     <Box py={4} position="sticky" bottom="0" width="100%">
@@ -21,12 +28,13 @@ function Navbar() {
         <Spacer />
         <Box>
           <Link mr={4} href="/">검색</Link>
-          <Link mr={4} href="/SiteInfo">Info</Link>
+          <Link mr={4} href="/SiteInfo">정보</Link>
+            <Link mr={4} onClick={handleKakaoLogin}>로그인</Link>
           {/*<Link mr={4} href="https://github.com/ckcks1997/company-color">Info</Link>*/}
         </Box>
       </Flex>
     </Box>
   );
-}
+  }
 
-export default Navbar;
+  export default Navbar;

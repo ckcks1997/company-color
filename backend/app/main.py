@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import search
+from app.api.endpoints import search, oauth
 from dotenv import load_dotenv
 
 # .env 환경변수 load
@@ -25,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(search.router)
+app.include_router(oauth.router)
 
 if __name__ == "__main__":
     import uvicorn

@@ -71,7 +71,7 @@ async def get_business_info(hash: str, db: Session = Depends(get_db)):
                 GukminYungumData.created_dt >= '2023-08'
             )
         )
-                 .order_by(GukminYungumData.created_dt))
+        .order_by(GukminYungumData.created_dt))
         results = query.all()
 
     return results
