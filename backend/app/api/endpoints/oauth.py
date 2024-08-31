@@ -4,14 +4,18 @@ from pydantic import BaseModel
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import httpx
+from ...config import settings
+
 
 router = APIRouter()
 
 # 설정
-
-KAKAO_REDIRECT_URI = "http://localhost:8000/oauth"
-SECRET_KEY = "test"
-ALGORITHM = "HS256"
+KAKAO_CLIENT_ID = settings.KAKAO_CLIENT_ID
+KAKAO_WEB_CLIENT_ID = settings.KAKAO_WEB_CLIENT_ID
+KAKAO_CLIENT_SECRET = settings.KAKAO_CLIENT_SECRET
+KAKAO_REDIRECT_URI = settings.KAKAO_REDIRECT_URI
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -29,7 +33,7 @@ class User(BaseModel):
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

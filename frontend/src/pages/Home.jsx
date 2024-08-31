@@ -5,11 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Home() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const navigate = useNavigate();
-
-   const regions = [
+  const regions = [
     { key: '전체', value: '' },
     { key: '서울특별시', value: '서울특별시' },
     { key: '경기도', value: '경기도' },
@@ -29,6 +25,10 @@ function Home() {
     { key: '충청남도', value: '충청남도' },
     { key: '충청북도', value: '충청북도' },
   ];
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -115,7 +115,6 @@ function Home() {
             mt={{ base: 2, md: 0 }}
             ml={{ base: 0, md: 2 }}
             value={selectedRegion}
-            defaultValue={regions[0].value}
             onChange={(e) => setSelectedRegion(e.target.value)}
             background={'rgba(255,255,255,0.95)'}
             borderRadius="full"
