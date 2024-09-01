@@ -3,6 +3,7 @@ import { Box, Heading, SimpleGrid, Text, Flex, Input, Button, VStack, HStack, Ba
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ClockLoader } from "react-spinners";
 import { Search } from 'lucide-react';
+import { regions } from "../constants/regions.js";
 
 const ITEMS_PER_PAGE = 30;
 
@@ -11,32 +12,9 @@ function Result() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
   const resultRef = useRef(null);
-
-  const regions = [
-    { key: '전체', value: '' },
-    { key: '서울특별시', value: '서울특별시' },
-    { key: '경기도', value: '경기도' },
-    { key: '강원도', value: '강원특별자치도' },
-    { key: '경상남도', value: '경상남도' },
-    { key: '경상북도', value: '경상북도' },
-    { key: '광주광역시', value: '광주광역시' },
-    { key: '대구광역시', value: '대구광역시' },
-    { key: '대전광역시', value: '대전광역시' },
-    { key: '부산광역시', value: '부산광역시' },
-    { key: '세종시', value: '세종특별자치시' },
-    { key: '울산광역시', value: '울산광역시' },
-    { key: '인천광역시', value: '인천광역시' },
-    { key: '전라남도', value: '전라남도' },
-    { key: '전라북도', value: '전라북도' },
-    { key: '제주시', value: '제주특별자치도' },
-    { key: '충청남도', value: '충청남도' },
-    { key: '충청북도', value: '충청북도' },
-  ];
 
   const fetchSearchResult = useCallback(async (businessName, locationParam, pageParam) => {
     setIsLoading(true);

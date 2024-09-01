@@ -1,30 +1,10 @@
 import React, { useState } from 'react';
-import {  Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
+import { Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
+import { regions } from "../constants/regions.js";
 
 function Home() {
-  const regions = [
-    { key: '전체', value: '' },
-    { key: '서울특별시', value: '서울특별시' },
-    { key: '경기도', value: '경기도' },
-    { key: '강원도', value: '강원특별자치도' },
-    { key: '경상남도', value: '경상남도' },
-    { key: '경상북도', value: '경상북도' },
-    { key: '광주광역시', value: '광주광역시' },
-    { key: '대구광역시', value: '대구광역시' },
-    { key: '대전광역시', value: '대전광역시' },
-    { key: '부산광역시', value: '부산광역시' },
-    { key: '세종시', value: '세종특별자치시' },
-    { key: '울산광역시', value: '울산광역시' },
-    { key: '인천광역시', value: '인천광역시' },
-    { key: '전라남도', value: '전라남도' },
-    { key: '전라북도', value: '전라북도' },
-    { key: '제주시', value: '제주특별자치도' },
-    { key: '충청남도', value: '충청남도' },
-    { key: '충청북도', value: '충청북도' },
-  ];
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
