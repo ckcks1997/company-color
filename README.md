@@ -22,18 +22,16 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 - COMPANY COLOR는 로그인같은 복잡한 과정 없이 바로 원하는 기업에 대한 검색이 가능합니다. 
 <br>
-<br>
-
 <img src="https://github.com/user-attachments/assets/05c7c7de-fb16-4b9d-a924-d2011c3d1d43" width="120px">
 <img src="https://github.com/user-attachments/assets/939c01f1-9f50-4247-9a89-50d8062e0ee6" width="120px">
 <img src="https://github.com/user-attachments/assets/83351290-d405-4c04-8dba-df1587e7ce79" width="120px">
 <img src="https://github.com/user-attachments/assets/eaf74ef8-df42-4fe6-b163-1137c4c1490c" width="120px">
 <img src="https://github.com/user-attachments/assets/9f9d0600-3437-4cd4-bd49-b5a53427892b" width="120px">
 <img src="https://github.com/user-attachments/assets/487fc66b-a7a0-497e-95ef-cfe21c78fc9b" width="120px">
-
+<br>
 - 기업명을 검색하면 국민연금 가입자수(전체 사원 수), 월별 입/퇴사자 수, 퇴사율과 추정 평균 연봉을 확인할 수 있습니다.
 - 입/퇴사자와 전체 인원의 추세를 시각적으로 확인할 수 있도록 그래프를 제공합니다.
-- 해당 기업의 퇴사율에 따라 배경 색상이 변화합니다. (20인 미만 기업 제외)
+- 해당 기업의 퇴사율에 따라 배경 색상이 변합니다. (20인 미만 기업 제외)
 
 ### 기술 stack
 
