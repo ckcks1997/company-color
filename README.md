@@ -29,6 +29,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 <img src="https://github.com/user-attachments/assets/9f9d0600-3437-4cd4-bd49-b5a53427892b" width="120px">
 <img src="https://github.com/user-attachments/assets/487fc66b-a7a0-497e-95ef-cfe21c78fc9b" width="120px">
 <br>
+
 - 기업명을 검색하면 국민연금 가입자수(전체 사원 수), 월별 입/퇴사자 수, 퇴사율과 추정 평균 연봉을 확인할 수 있습니다.
 - 입/퇴사자와 전체 인원의 추세를 시각적으로 확인할 수 있도록 그래프를 제공합니다.
 - 해당 기업의 퇴사율에 따라 배경 색상이 변합니다. (20인 미만 기업 제외)
