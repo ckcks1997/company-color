@@ -1,31 +1,14 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.core.database import get_db
 from app.models.tCompanyInfo import CompanyInfo
 from app.models.tGukminYungumData import GukminYungumData
 from sqlalchemy import and_, case, func
-from pydantic import BaseModel
+from app.dtos import SearchParams, PaginatedResponse
+from app.api.deps import SessionDep
 
 router = APIRouter()
 
-
-class SearchParams(BaseModel):
-    business_name: str
-    location: str | None = None
-    page: int = 1
-    items_per_page: int = 30
-
-
-class PaginatedResponse(BaseModel):
-    items: list[CompanyInfo]
-    total_count: int
-    page: int
-    items_per_page: int
-    total_pages: int
-
-
 @router.get("/search_business", response_model=PaginatedResponse)
-async def search_business(params: SearchParams = Depends(), db: Session = Depends(get_db)):
+async def search_business(db: SessionDep, params: SearchParams = Depends()):
     conditions = [CompanyInfo.company_nm.ilike(f"%{params.business_name}%")]
 
     if params.location:
@@ -49,6 +32,7 @@ async def search_business(params: SearchParams = Depends(), db: Session = Depend
 
     results = query.all()
 
+
     total_pages = (total_count + params.items_per_page - 1) // params.items_per_page
 
     return PaginatedResponse(
@@ -61,7 +45,7 @@ async def search_business(params: SearchParams = Depends(), db: Session = Depend
 
 
 @router.get("/get_business_info", response_model=list[GukminYungumData])
-async def get_business_info(hash: str, db: Session = Depends(get_db)):
+async def get_business_info(hash: str, db: SessionDep):
     results = None
     if hash:
         query = (db.query(GukminYungumData)
