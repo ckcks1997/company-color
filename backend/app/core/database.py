@@ -1,34 +1,15 @@
-from sqlalchemy import create_engine, MetaData, text
 from databases import Database
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import QueuePool
-from app.config import settings
+from sqlmodel import Session, create_engine, text, QueuePool
+from app.core.config import db_settings
 
 
-# 데이터베이스 연결 정보
-DB_HOST = settings.DB_HOST
-DB_PORT = settings.DB_PORT
-DB_NAME = settings.DB_NAME
-DB_USER = settings.DB_USER
-DB_PASSWORD = settings.DB_PASSWORD
-
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = f"mysql+pymysql://{db_settings.DB_USER}:{db_settings.DB_PASSWORD}@{db_settings.DB_HOST}:{db_settings.DB_PORT}/{db_settings.DB_NAME}"
 database = Database(DATABASE_URL)
 engine = create_engine(DATABASE_URL, poolclass=QueuePool, pool_size=5, max_overflow=10, pool_timeout=30, pool_pre_ping=True)
-metadata = MetaData()
-Base = declarative_base()
 
-# 세션 팩토리 생성
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def get_db() -> Session:
+    with Session(engine) as session:
+        yield session
 
 
 # test

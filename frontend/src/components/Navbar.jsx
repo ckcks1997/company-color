@@ -2,7 +2,7 @@ import {Box, Flex, Spacer, Link, Image} from '@chakra-ui/react';
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {setToken} from "../utils/auth.js";
+import {setAccessToken} from "../utils/auth.js";
 function Navbar() {
 
   const navigate = useNavigate();
@@ -24,7 +24,8 @@ function Navbar() {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/oauth?code=${code}`);
       const { access_token } = response.data;
-      setToken('token', access_token);
+
+      setAccessToken(access_token);
       setIsLoggedIn(true);
     } catch (error) {
       console.error('kakao backend 인증 실패', error);
