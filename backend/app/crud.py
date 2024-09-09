@@ -43,7 +43,6 @@ def search_companies(db: Session, params):
 
     return total_count, results
 
-
 async def get_or_create_user(db: Session, user_info: dict):
     social_key = str(user_info["id"])
     stmt = select(Users).where(Users.SOCIAL_KEY == social_key)

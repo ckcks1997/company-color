@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { regions } from "../constants/regions.js";
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 
 function Home() {
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [recentSearches, setRecentSearches] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
   const navigate = useNavigate();
+
+   useEffect(() => {
+    // 최근 검색 목록을 가져오는 API 호출
+    const fetchRecentSearches = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/get_recent_search`);
+        const data = await response.json();
+        setRecentSearches(data);
+      } catch (error) {
+        console.error('error', error);
+      }
+    };
+    fetchRecentSearches();
+  }, []);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -108,6 +127,54 @@ function Home() {
           </Select>
         </Flex>
       </Box>
+      {recentSearches.length > 0 && (
+        <Box width="100%" maxWidth="800px" marginTop="20px">
+          <Text fontSize="xl" fontWeight="bold" mb={4}>
+            최근 검색 기업
+          </Text>
+          <Swiper
+            modules={[Pagination]}
+            style={{paddingBottom: "40px"}}
+            pagination={{
+              clickable: true,
+            }}
+            breakpoints={{
+              // 화면 너비가 0px 이상일 때
+              0: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+              // 화면 너비가 480px 이상일 때
+              480: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              // 화면 너비가 768px 이상일 때
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+              },
+            }}
+          >
+            {recentSearches.map((company, index) => (
+              <SwiperSlide key={index}>
+                <Box
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  p={4}
+                  textAlign="center"
+                  cursor="pointer"
+                  onClick={() => navigate(`/businessInfo?hash=${company.hash}`)}
+                >
+                  <Text fontWeight="bold">{company.company_nm}</Text>
+                  <Text fontSize="sm">{company.business_location}</Text>
+                </Box>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Box>
+      )}
     </Flex>
   );
 }
