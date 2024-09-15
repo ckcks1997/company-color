@@ -15,19 +15,19 @@ function Home() {
   const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
   const navigate = useNavigate();
 
-   useEffect(() => {
-    // 최근 검색 목록을 가져오는 API 호출
-    const fetchRecentSearches = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/get_recent_search`);
-        const data = await response.json();
-        setRecentSearches(data);
-      } catch (error) {
-        console.error('error', error);
-      }
-    };
-    fetchRecentSearches();
-  }, []);
+  //  useEffect(() => {
+  //   // 최근 검색 목록을 가져오는 API 호출
+  //   const fetchRecentSearches = async () => {
+  //     try {
+  //       const response = await fetch(`${import.meta.env.VITE_API_URL}/get_recent_search`);
+  //       const data = await response.json();
+  //       setRecentSearches(data);
+  //     } catch (error) {
+  //       console.error('error', error);
+  //     }
+  //   };
+  //   fetchRecentSearches();
+  // }, []);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -156,22 +156,22 @@ function Home() {
               },
             }}
           >
-            {recentSearches.map((company, index) => (
-              <SwiperSlide key={index}>
-                <Box
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  p={4}
-                  textAlign="center"
-                  cursor="pointer"
-                  onClick={() => navigate(`/businessInfo?hash=${company.hash}`)}
-                >
-                  <Text fontWeight="bold">{company.company_nm}</Text>
-                  <Text fontSize="sm">{company.business_location}</Text>
-                </Box>
-              </SwiperSlide>
-            ))}
+            {/*{recentSearches.map((company, index) => (*/}
+            {/*  <SwiperSlide key={index}>*/}
+            {/*    <Box*/}
+            {/*      borderWidth="1px"*/}
+            {/*      borderRadius="lg"*/}
+            {/*      overflow="hidden"*/}
+            {/*      p={4}*/}
+            {/*      textAlign="center"*/}
+            {/*      cursor="pointer"*/}
+            {/*      onClick={() => navigate(`/businessInfo?hash=${company.hash}`)}*/}
+            {/*    >*/}
+            {/*      <Text fontWeight="bold">{company.company_nm}</Text>*/}
+            {/*      <Text fontSize="sm">{company.business_location}</Text>*/}
+            {/*    </Box>*/}
+            {/*  </SwiperSlide>*/}
+            {/*))}*/}
           </Swiper>
         </Box>
       )}
