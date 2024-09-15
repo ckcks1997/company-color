@@ -1,8 +1,12 @@
 from datetime import datetime
 from sqlmodel import Session, select
 from app.models import GukminYungumData, CompanyInfo
+from elasticsearch import Elasticsearch
 from sqlalchemy import and_, case, func
 from app.models.tUsers import Users
+from dtos import SearchParams
+
+es = Elasticsearch(['http://10.0.0.5:9200'])
 
 
 def get_business_info(db: Session, hash: str):
@@ -16,32 +20,6 @@ def get_business_info(db: Session, hash: str):
              .order_by(GukminYungumData.created_dt))
     return db.exec(query).all()
 
-
-def search_companies(db: Session, params):
-    conditions = [CompanyInfo.company_nm.ilike(f"%{params.business_name}%")]
-
-    if params.location:
-        conditions.append(CompanyInfo.location == params.location)
-
-    # total cnt
-    count_query = select(func.count(CompanyInfo.id)).where(and_(*conditions))
-    total_count = db.exec(count_query).first()
-
-    # 실제 검색 쿼리
-    query = (select(CompanyInfo)
-             .where(and_(*conditions))
-             .order_by(
-        case(
-            (CompanyInfo.company_nm.ilike(f'{params.business_name}%'), 1),
-            (CompanyInfo.company_nm.ilike(f'%{params.business_name}'), 2),
-            else_=3
-        ))
-             .offset((params.page - 1) * params.items_per_page)
-             .limit(params.items_per_page))
-
-    results = db.exec(query).all()
-
-    return total_count, results
 
 async def get_or_create_user(db: Session, user_info: dict):
     social_key = str(user_info["id"])
@@ -67,3 +45,49 @@ async def get_or_create_user(db: Session, user_info: dict):
         db.commit()
         db.refresh(new_user)
         return new_user
+
+
+def search_companies_elastic(params: SearchParams):
+    must_conditions = []
+
+    if params.location:
+        must_conditions.append({
+            "term": {
+                "Location": params.location
+            }
+        })
+
+    query = {
+        "bool": {
+            "must": must_conditions,
+            "should": [
+                {
+                    "wildcard": {
+                        "CompanyNm": f"*{params.business_name}*"
+                    }
+                }
+            ]
+        }
+    }
+
+    response = es.search(
+        index="company_color_search_idx",
+        body={
+            "query": query,
+            "sort": [
+                {"_score": {"order": "desc"}},
+                #{"CompanyNm.keyword": {"order": "asc"}}
+            ],
+            "from": (params.page - 1) * params.items_per_page,
+            "size": params.items_per_page
+        }
+    )
+
+    total_count = response['hits']['total']['value']
+    results = [CompanyInfo(
+        company_nm=hit['_source']['CompanyNm'],
+        location=hit['_source']['Location'],
+        hash=hit['_source']['Hash']
+    ) for hit in response['hits']['hits']]
+
+    return total_count, results
