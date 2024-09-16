@@ -108,11 +108,18 @@ def recreate_index():
                         }
                     },
                     "analyzer": {
-                        "company_name_analyzer": {
+                        "ngram_analyzer": {
                             "type": "custom",
-                            "char_filter": ["remove_corp"],
-                            "tokenizer": "standard",
-                            "filter": ["lowercase", "trim"]
+                            "tokenizer": "ngram_tokenizer",
+                            "filter": ["lowercase"]
+                        }
+                    },
+                    "tokenizer": {
+                        "ngram_tokenizer": {
+                            "type": "ngram",
+                            "min_gram": 2,
+                            "max_gram": 3,
+                            "token_chars": ["letter", "digit"]
                         }
                     }
                 }
@@ -121,10 +128,14 @@ def recreate_index():
                 "properties": {
                     "CompanyNm": {
                         "type": "text",
-                        "analyzer": "company_name_analyzer",
+                        "analyzer": "standard",
                         "fields": {
                             "keyword": {
                                 "type": "keyword"
+                            },
+                            "ngram": {
+                                "type": "text",
+                                "analyzer": "ngram_analyzer"
                             }
                         }
                     },

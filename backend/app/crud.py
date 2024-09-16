@@ -65,34 +65,45 @@ def search_companies_elastic(params: SearchParams):
     })
 
     query = {
-        "bool": {
-            "must": must_conditions,
-            "must_not": must_not_conditions,
-            "should": [
-                {
-                    "match_phrase": {
-                        "CompanyNm": f"{params.business_name}"
-                    }
-                },
-                {
-                    "match": {
-                        "CompanyNm": {
-                            "query": f"{params.business_name}",
-                            "operator": "and",
-                            "boost": 2
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": must_conditions,
+                    "must_not": must_not_conditions,
+                    "should": [
+                        {
+                            "match_phrase": {
+                                "CompanyNm": f"{params.business_name}"
+                            }
+                        },
+                        {
+                            "match": {
+                                "CompanyNm": {
+                                    "query": f"{params.business_name}",
+                                    "operator": "and",
+                                    "boost": 2
+                                }
+                            }
+                        },
+                        {
+                            "match": {
+                                "CompanyNm.ngram": {
+                                    "query": f"{params.business_name}",
+                                    "boost": 1
+                                }
+                            }
                         }
-                    }
-                },
-                {
-                    "match": {
-                        "CompanyNm.ngram": {
-                            "query": f"{params.business_name}",
-                            "boost": 1
-                        }
-                    }
+                    ],
+                    "minimum_should_match": 1
                 }
-            ],
-            "minimum_should_match": 1
+            },
+            "field_value_factor": {
+                "field": "Subscriber",
+                "factor": 0.05,
+                "modifier": "log1p",
+                "missing": 1
+            },
+            "boost_mode": "multiply"
         }
     }
 
