@@ -2,10 +2,11 @@ from datetime import datetime
 from sqlmodel import Session, select
 from elasticsearch import Elasticsearch
 from sqlalchemy import and_
-from app.models import GukminYungumData, CompanyInfo,Users
-from app.dtos import SearchParams
+from app.models import GukminYungumData, Users
+from app.dtos import SearchParams, SearchResponse
+from app.core.config import elastic_settings
 
-es = Elasticsearch(['http://10.0.0.5:9200'])
+es = Elasticsearch([elastic_settings.ELASTIC_HOST])
 
 
 def get_business_info(db: Session, hash: str):
@@ -48,46 +49,82 @@ async def get_or_create_user(db: Session, user_info: dict):
 
 def search_companies_elastic(params: SearchParams):
     must_conditions = []
-
+    must_not_conditions = []
+    # 지역 선택시
     if params.location:
         must_conditions.append({
             "term": {
                 "Location": params.location
             }
         })
+    # 가입자 0인 데이터 제외
+    must_not_conditions.append({
+        "term": {
+            "Subscriber": 0
+        }
+    })
 
     query = {
         "bool": {
             "must": must_conditions,
+            "must_not": must_not_conditions,
             "should": [
                 {
-                    "wildcard": {
-                        "CompanyNm": f"*{params.business_name}*"
+                    "match_phrase": {
+                        "CompanyNm": f"{params.business_name}"
+                    }
+                },
+                {
+                    "match": {
+                        "CompanyNm": {
+                            "query": f"{params.business_name}",
+                            "operator": "and",
+                            "boost": 2
+                        }
+                    }
+                },
+                {
+                    "match": {
+                        "CompanyNm.ngram": {
+                            "query": f"{params.business_name}",
+                            "boost": 1
+                        }
                     }
                 }
-            ]
+            ],
+            "minimum_should_match": 1
         }
     }
+
+    sort = [
+        {"_score": {"order": "desc"}},
+        {"Subscriber": {"order": "desc"}}
+    ]
+
+    if params.sort == 'subscriber':
+        sort = [
+            {"Subscriber": {"order": "desc"}},
+            {"_score": {"order": "desc"}}
+        ]
 
     response = es.search(
         index="company_color_search_idx",
         body={
             "query": query,
-            "sort": [
-                {"_score": {"order": "desc"}},
-                #{"CompanyNm.keyword": {"order": "asc"}}
-            ],
+            "sort": sort,
+            "min_score": 10.0,
             "from": (params.page - 1) * params.items_per_page,
             "size": params.items_per_page
         }
     )
 
     total_count = response['hits']['total']['value']
-    results = [CompanyInfo(
+    results = [SearchResponse(
         company_nm=hit['_source']['CompanyNm'],
         address=hit['_source']['Address'],
         location=hit['_source']['Location'],
-        hash=hit['_source']['Hash']
+        hash=hit['_source']['Hash'],
+        subscriber=hit['_source']['Subscriber']
     ) for hit in response['hits']['hits']]
 
     return total_count, results

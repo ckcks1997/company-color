@@ -42,12 +42,14 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
   - fastAPI 0.114.x
   
 - 서버 정보
-  - vm: azure vm x2
-  - web서버: nginx latest
-  - db: mariaDB 11.4
-  - domain: namecheap
+  - VM: Azure VM x2(B1s, B2ats_v2)
+  - 웹 서버: Nginx (최신 버전)
+  - DB: 
+    - MariaDB 11.4
+    - Elasticsearch
+  - 도메인: Namecheap
   - SSL: ZeroSSL
-  - etc: redis, Elasticsearch
+  - 기타: Redis
 
 ### 이미지 출처
 

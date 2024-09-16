@@ -153,8 +153,11 @@ function Result() {
                 >
                   <VStack align="stretch" spacing={3}>
                     <Heading size="md" color="green.600">{value.company_nm}</Heading>
-                    <Badge colorScheme="green" alignSelf="flex-start">{value.location}</Badge>
-                    <Text color="gray.600">{value.address}</Text>
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <Badge colorScheme="green">{value.location}</Badge>
+                      <Text fontSize="0.8rem" color="gray.600">전체 가입자 수: {value.subscriber} 명</Text>
+                    </Flex>
+                    <Text fontSize="0.9rem" color="gray.600">{value.address}</Text>
                   </VStack>
                 </Box>
               ))}

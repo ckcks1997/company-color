@@ -32,6 +32,11 @@ class KakaoSettings(BaseSettings):
     KAKAO_REDIRECT_URI: str
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
+class ElasticSettings(BaseSettings):
+    ELASTIC_HOST: str
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
 redis_Settings = RedisSettings()
 db_settings = DBSettings()
 kakao_settings = KakaoSettings()
+elastic_settings = ElasticSettings()

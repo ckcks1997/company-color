@@ -10,7 +10,7 @@ es = Elasticsearch(
 )
 
 INDEX_NAME = "company_color_search_idx"
-BATCH_SIZE = 10000
+BATCH_SIZE = 2000
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -46,7 +46,18 @@ def fetch_batch(offset, limit):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        query = f"SELECT COMPANY_NM, ADDRESS, LOCATION, HASH FROM COMPANY_INFO LIMIT {limit} OFFSET {offset}"
+        query = f"""
+        SELECT COMPANY_NM,
+               ADDRESS,
+               LOCATION,
+               HASH,
+               (   SELECT A.SUBSCRIBER_CNT 
+                   FROM GUKMIN_YUNGUM_DATA A 
+                   WHERE A.HASH = B.HASH ORDER BY CREATED_DT DESC LIMIT 1
+               ) SUBSCRIBER
+        FROM COMPANY_INFO B
+        LIMIT {limit} OFFSET {offset}
+            """
         cursor.execute(query)
         batch = cursor.fetchall()
         return batch
@@ -68,6 +79,7 @@ def index_batch(batch):
                 "CompanyNm": row["COMPANY_NM"],
                 "Address": row["ADDRESS"],
                 "Location": row["LOCATION"],
+                "Subscriber": row["SUBSCRIBER"],
                 "Hash": row["HASH"]
             }
         }
@@ -118,6 +130,12 @@ def recreate_index():
                     },
                     "Location": {
                         "type": "keyword"
+                    },
+                    "Address": {
+                        "type": "keyword"
+                    },
+                    "Subscriber": {
+                        "type": "integer"
                     },
                     "Hash": {
                         "type": "keyword"
