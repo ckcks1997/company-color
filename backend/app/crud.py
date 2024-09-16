@@ -1,10 +1,9 @@
 from datetime import datetime
 from sqlmodel import Session, select
-from app.models import GukminYungumData, CompanyInfo
 from elasticsearch import Elasticsearch
-from sqlalchemy import and_, case, func
-from app.models.tUsers import Users
-from dtos import SearchParams
+from sqlalchemy import and_
+from app.models import GukminYungumData, CompanyInfo,Users
+from app.dtos import SearchParams
 
 es = Elasticsearch(['http://10.0.0.5:9200'])
 
@@ -86,6 +85,7 @@ def search_companies_elastic(params: SearchParams):
     total_count = response['hits']['total']['value']
     results = [CompanyInfo(
         company_nm=hit['_source']['CompanyNm'],
+        address=hit['_source']['Address'],
         location=hit['_source']['Location'],
         hash=hit['_source']['Hash']
     ) for hit in response['hits']['hits']]

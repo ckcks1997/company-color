@@ -47,7 +47,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
   - db: mariaDB 11.4
   - domain: namecheap
   - SSL: ZeroSSL
-  - etc: redis, Elastic 7.x
+  - etc: redis, Elasticsearch
 
 ### 이미지 출처
 
