@@ -2,7 +2,7 @@
 
 ---
 ![deviceMockup](https://github.com/user-attachments/assets/85f99092-7ffa-4326-9f2c-74c7264a3638)
-COMPANY COLOR 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
+<a href='https://companycolor.site'>COMPANY COLOR</a> 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
   - 기업의 현재 인원 규모<br>
   - 최근 입사자 및 퇴사자 동향<br>
   - 예상 평균 연봉 데이터<br>
@@ -11,8 +11,12 @@ COMPANY COLOR 사이트는 신뢰할 수 있는 국민연금 데이터를 기반
 보다 정확한 정보를 바탕으로 취업 전략을 수립할 수 있습니다.<br>
 <br>
 COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세요!<br>
+<br>
+* 참고사항:<br>
+  - 공무원의 경우 국민연금이 아닌 공무원연금 가입자로 분류되어 조회되지 않습니다.<br>
+  - 국민연금을 납부하지 않는 사업자의 경우 조회되지 않거나 실제 인원보다 적게 표시될 수 있습니다.<br>
 
-<a href='https://companycolor.site'>바로가기</a>
+<a href='https://companycolor.site'>사이트 바로가기</a>
 ### 주요 기능
 
 ---
@@ -21,6 +25,9 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 <br>
 
 - COMPANY COLOR는 로그인같은 복잡한 과정 없이 바로 원하는 기업에 대한 검색이 가능합니다. 
+- Elasticsearch의 ngram토큰화 방식을 이용하여 유사한 회사명 결과도 함께 제공됩니다. 
+
+
 <br>
 <img src="https://github.com/user-attachments/assets/05c7c7de-fb16-4b9d-a924-d2011c3d1d43" width="120px">
 <img src="https://github.com/user-attachments/assets/939c01f1-9f50-4247-9a89-50d8062e0ee6" width="120px">
@@ -32,7 +39,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 - 기업명을 검색하면 국민연금 가입자수(전체 사원 수), 월별 입/퇴사자 수, 퇴사율과 추정 평균 연봉을 확인할 수 있습니다.
 - 입/퇴사자와 전체 인원의 추세를 시각적으로 확인할 수 있도록 그래프를 제공합니다.
-- 해당 기업의 퇴사율에 따라 배경 색상이 변합니다. (20인 미만 기업 제외)
+- 해당 기업의 퇴사율에 따라 배경의 색상으로 회사정보를 제공합니다. (20인 미만 기업 제외)
 
 ### 기술 stack
 
