@@ -73,15 +73,18 @@ def search_companies_elastic(params: SearchParams):
                     "should": [
                         {
                             "match_phrase": {
-                                "CompanyNm": f"{params.business_name}"
+                                "CompanyNm.keyword": {
+                                  "query": f"{params.business_name}",
+                                  "boost": 3
+                                }
                             }
                         },
                         {
-                            "match": {
+                            "match_phrase": {
                                 "CompanyNm": {
                                     "query": f"{params.business_name}",
-                                    "operator": "and",
-                                    "boost": 2
+                                    "boost": 2,
+                                    "slop": 10
                                 }
                             }
                         },
@@ -89,6 +92,7 @@ def search_companies_elastic(params: SearchParams):
                             "match": {
                                 "CompanyNm.ngram": {
                                     "query": f"{params.business_name}",
+                                    "operator": "and",
                                     "boost": 1
                                 }
                             }
@@ -99,7 +103,7 @@ def search_companies_elastic(params: SearchParams):
             },
             "field_value_factor": {
                 "field": "Subscriber",
-                "factor": 0.05,
+                "factor": 0.1,
                 "modifier": "log1p",
                 "missing": 1
             },
@@ -123,7 +127,7 @@ def search_companies_elastic(params: SearchParams):
         body={
             "query": query,
             "sort": sort,
-            "min_score": 10.0,
+            "min_score": 3.0,
             "from": (params.page - 1) * params.items_per_page,
             "size": params.items_per_page
         }
