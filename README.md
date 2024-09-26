@@ -1,6 +1,7 @@
-## COMPANY COLOR
+# COMPANY COLOR
 
 ---
+
 ![deviceMockup](https://github.com/user-attachments/assets/85f99092-7ffa-4326-9f2c-74c7264a3638)
 <a href='https://companycolor.site'>COMPANY COLOR</a> 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
   - 기업의 현재 인원 규모<br>
@@ -18,6 +19,25 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 <br>
 
 <a href='https://companycolor.site'>사이트 바로가기</a>
+
+### 기술 stack
+
+---
+- FRONT/BACKEND 
+  - React 18.x
+  - fastAPI 0.114.x
+  
+- 서버 정보
+  - VM: Azure VM x2(B1s, B2ats_v2)
+  - 웹 서버: Nginx (최신 버전)
+  - DB: 
+    - MariaDB 11.4
+    - Elasticsearch
+  - 도메인: Namecheap
+  - SSL: ZeroSSL
+  - 기타: Redis
+
+
 ### 주요 기능
 
 ---
@@ -49,22 +69,6 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 - 입/퇴사자와 전체 인원의 추세를 시각적으로 확인할 수 있도록 그래프를 제공합니다.
 - 해당 기업의 퇴사율에 따라 배경의 색상으로 회사정보를 제공합니다. (20인 미만 기업 제외)
 
-### 기술 stack
-
----
-- FRONT/BACKEND 
-  - React 18.x
-  - fastAPI 0.114.x
-  
-- 서버 정보
-  - VM: Azure VM x2(B1s, B2ats_v2)
-  - 웹 서버: Nginx (최신 버전)
-  - DB: 
-    - MariaDB 11.4
-    - Elasticsearch
-  - 도메인: Namecheap
-  - SSL: ZeroSSL
-  - 기타: Redis
 
 ### 이미지 출처
 
