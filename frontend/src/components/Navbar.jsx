@@ -60,10 +60,18 @@ function Navbar() {
           </Flex>
         </Box>
         <Spacer />
-        <Box>
+        <Box display="flex">
           <Link mr={4} href="/">검색</Link>
           <Link mr={4} href="/SiteInfo">정보</Link>
-            <Link mr={4} onClick={handleKakaoLogin}>로그인</Link>
+            {/*<Link mr={4} onClick={handleKakaoLogin}>로그인</Link>*/}
+          <Link mr={4} href="https://github.com/ckcks1997/company-color" isExternal>
+            <Image
+              src="images/git.png"
+              alt="Git logo"
+              maxWidth="25px"
+              style={{opacity: 0.5}}
+            />
+          </Link>
         </Box>
       </Flex>
     </Box>

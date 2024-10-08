@@ -34,6 +34,8 @@ class KakaoSettings(BaseSettings):
 
 class ElasticSettings(BaseSettings):
     ELASTIC_HOST: str
+    ELASTIC_USERNAME: str
+    ELASTIC_PASSWORD: str
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 redis_Settings = RedisSettings()

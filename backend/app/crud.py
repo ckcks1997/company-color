@@ -6,7 +6,10 @@ from app.models import GukminYungumData, Users
 from app.dtos import SearchParams, SearchResponse
 from app.core.config import elastic_settings
 
-es = Elasticsearch([elastic_settings.ELASTIC_HOST])
+es = Elasticsearch(
+    [elastic_settings.ELASTIC_HOST],
+    http_auth=(elastic_settings.ELASTIC_USERNAME, elastic_settings.ELASTIC_PASSWORD)
+    )
 
 
 def get_business_info(db: Session, hash: str):
