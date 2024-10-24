@@ -17,7 +17,7 @@ def get_business_info(db: Session, hash: str):
              .filter(
         and_(
             GukminYungumData.hash == hash,
-            GukminYungumData.created_dt >= '2023-09'
+            GukminYungumData.created_dt >= '2023-10'
         )
     )
              .order_by(GukminYungumData.created_dt))
