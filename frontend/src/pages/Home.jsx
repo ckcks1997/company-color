@@ -71,7 +71,7 @@ function Home() {
             color='white'
             textShadow='0 2px 4px rgba(0,0,0,1)'
           >
-            약 600만+ 기업 데이터로 인사 트렌드를 한눈에
+            약 800만+ 기업 데이터로 인사 트렌드를 한눈에
           </Text>
           <Text
             align='center'

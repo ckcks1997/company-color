@@ -143,6 +143,7 @@ function BusinessInfo() {
           <CardHeader>
             <Heading size='lg' color="blue.600">{latestBusinessData.company_nm}</Heading>
             <Text color="gray.500">최근 업데이트: {latestBusinessData.created_dt}</Text>
+            <Text color="gray.500">최초 등록일(추정 설립일): {latestBusinessData.applied_date}</Text>
           </CardHeader>
 
           <CardBody>

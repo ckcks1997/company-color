@@ -14,13 +14,9 @@ es = Elasticsearch(
 
 def get_business_info(db: Session, hash: str):
     query = (select(GukminYungumData)
-             .filter(
-        and_(
-            GukminYungumData.hash == hash,
-            GukminYungumData.created_dt >= '2023-10'
-        )
-    )
-             .order_by(GukminYungumData.created_dt))
+             .filter(GukminYungumData.hash == hash)
+             .order_by(GukminYungumData.created_dt.desc())
+             .limit(12))
     return db.exec(query).all()
 
 
