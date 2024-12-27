@@ -29,7 +29,6 @@ jobs:
 
     - name: Execute start script
       run: |
-        chmod +x stop.sh
-        cd /home/lch/python
-        chmod +x start.sh
+        cd /home/lch/python/backend
+        ./stop.sh
         ./start.sh
