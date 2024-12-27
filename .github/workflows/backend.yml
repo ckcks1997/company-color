@@ -1,0 +1,35 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Copy files to target directory
+      run: |
+        sudo cp -r backend/* /home/lch/python/backend/
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install Dependencies
+      working-directory: /home/lch/python/backend/
+      run: |
+        poetry install
+
+    - name: Execute start script
+      run: |
+        sudo systemctl stop fastapi 
+        cd /home/lch/python
+        chmod +x start.sh
+        ./start.sh
