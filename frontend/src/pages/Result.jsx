@@ -77,7 +77,7 @@ function Result() {
   return (
     <Box p={8} maxWidth="1200px" margin="0 auto" ref={resultRef}>
       <VStack spacing={8} align="stretch">
-        <Heading textAlign="center" color="green.600">검색 결과</Heading>
+        <Heading textAlign="center" color="blue.600">검색 결과</Heading>
 
         <Box
           width="100%"
@@ -152,9 +152,9 @@ function Result() {
                   cursor="pointer"
                 >
                   <VStack align="stretch" spacing={3}>
-                    <Heading size="md" color="green.600">{value.company_nm}</Heading>
+                    <Heading size="md" color="blue.600">{value.company_nm}</Heading>
                     <Flex alignItems="center" justifyContent="space-between">
-                      <Badge colorScheme="green">{value.location}</Badge>
+                      <Badge colorScheme="blue">{value.location}</Badge>
                       <Text fontSize="0.8rem" color="gray.600">전체 가입자 수: {value.subscriber} 명</Text>
                     </Flex>
                     <Text fontSize="0.9rem" color="gray.600">{value.address}</Text>

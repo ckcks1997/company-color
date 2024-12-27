@@ -55,7 +55,7 @@ function Navbar() {
           <Flex alignItems="center">
             <Image src="/favicon-64x64.png" alt="logo" maxH='30px' ml={2}/>
             <Box fontWeight="bold" ml={1}>
-              <span>COMPANY</span> <span style={{color: 'green'}}>COLOR</span>
+              <span>COMPANY</span> <span style={{color: '#2b6cb0'}}>COLOR</span>
             </Box>
           </Flex>
         </Box>
