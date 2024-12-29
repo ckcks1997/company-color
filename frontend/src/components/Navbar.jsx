@@ -1,12 +1,16 @@
 import {Box, Flex, Spacer, Link, Image} from '@chakra-ui/react';
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {setAccessToken} from "../utils/auth.js";
+import {api, authApi} from "../api/api.js"
+import useLoadingStore from "../store/loadingStore.js";
+import usePageStore from "../store/pageStore.js";
+
 function Navbar() {
 
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { setLoading } = useLoadingStore();
+  const { previousLocation, setPreviousLocation,  clearPreviousLocation } = usePageStore()
 
   const KAKAO_CLIENT_ID = `${import.meta.env.VITE_KAKAO_JS_CLIENT_ID}`
   const KAKAO_REDIRECT_URI = `${import.meta.env.VITE_FRONT_URL}`
@@ -16,19 +20,27 @@ function Navbar() {
   };
 
   const handleKakaoLogin = async() => {
-    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
-    window.location.href = kakaoAuthURL;
+    authApi.goKakaoLogin()
+  }
+
+  const handleLogout = async() => {
+    authApi.logout();
+    window.location.reload();
   }
 
   const handleKakaoCallback = async (code) => {
+    console.log(previousLocation)
+    await navigate(previousLocation);
+    setLoading(true); // 로딩 시작
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/oauth?code=${code}`);
-      const { access_token } = response.data;
-
-      setAccessToken(access_token);
+      let result = await authApi.getAccessToken(code);
+      console.log(result)
       setIsLoggedIn(true);
     } catch (error) {
       console.error('kakao backend 인증 실패', error);
+      authApi.logout();
+    } finally {
+      setLoading(false); // 로딩 종료
     }
   };
 
@@ -63,7 +75,12 @@ function Navbar() {
         <Box display="flex">
           <Link mr={4} href="/">검색</Link>
           <Link mr={4} href="/SiteInfo">정보</Link>
-            {/*<Link mr={4} onClick={handleKakaoLogin}>로그인</Link>*/}
+          {
+            isLoggedIn
+              ? <Link mr={4} onClick={handleLogout}>로그아웃</Link>
+              : <Link mr={4} onClick={handleKakaoLogin}>로그인</Link>
+          }
+
           <Link mr={4} href="https://github.com/ckcks1997/company-color" isExternal>
             <Image
               src="images/git.png"
