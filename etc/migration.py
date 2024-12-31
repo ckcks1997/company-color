@@ -9,6 +9,23 @@ import os
 #SET hash = MD5(CONCAT(COMPANY_NM, '|', BUSINESS_NUM, '|', BUSINESS_LOCATION))
 #where hash = null;
 
+# elastic 데이터 세팅
+# INSERT IGNORE INTO COMPANY_INFO
+#     (COMPANY_NM, ADDRESS, BUSINESS_NUM, LOCATION, HASH)
+# SELECT DISTINCT
+#     TRIM(COMPANY_NM),
+#     TRIM(BUSINESS_LOCATION),
+#     TRIM(BUSINESS_NUM),
+#     TRIM(SUBSTRING_INDEX(BUSINESS_LOCATION, ' ', 1)),
+#     TRIM(HASH)
+# FROM GUKMIN_YUNGUM_DATA;
+
+# 불필요한 데이터 삭제
+#delete from COMPANY_INFO WHERE COMPANY_NM like '%(일용%';
+#delete from COMPANY_INFO WHERE COMPANY_NM like '%/일용%';
+#delete from COMPANY_INFO WHERE COMPANY_NM like '%(상용%';
+#delete from COMPANY_INFO WHERE COMPANY_NM like '%/상용%';
+
 # SQLite -> Maria 이동 관련 코드
 def sqlite_connect(db_file):
     if not os.path.exists(db_file):
