@@ -18,14 +18,12 @@ jobs:
       run: |
         sudo cp -r backend/* /home/lch/python/backend/
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-
     - name: Install Dependencies
       working-directory: /home/lch/python/backend/
       run: |
-        poetry install
+        source /home/lch/python/backend/.venv/bin/activate
+        cd /home/lch/python/backend
+        poetry install --no-root
 
     - name: Execute start script
       run: |
