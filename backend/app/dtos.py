@@ -29,3 +29,10 @@ class SearchResponse(BaseModel):
     location: str
     hash: str
     subscriber: int
+
+
+class Reply(BaseModel):
+    access_token: str
+    hash: str
+    value: str
+

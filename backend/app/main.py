@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import search, oauth
+from app.api.endpoints import search, oauth, reply
 from app.core.config import db_settings
 from app.core.logging_config import setup_sql_logging
 
@@ -25,6 +25,7 @@ app.add_middleware(
 
 app.include_router(search.router)
 app.include_router(oauth.router)
+app.include_router(reply.router)
 
 if __name__ == "__main__":
     import uvicorn

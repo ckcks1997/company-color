@@ -1,20 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  Card,
-  CardBody,
-  CardHeader,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  SimpleGrid,
-  Divider,
-  Center
+  Box, Heading, Text, VStack, Card, CardBody, CardHeader, Stat, StatLabel,
+  StatNumber, StatHelpText, StatArrow, SimpleGrid, Divider, Center,
+  Input, Button
 } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 import { Flex } from '@chakra-ui/react';
@@ -22,6 +10,7 @@ import { ClockLoader } from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
 import InfoPopover from "../components/InfoPopover.jsx";
 import BounceText from "../components/BounceText.jsx";
+import {api} from "../api/api.js"
 
 function BusinessInfo() {
   const location = useLocation();
@@ -127,6 +116,14 @@ function BusinessInfo() {
 
   const bgGradientColor = getBgGradientColor(quitRate, latestBusinessData.subscriber_cnt);
 
+  const saveReply = () =>{
+    api.post('/reply', {
+      'access_token': '',
+      'hash': '',
+      'value': ''
+    });
+  }
+
   if (isLoading) {
     return (
       <Center minHeight="100vh">
@@ -196,6 +193,20 @@ function BusinessInfo() {
                 {businessData.length > 0 ? <EmployeeChart data={businessData} /> : <Text>데이터가 없습니다.</Text>}
               </Box>
             </VStack>
+          </CardBody>
+        </Card>
+      </Box>
+      <Box maxWidth="1000px" margin="auto" p={5} pt={0}>
+        <Card>
+          <CardBody>
+            <Text>댓글</Text>
+            <Flex marginTop={2}>
+              <Input placeholder={"내용을 입력하세요."}></Input>
+              <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>
+            </Flex>
+            <Box>
+
+            </Box>
           </CardBody>
         </Card>
       </Box>
