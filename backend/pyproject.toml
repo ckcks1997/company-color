@@ -7,7 +7,7 @@ authors = ["lch <ckcks1997@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "^0.115.6"
-uvicorn = "^0.34.0"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
 aiomysql = "0.2.0"
 annotated-types = "0.7.0"
 anyio = "4.4.0"
@@ -36,6 +36,7 @@ httpx = "0.28.1"
 python-jose = "^3.3.0"
 redis = "^5.2.1"
 elasticsearch = "^8.17.0"
+concurrent-log-handler = "^0.9.25"
 
 
 [build-system]
