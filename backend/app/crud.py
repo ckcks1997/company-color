@@ -59,9 +59,9 @@ async def save_reply(db: Session, reply: Reply):
 
     if result:
         new_reply = InfoReply(
-            HASH=reply.hash,
-            REPLY=reply.value,
-            USERS_ID=result.SOCIAL_KEY
+            hash=reply.hash,
+            reply=reply.value,
+            users_id=result.SOCIAL_KEY
         )
 
         db.add(new_reply)
@@ -69,6 +69,11 @@ async def save_reply(db: Session, reply: Reply):
         return
     else:
         raise HTTPException(status_code=400, detail="token is not valid")
+
+
+async def get_reply_by_hash(db: Session, hash: str):
+    stmt = select(InfoReply).where(InfoReply.hash == hash).order_by(InfoReply.idx)
+    return db.exec(stmt).all()
 
 
 def search_companies_elastic(params: SearchParams):

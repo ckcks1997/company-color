@@ -1,7 +1,8 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Depends
 from app.api.deps import SessionDep
-from app.crud import save_reply
+from app.crud import save_reply, get_reply_by_hash
 from app.dtos import Reply
+from app.models.tInfoReply import InfoReply
 
 router = APIRouter()
 
@@ -16,3 +17,12 @@ async def post_reply(reply: Reply, db: SessionDep):
     await save_reply(db, reply)
 
     return reply
+
+
+@router.get("/reply", response_model=list[InfoReply])
+async def get_reply(db: SessionDep, reply: Reply = Depends()):
+    if reply.hash == '':
+        raise HTTPException(status_code=400, detail="hash is empty")
+
+    list = await get_reply_by_hash(db, reply.hash)
+    return list

@@ -15,18 +15,19 @@ import {api} from "../api/api.js"
 function BusinessInfo() {
   const location = useLocation();
   const [businessData, setBusinessData] = useState([]);
+  const [replyData, setReplyData] = useState([]);
   const [latestBusinessData, setLatestBusinessData] = useState({});
   const [quitRate, setQuitRate] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [bgColor, setBgColor] = useState('gray.50');
-  const [finalBgColor, setFinalBgColor] = useState('');
+  const [reply, setReply] = useState();
+
+  const searchParams = new URLSearchParams(location.search);
+  const hash = searchParams.get('hash');
 
   useEffect(() => {
     setIsLoading(true);
     const fetchBusinessData = async () => {
-      const searchParams = new URLSearchParams(location.search);
-      const hash = searchParams.get('hash');
-
       if (hash) {
         try {
           const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
@@ -41,6 +42,25 @@ function BusinessInfo() {
       }
     };
     fetchBusinessData();
+    const fetchReplyData = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      const hash = searchParams.get('hash');
+
+      if (hash) {
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/reply?access_token=&value=&hash=${hash}`);
+          const data = await response.json();
+          const fetchData = data.sort((b, a) => new Date(a.idx) - new Date(b.idx));
+          setReplyData(fetchData)
+          console.log(replyData)
+        } catch (error) {
+          console.error('Error fetching reply data:', error);
+        }
+      }
+    };
+
+    fetchReplyData();
+
     window.scrollTo(0, 0);
   }, [location.search]);
 
@@ -86,7 +106,6 @@ function BusinessInfo() {
 
       // 배경색 트랜지션
       const newBgColor = getBgColor(rate, latestBusinessData.subscriber_cnt);
-      setFinalBgColor(newBgColor);
 
       // 약간의 지연 후 배경색 변경
       setTimeout(() => {
@@ -118,9 +137,9 @@ function BusinessInfo() {
 
   const saveReply = () =>{
     api.post('/reply', {
-      'access_token': '',
-      'hash': '',
-      'value': ''
+      'access_token': localStorage.getItem('access_token'),
+      'hash': hash,
+      'value': reply
     });
   }
 
@@ -201,11 +220,15 @@ function BusinessInfo() {
           <CardBody>
             <Text>댓글</Text>
             <Flex marginTop={2}>
-              <Input placeholder={"내용을 입력하세요."}></Input>
+              <Input placeholder={"내용을 입력하세요."} value={reply} onChange={(e) => setReply(e.target.value)}></Input>
               <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>
             </Flex>
-            <Box>
-
+            <Box display='flex' flexDirection='column'>
+              {replyData.map(val => (
+                <Box key={val.idx} display='inline' p={3}>
+                  <Text>{val.reply}</Text>
+                </Box>
+              ))}
             </Box>
           </CardBody>
         </Card>

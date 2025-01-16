@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from app.models.tCompanyInfo import CompanyInfo
 
@@ -32,7 +33,7 @@ class SearchResponse(BaseModel):
 
 
 class Reply(BaseModel):
-    access_token: str
-    hash: str
-    value: str
+    access_token: Optional[str]
+    hash: Optional[str]
+    value: Optional[str]
 
