@@ -19,7 +19,6 @@ jobs:
         sudo cp -r backend/* /home/lch/python/backend/
 
     - name: Install Dependencies
-      working-directory: /home/lch/python/backend/
       run: |
         source /home/lch/python/backend/.venv/bin/activate
         cd /home/lch/python/backend
@@ -28,5 +27,6 @@ jobs:
     - name: Execute start script
       run: |
         cd /home/lch/python/backend
+        source /home/lch/python/backend/.venv/bin/activate
         ./stop.sh
         ./start.sh
