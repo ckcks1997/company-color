@@ -24,8 +24,8 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 ---
 - FRONT/BACKEND 
-  - React 18.x
-  - fastAPI 0.114.x
+  - React 18.3
+  - fastAPI 0.115.x
   
 - 서버 정보
   - VM: Azure VM x2(B1s, B2ats_v2)
@@ -34,9 +34,11 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
     - MariaDB 11.4
     - Elasticsearch
   - 도메인: Namecheap
-  - SSL: ZeroSSL
+  - SSL: Let's Encrypt
   - CI/CD: Github Actions
-  - 기타: Redis
+
+  - 기타: OAuth 로그인 - Kakao
+
 
 
 ### 주요 기능
@@ -48,7 +50,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 - COMPANY COLOR는 로그인같은 복잡한 과정 없이 바로 원하는 기업에 대한 검색이 가능합니다. 
 - Elasticsearch의 ngram토큰화 방식을 이용하여 유사한 회사명 결과도 함께 제공됩니다. 
-
+- 기업 페이지내 댓글작성 기능을 제공합니다.
 
 <br>
 <img src="https://github.com/user-attachments/assets/05c7c7de-fb16-4b9d-a924-d2011c3d1d43" width="120px">
