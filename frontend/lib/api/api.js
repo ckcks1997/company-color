@@ -1,13 +1,52 @@
 import apiClient from './axios';
-import useLoadingStore from "../store/loadingStore.js";
 
-const KAKAO_CLIENT_ID = `${import.meta.env.VITE_KAKAO_JS_CLIENT_ID}`
-const KAKAO_REDIRECT_URI = `${import.meta.env.VITE_FRONT_URL}`
+const baseURL = process.env.NEXT_PUBLIC_API_URL
+
+const KAKAO_CLIENT_ID = `${process.env.NEXT_KAKAO_JS_CLIENT_ID}`
+const KAKAO_REDIRECT_URI = `${process.env.NEXT_FRONT_URL}`
 
 export const api = {
+  // 일반적인 데이터 조회
+  fetchBusinessData: async (hash) => {
+    try {
+      const response = await fetch(`${baseURL}/get_business_info?hash=${hash}`)
+      return response.json()
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  },
+
+  // 검색 결과 조회
+  fetchSearchResult: async (businessName, location, page) => {
+    try {
+      let url = `${baseURL}/search_business?business_name=${businessName}`
+      if (location) url += `&location=${location}`
+      if (page) url += `&page=${page}`
+
+      const response = await fetch(url)
+      return response.json()
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  },
+
+  fetchReplyData: async (hash) => {
+    try {
+      const response = await fetch(`${baseURL}/reply?hash=${hash}`)
+      return response.json()
+    } catch (error) {
+      console.error('Error fetching reply data:', error)
+      throw error
+    }
+  },
+
   get: async (url, config = {}) => {
-    const response = await apiClient.get(url, config);
-    return response.data;
+    const response = await fetch(`${baseURL}${url}`, {
+      ...config, next: {revalidate: 3600}
+    })
+    return response.json()
   },
 
   post: async (url, data = {}, config = {}) => {

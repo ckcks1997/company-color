@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import {Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton, VStack} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';

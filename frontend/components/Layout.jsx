@@ -1,3 +1,4 @@
+'use client'
 import {Box, Flex, Spinner, Center} from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar.jsx';

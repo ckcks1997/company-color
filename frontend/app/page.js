@@ -1,4 +1,8 @@
-import React, {useEffect, useState} from 'react';
+'use client'
+
+import React, {useState} from 'react';
+import { useRouter, useSearchParams } from 'next/navigation'
+
 import { Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +17,9 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [recentSearches, setRecentSearches] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
-  const navigate = useNavigate();
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   //  useEffect(() => {
   //   // 최근 검색 목록을 가져오는 API 호출
@@ -29,16 +35,16 @@ function Home() {
   //   fetchRecentSearches();
   // }, []);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!searchTerm.trim()) return;
 
-    const searchParams = new URLSearchParams();
-    searchParams.append('business_name', searchTerm);
+    const params = new URLSearchParams()
+    params.append('business_name', searchTerm)
     if (selectedRegion !== '') {
-      searchParams.append('location', selectedRegion);
+      params.append('location', selectedRegion)
     }
-    navigate(`/result?${searchParams.toString()}`);
-  };
+    router.push(`/result?${params.toString()}`)
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
