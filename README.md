@@ -35,6 +35,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
     - Elasticsearch
   - 도메인: Namecheap
   - SSL: ZeroSSL
+  - CI/CD: Github Actions
   - 기타: Redis
 
 

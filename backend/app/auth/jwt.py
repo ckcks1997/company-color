@@ -10,6 +10,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, db_settings.SECRET_KEY, algorithm=db_settings.ALGORITHM)
     return encoded_jwt
 
+
 def validate_access_token(data: dict):
     try:
         decoded_jwt = jwt.decode(data, db_settings.SECRET_KEY, algorithms=db_settings.ALGORITHM)
@@ -21,3 +22,17 @@ def validate_access_token(data: dict):
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+
+def get_token_data(token: str):
+    try:
+        decoded_jwt = jwt.decode(token, db_settings.SECRET_KEY, algorithms=[db_settings.ALGORITHM])
+        exp_timestamp = datetime.fromtimestamp(decoded_jwt['exp'])
+        now = datetime.now()
+
+        if now < exp_timestamp:
+            return decoded_jwt
+        else:
+            raise HTTPException(status_code=401, detail="Token expired")
+
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")

@@ -3,17 +3,33 @@ import ReactApexChart from 'react-apexcharts';
 
 const EmployeeChart = ({ data }) => {
 
+  // window 객체가 정의된후에 차트 랜더링
+  const [isBrowser, setIsBrowser] = useState(false);
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
+
   const calculateYAxisProps = (maxValue) => {
     let roundedMax = 0;
-    if (maxValue <= 10) roundedMax = 16;
-    else if (maxValue <= 30) roundedMax = 50;
+    if (maxValue <= 10) roundedMax = 12;
+    else if (maxValue <= 30) roundedMax = 40;
     else if (maxValue <= 50) roundedMax = 80;
-    else if (maxValue <= 100) roundedMax = 150;
+    else if (maxValue <= 100) roundedMax = 160;
     else if (maxValue <= 300) roundedMax = 500;
     else if (maxValue <= 500) roundedMax = 800;
     else if (maxValue <= 1000) roundedMax = 1500;
     else roundedMax = Math.ceil(maxValue / 1000) * 1200;
-    return { max: roundedMax };
+    return roundedMax;
+  };
+
+    const calculateQuitMaxYAxisProps = (maxValue) => {
+    let roundedMax = 0;
+    if (maxValue <= 10) roundedMax = 12;
+    else if (maxValue <= 30) roundedMax = 40;
+    else if (maxValue <= 100) roundedMax = Math.ceil(maxValue / 10) * 12;
+    else if (maxValue <= 1000) roundedMax = Math.ceil(maxValue / 100) * 120;
+    else roundedMax = Math.ceil(maxValue / 1000) * 1200;
+    return roundedMax;
   };
 
   const [chartOptions, setChartOptions] = useState({
@@ -97,7 +113,7 @@ const EmployeeChart = ({ data }) => {
             rotate: -90,
             offsetY: 0,
           },
-          tickAmount: 4
+          tickAmount: 6
         },
         yaxis: [
           {
@@ -112,7 +128,7 @@ const EmployeeChart = ({ data }) => {
               }
             },
             forceNiceScale: true,  // y축 스케일 강제 조정
-            tickAmount: 5,  // y축 눈금 수 지정
+            tickAmount: 6,  // y축 눈금 수 지정
           },
           {
             opposite: true,
@@ -126,7 +142,7 @@ const EmployeeChart = ({ data }) => {
               }
             },
             forceNiceScale: true,  // y축 스케일 강제 조정
-            tickAmount: 5,  // y축 눈금 수 지정
+            tickAmount: 6,  // y축 눈금 수 지정
           }
         ]
       }
@@ -146,7 +162,7 @@ const EmployeeChart = ({ data }) => {
       const maxNewQuit = Math.max(...newEmployees, ...quitEmployees);
       const maxTotal = Math.max(...totalEmployees);
       const newQuitAxisProps = calculateYAxisProps(maxNewQuit);
-      const totalAxisProps = calculateYAxisProps(maxTotal);
+      const totalAxisProps = calculateQuitMaxYAxisProps(maxTotal);
 
       setChartOptions(prevOptions => ({
         ...prevOptions,
@@ -158,12 +174,12 @@ const EmployeeChart = ({ data }) => {
           {
             ...prevOptions.yaxis[0],
             min: 0,
-            ...newQuitAxisProps,
+            max: newQuitAxisProps,
           },
           {
             ...prevOptions.yaxis[1],
             min: 0,
-            ...totalAxisProps,
+            max: totalAxisProps,
           }
         ],
         responsive: [
@@ -179,12 +195,12 @@ const EmployeeChart = ({ data }) => {
                 {
                   ...prevOptions.responsive[0].options.yaxis[0],
                   min: 0,
-                  ...newQuitAxisProps,
+                  max: newQuitAxisProps,
                 },
                 {
                   ...prevOptions.responsive[0].options.yaxis[1],
                   min: 0,
-                  ...totalAxisProps,
+                  max: totalAxisProps,
                 }
               ],
             }
@@ -200,6 +216,7 @@ const EmployeeChart = ({ data }) => {
     }
   }, [data]);
 
+  if (!isBrowser) return null;
   if (!Array.isArray(data) || data.length === 0) {
     return <div>직원 데이터가 없습니다.</div>;
   }

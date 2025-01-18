@@ -1,10 +1,15 @@
 from datetime import datetime
+from fastapi import HTTPException
+
 from sqlmodel import Session, select
 from elasticsearch import Elasticsearch
 from sqlalchemy import and_
+
+from app.auth.jwt import get_token_data
 from app.models import GukminYungumData, Users
-from app.dtos import SearchParams, SearchResponse
+from app.dtos import SearchParams, SearchResponse, Reply
 from app.core.config import elastic_settings
+from app.models.tInfoReply import InfoReply
 
 es = Elasticsearch(
     [elastic_settings.ELASTIC_HOST],
@@ -44,6 +49,31 @@ async def get_or_create_user(db: Session, user_info: dict):
         db.commit()
         db.refresh(new_user)
         return new_user
+
+
+async def save_reply(db: Session, reply: Reply):
+    token_contents = get_token_data(reply.access_token)
+    social_key = token_contents.get('sub')
+    stmt = select(Users).where(Users.SOCIAL_KEY == social_key)
+    result = db.exec(stmt).first()
+
+    if result:
+        new_reply = InfoReply(
+            hash=reply.hash,
+            reply=reply.value,
+            users_id=result.SOCIAL_KEY
+        )
+
+        db.add(new_reply)
+        db.commit()
+        return
+    else:
+        raise HTTPException(status_code=400, detail="token is not valid")
+
+
+async def get_reply_by_hash(db: Session, hash: str):
+    stmt = select(InfoReply).where(InfoReply.hash == hash).order_by(InfoReply.idx)
+    return db.exec(stmt).all()
 
 
 def search_companies_elastic(params: SearchParams):
