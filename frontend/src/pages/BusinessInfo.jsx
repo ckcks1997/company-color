@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Box, Heading, Text, VStack, Card, CardBody, CardHeader, Stat, StatLabel,
   StatNumber, StatHelpText, StatArrow, SimpleGrid, Divider, Center,
   Input, Button
 } from '@chakra-ui/react';
-import { useLocation } from 'react-router-dom';
-import { Flex } from '@chakra-ui/react';
-import { ClockLoader } from "react-spinners";
+import {useLocation} from 'react-router-dom';
+import {Flex} from '@chakra-ui/react';
+import {ClockLoader} from "react-spinners";
 import EmployeeChart from "../components/EmployeeChart.jsx";
 import InfoPopover from "../components/InfoPopover.jsx";
 import BounceText from "../components/BounceText.jsx";
@@ -25,40 +25,42 @@ function BusinessInfo() {
   const searchParams = new URLSearchParams(location.search);
   const hash = searchParams.get('hash');
 
+  const fetchBusinessData = async () => {
+    if (hash) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
+        const data = await response.json();
+        const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt));
+        setBusinessData(sortedData);
+        setLatestBusinessData(sortedData[0] || {});
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching business data:', error);
+      }
+    }
+  };
+
+  const fetchReplyData = async () => {
+    const searchParams = new URLSearchParams(location.search);
+    const hash = searchParams.get('hash');
+
+    if (hash) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/reply?access_token=&value=&hash=${hash}`);
+        const data = await response.json();
+        const fetchData = data.sort((b, a) => new Date(a.idx) - new Date(b.idx));
+        setReplyData(fetchData)
+        console.log(replyData)
+      } catch (error) {
+        console.error('Error fetching reply data:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    const fetchBusinessData = async () => {
-      if (hash) {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
-          const data = await response.json();
-          const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt));
-          setBusinessData(sortedData);
-          setLatestBusinessData(sortedData[0] || {});
-          setIsLoading(false);
-        } catch (error) {
-          console.error('Error fetching business data:', error);
-        }
-      }
-    };
+
     fetchBusinessData();
-    const fetchReplyData = async () => {
-      const searchParams = new URLSearchParams(location.search);
-      const hash = searchParams.get('hash');
-
-      if (hash) {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/reply?access_token=&value=&hash=${hash}`);
-          const data = await response.json();
-          const fetchData = data.sort((b, a) => new Date(a.idx) - new Date(b.idx));
-          setReplyData(fetchData)
-          console.log(replyData)
-        } catch (error) {
-          console.error('Error fetching reply data:', error);
-        }
-      }
-    };
-
     fetchReplyData();
 
     window.scrollTo(0, 0);
@@ -118,7 +120,7 @@ function BusinessInfo() {
   }, [latestBusinessData, totalQuit]);
 
   const getBgColor = (rate, totalSubscriber) => {
-    if(totalSubscriber < 20) return '';
+    if (totalSubscriber < 20) return '';
     else if (rate < 15) return 'blue.400';
     else if (rate < 20) return 'green.100';
     else if (rate < 30) return 'orange.100';
@@ -135,25 +137,34 @@ function BusinessInfo() {
 
   const bgGradientColor = getBgGradientColor(quitRate, latestBusinessData.subscriber_cnt);
 
-  const saveReply = () =>{
-    api.post('/reply', {
+  const saveReply = async () => {
+    const response = await api.post('/reply', {
       'access_token': localStorage.getItem('access_token'),
       'hash': hash,
       'value': reply
-    });
-  }
+    })
+      .then(response => {
+        alert('댓글이 등록되었습니다');
+        setReply('');
+        fetchReplyData();
+      })
+      .catch(error => {
+        alert('댓글 등록에 실패했습니다');
+        console.error('Error:', error);
+      });
+  };
 
   if (isLoading) {
     return (
       <Center minHeight="100vh">
-        <ClockLoader color="#3182CE" />
+        <ClockLoader color="#3182CE"/>
       </Center>
     );
   }
 
   return (
     <Box bg={bgColor} bgGradient={bgGradientColor} minHeight="calc(100vh - 62px)" transition="all 2s ease">
-      {quitRate > 100 && <BounceText />}
+      {quitRate > 100 && <BounceText/>}
       <Box maxWidth="1000px" margin="auto" p={5}>
         <Card>
           <CardHeader>
@@ -173,7 +184,7 @@ function BusinessInfo() {
                   <StatLabel>당월 / 12개월 입사자 수</StatLabel>
                   <StatNumber>{latestBusinessData.subscriber_new}/{totalNew?.toLocaleString()}</StatNumber>
                   <StatHelpText>
-                    <StatArrow type={newPercentChange >= 0 ? 'increase' : 'decrease'} />
+                    <StatArrow type={newPercentChange >= 0 ? 'increase' : 'decrease'}/>
                     전월 대비 {newPercentChange.toFixed(2)}%
                   </StatHelpText>
                 </Stat>
@@ -181,14 +192,14 @@ function BusinessInfo() {
                   <StatLabel>당월 / 12개월 퇴사자 수</StatLabel>
                   <StatNumber>{latestBusinessData.subscriber_quit}/{totalQuit?.toLocaleString()}</StatNumber>
                   <StatHelpText>
-                    <StatArrow type={quitPercentChange >= 0 ? 'increase' : 'decrease'} />
+                    <StatArrow type={quitPercentChange >= 0 ? 'increase' : 'decrease'}/>
                     전월 대비 {quitPercentChange.toFixed(2)}%
                   </StatHelpText>
                 </Stat>
                 <Stat>
                   <Flex alignItems="center">
                     <StatLabel>퇴사율</StatLabel>
-                     <InfoPopover
+                    <InfoPopover
                       content="퇴사율 = (12개월 퇴사자 수 / 전체 가입자 수) * 100"
                     />
                   </Flex>
@@ -205,11 +216,11 @@ function BusinessInfo() {
                 </Stat>
               </SimpleGrid>
 
-              <Divider />
+              <Divider/>
 
               <Box>
                 <Heading size='md' mb={4}>직원 변동 추이</Heading>
-                {businessData.length > 0 ? <EmployeeChart data={businessData} /> : <Text>데이터가 없습니다.</Text>}
+                {businessData.length > 0 ? <EmployeeChart data={businessData}/> : <Text>데이터가 없습니다.</Text>}
               </Box>
             </VStack>
           </CardBody>
@@ -219,13 +230,22 @@ function BusinessInfo() {
         <Card>
           <CardBody>
             <Text>댓글</Text>
-            <Flex marginTop={2}>
-              <Input placeholder={"내용을 입력하세요."} value={reply} onChange={(e) => setReply(e.target.value)}></Input>
-              <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>
-            </Flex>
+            {localStorage.getItem('access_token') ? (
+              <Flex marginTop={2}>
+                <Input
+                  placeholder={"내용을 입력하세요."}
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                />
+                <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>
+              </Flex>
+            ) : (
+              <Text color="gray.500" mt={2}>댓글을 작성하려면 로그인이 필요합니다.</Text>
+            )}
             <Box display='flex' flexDirection='column'>
-              {replyData.map(val => (
+              {replyData.map((val, index) => (
                 <Box key={val.idx} display='inline' p={3}>
+                  <Text>익명 {index + 1}</Text>
                   <Text>{val.reply}</Text>
                 </Box>
               ))}

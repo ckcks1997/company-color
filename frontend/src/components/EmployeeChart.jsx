@@ -3,6 +3,12 @@ import ReactApexChart from 'react-apexcharts';
 
 const EmployeeChart = ({ data }) => {
 
+  // window 객체가 정의된후에 차트 랜더링
+  const [isBrowser, setIsBrowser] = useState(false);
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
+
   const calculateYAxisProps = (maxValue) => {
     let roundedMax = 0;
     if (maxValue <= 10) roundedMax = 12;
@@ -210,6 +216,7 @@ const EmployeeChart = ({ data }) => {
     }
   }, [data]);
 
+  if (!isBrowser) return null;
   if (!Array.isArray(data) || data.length === 0) {
     return <div>직원 데이터가 없습니다.</div>;
   }
