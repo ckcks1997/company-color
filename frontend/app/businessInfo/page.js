@@ -4,12 +4,10 @@ import {useEffect, useState, useMemo} from 'react'
 import {useSearchParams} from 'next/navigation'
 import {
   Box, Heading, Text, VStack, Card, CardBody, CardHeader,
-  Stat, StatLabel, StatNumber, StatHelpText, StatArrow,
-  SimpleGrid, Divider, Center, Input, Button, Flex
+   Divider, Center, Input, Button, Flex
 } from '@chakra-ui/react'
 import {ClockLoader} from "react-spinners"
 import EmployeeChart from "@/components/EmployeeChart"
-import InfoPopover from "@/components/InfoPopover"
 import BounceText from "@/components/BounceText"
 import {api} from "@/lib/api/api"
 import BusinessStats from "@/components/BusinessStats"

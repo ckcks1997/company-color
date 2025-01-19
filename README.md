@@ -24,7 +24,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 ---
 - FRONT/BACKEND 
-  - React 18.x
+  - Next 15 + React 19
   - fastAPI 0.114.x
   
 - 서버 정보

@@ -1,7 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
+import dynamic from 'next/dynamic'
 
+const ReactApexChart = dynamic(() => import('react-apexcharts'), {
+  ssr: false,
+  loading: () => <div>차트 로딩중...</div>
+})
 const EmployeeChart = ({ data }) => {
 
   // window 객체가 정의된후에 차트 랜더링
