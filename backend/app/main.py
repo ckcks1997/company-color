@@ -1,4 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from app.core.exceptions import (
+    CustomHTTPException,
+    http_exception_handler,
+    generic_exception_handler
+)
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import search, oauth, reply
 from app.core.config import db_settings
@@ -14,6 +19,11 @@ redoc_url = None if IS_PRODUCTION else "/redoc"
 setup_sql_logging()
 
 app = FastAPI(docs_url=docs_url, redoc_url=redoc_url)
+
+# 예외 핸들러
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(CustomHTTPException, http_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 app.add_middleware(
     CORSMiddleware,
