@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 from app.models import GukminYungumData, Corpcode
 from app.dtos import SearchParams, PaginatedResponse
 from app.api.deps import SessionDep
-from app.services.redis_service import RedisService
 import app.crud as crud
 import requests
 import os
@@ -26,13 +25,10 @@ async def search_business(db: SessionDep, params: SearchParams = Depends()):
 
 
 @router.get("/get_business_info", response_model=list[GukminYungumData])
-async def get_business_info(hash: str, db: SessionDep, redis_service: RedisService = Depends()):
+async def get_business_info(hash: str, db: SessionDep):
     results = None
     if hash:
         results = await crud.get_business_info(db, hash)
-        if results:
-            # Redis 저장 test
-            redis_service.add_recent_search(results[0])
 
     return results
 
