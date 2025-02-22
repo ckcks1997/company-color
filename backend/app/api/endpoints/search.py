@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends
-from app.models.tGukminYungumData import GukminYungumData
+from app.models import GukminYungumData, Corpcode
 from app.dtos import SearchParams, PaginatedResponse
 from app.api.deps import SessionDep
-from app.services import redis_service
 from app.services.redis_service import RedisService
 import app.crud as crud
+import requests
+import os
+from app.core.logging_config import logger
 
 router = APIRouter()
 
@@ -35,8 +37,30 @@ async def get_business_info(hash: str, db: SessionDep, redis_service: RedisServi
     return results
 
 
-@router.get("/get_dart_info", response_model=list[GukminYungumData])
+@router.get("/get_dart_info", response_model=list)
 async def get_dart_info(name: str, db: SessionDep):
     name = name.strip().replace("(주)", "").replace("주식회사","")
     searches =  await crud.get_dart_info(db, name)
-    return searches
+    code_list = [v.corp_code for v in searches]
+
+    documents = []
+
+    API_KEY = os.getenv("DART_KEY")
+    for corp_code in code_list:
+        url = (f"https://opendart.fss.or.kr/api/list.json?crtfc_key={API_KEY}"
+               f"&corp_code={corp_code}"
+               f"&bgn_de=20240101"
+               f"&page_no=1"
+               f"&page_count=10")
+
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            if data['status'] != '013':
+                documents.extend(data["list"])
+        else:
+            logger.info({"error": f"Failed to fetch data for corp_code: {corp_code}"})
+
+    filtered_doc = [d for d in documents if "감사" in d["report_nm"]]
+
+    return filtered_doc

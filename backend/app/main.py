@@ -8,6 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import search, oauth, reply
 from app.core.config import db_settings
 from app.core.logging_config import setup_sql_logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # 환경 변수로 운영 환경 여부 확인
 IS_PRODUCTION = db_settings.ENVIRONMENT == "production"
