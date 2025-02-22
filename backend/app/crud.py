@@ -12,7 +12,8 @@ from app.core.config import elastic_settings
 
 es = Elasticsearch(
     [elastic_settings.ELASTIC_HOST],
-    http_auth=(elastic_settings.ELASTIC_USERNAME, elastic_settings.ELASTIC_PASSWORD)
+    http_auth=(elastic_settings.ELASTIC_USERNAME, elastic_settings.ELASTIC_PASSWORD),
+    verify_certs=False,
     )
 
 
