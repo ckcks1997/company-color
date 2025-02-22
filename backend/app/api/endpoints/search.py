@@ -27,7 +27,7 @@ async def search_business(db: SessionDep, params: SearchParams = Depends()):
 async def get_business_info(hash: str, db: SessionDep, redis_service: RedisService = Depends()):
     results = None
     if hash:
-        results = crud.get_business_info(db, hash)
+        results = await crud.get_business_info(db, hash)
         if results:
             # Redis 저장 test
             redis_service.add_recent_search(results[0])
@@ -35,7 +35,8 @@ async def get_business_info(hash: str, db: SessionDep, redis_service: RedisServi
     return results
 
 
-@router.get("/get_recent_search", response_model=list[GukminYungumData])
-async def get_recent_search(redis_service: RedisService = Depends()):
-    searches = redis_service.get_recent_searches()
+@router.get("/get_dart_info", response_model=list[GukminYungumData])
+async def get_dart_info(name: str, db: SessionDep):
+    name = name.strip().replace("(주)", "").replace("주식회사","")
+    searches =  await crud.get_dart_info(db, name)
     return searches

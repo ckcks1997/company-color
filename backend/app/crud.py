@@ -6,10 +6,9 @@ from elasticsearch import Elasticsearch
 from sqlalchemy import and_
 
 from app.auth.jwt import get_token_data
-from app.models import GukminYungumData, Users
+from app.models import GukminYungumData, Users, InfoReply, Corpcode
 from app.dtos import SearchParams, SearchResponse, Reply
 from app.core.config import elastic_settings
-from app.models.tInfoReply import InfoReply
 
 es = Elasticsearch(
     [elastic_settings.ELASTIC_HOST],
@@ -17,7 +16,7 @@ es = Elasticsearch(
     )
 
 
-def get_business_info(db: Session, hash: str):
+async def get_business_info(db: Session, hash: str):
     query = (select(GukminYungumData)
              .filter(GukminYungumData.hash == hash)
              .order_by(GukminYungumData.created_dt.desc())
@@ -74,6 +73,13 @@ async def save_reply(db: Session, reply: Reply):
 async def get_reply_by_hash(db: Session, hash: str):
     stmt = select(InfoReply).where(InfoReply.hash == hash).order_by(InfoReply.idx)
     return db.exec(stmt).all()
+
+
+async def get_dart_info(db: Session, corp_name: str):
+    query = (select(Corpcode)
+             .filter(Corpcode.corp_name  == corp_name)
+             .limit(12))
+    return db.exec(query).all()
 
 
 def search_companies_elastic(params: SearchParams):
