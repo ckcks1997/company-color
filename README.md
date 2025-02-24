@@ -25,18 +25,17 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 ---
 - FRONT/BACKEND 
   - Next 15 + React 19
-  - fastAPI 0.114.x
+  - fastAPI 0.115.x
   
 - 서버 정보
-  - VM: Azure VM x2(B1s, B2ats_v2)
+  - VM: Oracle Cloud
   - 웹 서버: Nginx (최신 버전)
   - DB: 
     - MariaDB 11.4
     - Elasticsearch
   - 도메인: Namecheap
   - SSL: ZeroSSL
-  - CI/CD: Github Actions
-  - 기타: Redis
+
 
 
 ### 주요 기능

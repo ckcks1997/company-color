@@ -5,6 +5,7 @@ from app.core.config import kakao_settings
 from app.auth.jwt import create_access_token
 from app.api.deps import SessionDep
 from app.crud import get_or_create_user
+
 router = APIRouter()
 
 # 설정

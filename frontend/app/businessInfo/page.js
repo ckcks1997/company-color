@@ -7,10 +7,10 @@ import {
    Divider, Center, Input, Button, Flex
 } from '@chakra-ui/react'
 import {ClockLoader} from "react-spinners"
-import EmployeeChart from "@/components/EmployeeChart"
-import BounceText from "@/components/BounceText"
+import EmployeeChart from "./EmployeeChart"
+import BounceText from "./BounceText"
 import {api} from "@/lib/api/api"
-import BusinessStats from "@/components/BusinessStats"
+import BusinessStats from "./BusinessStats"
 
 export default function BusinessInfo() {
   const searchParams = useSearchParams()
