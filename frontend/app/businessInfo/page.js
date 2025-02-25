@@ -11,10 +11,12 @@ import EmployeeChart from "./EmployeeChart"
 import BounceText from "./BounceText"
 import {api} from "@/lib/api/api"
 import BusinessStats from "./BusinessStats"
+import DartData from "./DartData"
 
 export default function BusinessInfo() {
   const searchParams = useSearchParams()
   const [businessData, setBusinessData] = useState([])
+  const [dartData, setDartData] = useState([])
   const [replyData, setReplyData] = useState([])
   const [latestBusinessData, setLatestBusinessData] = useState({})
   const [quitRate, setQuitRate] = useState(0)
@@ -30,6 +32,7 @@ export default function BusinessInfo() {
         const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt))
         setBusinessData(sortedData)
         setLatestBusinessData(sortedData[0] || {})
+        await fetchDartData(sortedData[0].company_nm)
         setIsLoading(false)
       } catch (error) {
         console.error('Error fetching business data:', error)
@@ -47,6 +50,19 @@ export default function BusinessInfo() {
       } catch (error) {
         console.error('Error fetching reply data:', error)
         setReplyData([])
+      }
+    }
+  }
+
+  const fetchDartData = async (name) => {
+    if (name) {
+      try {
+        const data = await api.fetchDartData(name)
+        console.log(data)
+        setDartData(data)
+      } catch (error) {
+        console.error('Error fetching dart data:', error)
+        setDartData([])
       }
     }
   }
@@ -178,6 +194,16 @@ export default function BusinessInfo() {
               <Box>
                 <Heading size='md' mb={4}>직원 변동 추이</Heading>
                 {businessData.length > 0 ? <EmployeeChart data={businessData}/> : <Text>데이터가 없습니다.</Text>}
+              </Box>
+            </VStack>
+            <Divider/>
+          </CardBody>
+
+          <CardBody>
+            <VStack spacing={6} align="stretch">
+              <Box>
+                <Heading size='md' mb={4}>DART 문서 조회</Heading>
+                {dartData.length > 0 ? <DartData data={dartData}/> : <Text>데이터가 없습니다.</Text>}
               </Box>
             </VStack>
           </CardBody>

@@ -42,6 +42,16 @@ export const api = {
     }
   },
 
+  fetchDartData: async (name) => {
+    try {
+      const response = await fetch(`${baseURL}/get_dart_info?name=${name}`)
+      return response.json()
+    } catch (error) {
+      console.error('Error fetching dart data:', error)
+      throw error
+    }
+  },
+
   get: async (url, config = {}) => {
     const response = await fetch(`${baseURL}${url}`, {
       ...config, next: {revalidate: 3600}
