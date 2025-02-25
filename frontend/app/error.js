@@ -1,9 +1,17 @@
-import React from 'react';
-import { Box, Heading, Text, Button, VStack, Container } from "@chakra-ui/react";
-import { css } from "@emotion/react";
-import {Link, useLocation} from 'react-router-dom';
-function ErrorPage() {
-  const location = useLocation();
+'use client'
+
+import { useEffect } from 'react'
+import { Box, Heading, Text, Button, VStack, Container } from "@chakra-ui/react"
+import { css } from "@emotion/react"
+import Link from 'next/link'
+
+export default function Error({
+  error,
+  reset
+}) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
 
   return (
     <Box
@@ -26,18 +34,32 @@ function ErrorPage() {
               text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             `}
           >
-            404
+            오류 발생
           </Heading>
           <Heading as="h2" size="xl" color="gray.700">
-            페이지를 찾을 수 없습니다
+            문제가 발생했습니다
           </Heading>
           <Text color="gray.500" fontSize="lg">
-            요청하신 페이지를 찾을 수 없습니다.
+            죄송합니다. 페이지를 로드하는 중 오류가 발생했습니다.
           </Text>
           <Button
-            as={Link}
-            to="/"
+            onClick={() => reset()}
             colorScheme="blue"
+            size="lg"
+            fontWeight="bold"
+            mr={4}
+            _hover={{
+              transform: 'translateY(-2px)',
+              boxShadow: 'lg',
+            }}
+            transition="all 0.2s"
+          >
+            다시 시도
+          </Button>
+          <Button
+            as={Link}
+            href="/"
+            variant="outline"
             size="lg"
             fontWeight="bold"
             _hover={{
@@ -46,12 +68,10 @@ function ErrorPage() {
             }}
             transition="all 0.2s"
           >
-            홈페이지로 돌아가기
+            홈으로 돌아가기
           </Button>
         </VStack>
       </Container>
     </Box>
-  );
+  )
 }
-
-export default ErrorPage;

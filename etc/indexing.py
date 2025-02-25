@@ -3,14 +3,16 @@ from elasticsearch import Elasticsearch, helpers
 import time
 
 es = Elasticsearch(
-    ['http://0.0.0.0:9200'],
+    ['https://127.0.0.1:9200'],
     timeout=30,  # 30초 타임아웃
     max_retries=1,
-    retry_on_timeout=True
+    retry_on_timeout=True,
+    verify_certs=False,
+    basic_auth=('', '')
 )
 
-INDEX_NAME = "company_color_search_idx"
-BATCH_SIZE = 2000
+INDEX_NAME = "company_color_search_idx_v2502"
+BATCH_SIZE = 20000
 
 def get_db_connection():
     return mysql.connector.connect(

@@ -1,3 +1,4 @@
+'use client'
 import {Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger} from "@chakra-ui/react";
 import {InfoOutlineIcon} from "@chakra-ui/icons";
 import React from "react";

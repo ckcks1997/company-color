@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import {SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, Flex} from '@chakra-ui/react';
 import InfoPopover from "./InfoPopover.jsx";

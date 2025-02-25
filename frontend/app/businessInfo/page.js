@@ -1,71 +1,78 @@
-import React, {useEffect, useState, useMemo} from 'react';
+'use client'
+
+import {useEffect, useState, useMemo} from 'react'
+import {useSearchParams} from 'next/navigation'
 import {
-  Box, Heading, Text, VStack, Card, CardBody, CardHeader, Stat, StatLabel,
-  StatNumber, StatHelpText, StatArrow, SimpleGrid, Divider, Center,
-  Input, Button
-} from '@chakra-ui/react';
-import {useLocation} from 'react-router-dom';
-import {Flex} from '@chakra-ui/react';
-import {ClockLoader} from "react-spinners";
-import EmployeeChart from "../components/EmployeeChart.jsx";
-import InfoPopover from "../components/InfoPopover.jsx";
-import BounceText from "../components/BounceText.jsx";
-import {api} from "../api/api.js"
-import BusinessStats from "../components/BusinessStats.jsx";
+  Box, Heading, Text, VStack, Card, CardBody, CardHeader,
+   Divider, Center, Input, Button, Flex
+} from '@chakra-ui/react'
+import {ClockLoader} from "react-spinners"
+import EmployeeChart from "./EmployeeChart"
+import BounceText from "./BounceText"
+import {api} from "@/lib/api/api"
+import BusinessStats from "./BusinessStats"
+import DartData from "./DartData"
 
-function BusinessInfo() {
-  const location = useLocation();
-  const [businessData, setBusinessData] = useState([]);
-  const [replyData, setReplyData] = useState([]);
-  const [latestBusinessData, setLatestBusinessData] = useState({});
-  const [quitRate, setQuitRate] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [bgColor, setBgColor] = useState('gray.50');
-  const [reply, setReply] = useState();
-
-  const searchParams = new URLSearchParams(location.search);
+export default function BusinessInfo() {
+  const searchParams = useSearchParams()
+  const [businessData, setBusinessData] = useState([])
+  const [dartData, setDartData] = useState([])
+  const [replyData, setReplyData] = useState([])
+  const [latestBusinessData, setLatestBusinessData] = useState({})
+  const [quitRate, setQuitRate] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [bgColor, setBgColor] = useState('gray.50')
+  const [reply, setReply] = useState('')
   const hash = searchParams.get('hash');
 
   const fetchBusinessData = async () => {
     if (hash) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/get_business_info?hash=${hash}`);
-        const data = await response.json();
-        const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt));
-        setBusinessData(sortedData);
-        setLatestBusinessData(sortedData[0] || {});
-        setIsLoading(false);
+        const data = await api.fetchBusinessData(hash)
+        const sortedData = data.sort((b, a) => new Date(a.created_dt) - new Date(b.created_dt))
+        setBusinessData(sortedData)
+        setLatestBusinessData(sortedData[0] || {})
+        await fetchDartData(sortedData[0].company_nm)
+        setIsLoading(false)
       } catch (error) {
-        console.error('Error fetching business data:', error);
+        console.error('Error fetching business data:', error)
       }
     }
-  };
+  }
 
   const fetchReplyData = async () => {
-    const searchParams = new URLSearchParams(location.search);
-    const hash = searchParams.get('hash');
-
     if (hash) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/reply?access_token=&value=&hash=${hash}`);
-        const data = await response.json();
-        const fetchData = data.sort((b, a) => new Date(a.idx) - new Date(b.idx));
-        setReplyData(fetchData)
-        console.log(replyData)
+        const data = await api.fetchReplyData(hash)
+        const replyArray = Array.isArray(data) ? data : data.items || []
+        const sortedData = replyArray.sort((b, a) => new Date(a.idx) - new Date(b.idx))
+        setReplyData(sortedData)
       } catch (error) {
-        console.error('Error fetching reply data:', error);
+        console.error('Error fetching reply data:', error)
+        setReplyData([])
       }
     }
-  };
+  }
+
+  const fetchDartData = async (name) => {
+    if (name) {
+      try {
+        const data = await api.fetchDartData(name)
+        console.log(data)
+        setDartData(data)
+      } catch (error) {
+        console.error('Error fetching dart data:', error)
+        setDartData([])
+      }
+    }
+  }
 
   useEffect(() => {
-    setIsLoading(true);
-
-    fetchBusinessData();
-    fetchReplyData();
-
-    window.scrollTo(0, 0);
-  }, [location.search]);
+    setIsLoading(true)
+    fetchBusinessData()
+    fetchReplyData()
+    window.scrollTo(0, 0)
+  }, [hash])
 
   const totalNew = useMemo(() => {
     return businessData?.reduce((sum, item) => sum + item.subscriber_new, 0);
@@ -139,21 +146,20 @@ function BusinessInfo() {
   const bgGradientColor = getBgGradientColor(quitRate, latestBusinessData.subscriber_cnt);
 
   const saveReply = async () => {
-    const response = await api.post('/reply', {
-      'access_token': localStorage.getItem('access_token'),
-      'hash': hash,
-      'value': reply
-    })
-      .then(response => {
-        alert('댓글이 등록되었습니다');
-        setReply('');
-        fetchReplyData();
+    try {
+      await api.post('/reply', {
+        'access_token': localStorage.getItem('access_token'),
+        'hash': hash,
+        'value': reply
       })
-      .catch(error => {
-        alert('댓글 등록에 실패했습니다');
-        console.error('Error:', error);
-      });
-  };
+      alert('댓글이 등록되었습니다')
+      setReply('')
+      fetchReplyData()
+    } catch (error) {
+      alert('댓글 등록에 실패했습니다')
+      console.error('Error:', error)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -190,6 +196,16 @@ function BusinessInfo() {
                 {businessData.length > 0 ? <EmployeeChart data={businessData}/> : <Text>데이터가 없습니다.</Text>}
               </Box>
             </VStack>
+            <Divider/>
+          </CardBody>
+
+          <CardBody>
+            <VStack spacing={6} align="stretch">
+              <Box>
+                <Heading size='md' mb={4}>DART 문서 조회</Heading>
+                {dartData.length > 0 ? <DartData data={dartData}/> : <Text>데이터가 없습니다.</Text>}
+              </Box>
+            </VStack>
           </CardBody>
         </Card>
       </Box>
@@ -223,5 +239,3 @@ function BusinessInfo() {
     </Box>
   );
 }
-
-export default BusinessInfo;
