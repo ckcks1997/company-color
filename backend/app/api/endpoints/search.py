@@ -45,9 +45,9 @@ async def get_dart_info(name: str, db: SessionDep):
     for corp_code in code_list:
         url = (f"https://opendart.fss.or.kr/api/list.json?crtfc_key={API_KEY}"
                f"&corp_code={corp_code}"
-               f"&bgn_de=20240101"
+               f"&bgn_de=20230101"
                f"&page_no=1"
-               f"&page_count=10")
+               f"&page_count=100")
 
         response = requests.get(url)
         if response.status_code == 200:
@@ -56,7 +56,12 @@ async def get_dart_info(name: str, db: SessionDep):
                 documents.extend(data["list"])
         else:
             logger.info({"error": f"Failed to fetch data for corp_code: {corp_code}"})
-
-    filtered_doc = [d for d in documents if "감사" in d["report_nm"]]
+    logger.info('----dart result----')
+    logger.info(documents)
+    filtered_doc = [d for d in documents
+                    if "감사" in d["report_nm"]
+                    or "해산" in d["report_nm"]
+                    or "연1회공시" in d["report_nm"]
+                    ]
 
     return filtered_doc
