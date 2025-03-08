@@ -4,6 +4,7 @@ import Footer from '@/components/Footer'
 import {Suspense} from 'react';
 import {ClockLoader} from "react-spinners";
 import './globals.css'
+import Script from 'next/script';
 
 export const metadata = {
   title: 'COMPANY COLOR',
@@ -46,6 +47,17 @@ export default function RootLayout({children}) {
             crossOrigin="anonymous"
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
         />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-YDV11GRYRB`}
+        />
+        <Script id="google-analytics">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-YDV11GRYRB');
+          `}
+        </Script>
       </head>
       <body>
       <Providers>

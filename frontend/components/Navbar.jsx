@@ -78,7 +78,7 @@ function Navbar() {
           )}
           <NextLink href="https://github.com/ckcks1997/company-color" target="_blank">
             <Image
-              src="images/git.png"
+              src="/images/git.png"
               alt="Git logo"
               maxWidth="25px"
               style={{opacity: 0.5}}
