@@ -8,7 +8,7 @@ import os
 from app.core.logging_config import logger
 
 router = APIRouter()
-
+API_KEY = os.getenv("DART_KEY")
 
 @router.get("/search_business", response_model=PaginatedResponse)
 async def search_business(db: SessionDep, params: SearchParams = Depends()):
@@ -38,10 +38,8 @@ async def get_dart_info(name: str, db: SessionDep):
     name = name.strip().replace("(주)", "").replace("주식회사","")
     searches =  await crud.get_dart_info(db, name)
     code_list = [v.corp_code for v in searches]
-
     documents = []
 
-    API_KEY = os.getenv("DART_KEY")
     for corp_code in code_list:
         url = (f"https://opendart.fss.or.kr/api/list.json?crtfc_key={API_KEY}"
                f"&corp_code={corp_code}"
@@ -61,6 +59,7 @@ async def get_dart_info(name: str, db: SessionDep):
     filtered_doc = [d for d in documents
                     if "감사" in d["report_nm"]
                     or "해산" in d["report_nm"]
+                    or "분기보고서" in d["report_nm"]
                     or "연1회공시" in d["report_nm"]
                     ]
 
