@@ -14,26 +14,29 @@ const EmployeeChart = ({ data }) => {
     setIsBrowser(true);
   }, []);
 
-  const calculateYAxisProps = (maxValue) => {
+  const calculateYAxisProps = (maxTotal, maxQuit) => {
     let roundedMax = 0;
-    if (maxValue <= 10) roundedMax = 12;
-    else if (maxValue <= 30) roundedMax = 40;
-    else if (maxValue <= 50) roundedMax = 80;
-    else if (maxValue <= 100) roundedMax = 160;
-    else if (maxValue <= 300) roundedMax = 500;
-    else if (maxValue <= 500) roundedMax = 800;
-    else if (maxValue <= 1000) roundedMax = 1500;
-    else roundedMax = Math.ceil(maxValue / 1000) * 1200;
+    roundedMax = calculateQuitMaxYAxisProps(maxTotal) / 5;
+    if (maxQuit > roundedMax) return maxQuit;
     return roundedMax;
+  };
+
+  const calculateQuitMinYAxisProps = (minValue) => {
+    let roundedMin = 0;
+    if (minValue > 1000) roundedMin = Math.ceil(minValue / 100) * 50;
+    else if (minValue > 100) roundedMin = Math.ceil(minValue / 10) * 5;
+    else if (minValue > 20) roundedMin = 10;
+    else roundedMin = 0;
+    return roundedMin;
   };
 
     const calculateQuitMaxYAxisProps = (maxValue) => {
     let roundedMax = 0;
     if (maxValue <= 10) roundedMax = 12;
     else if (maxValue <= 30) roundedMax = 40;
-    else if (maxValue <= 100) roundedMax = Math.ceil(maxValue / 10) * 12;
-    else if (maxValue <= 1000) roundedMax = Math.ceil(maxValue / 100) * 120;
-    else roundedMax = Math.ceil(maxValue / 1000) * 1200;
+    else if (maxValue <= 100) roundedMax = Math.ceil(maxValue / 10) * 10 * 1.1;
+    else if (maxValue <= 1000) roundedMax = Math.ceil(maxValue / 100) * 100 * 1.1;
+    else roundedMax = Math.ceil(maxValue / 500) * 500 * 1.1;
     return roundedMax;
   };
 
@@ -46,7 +49,7 @@ const EmployeeChart = ({ data }) => {
     colors: ['#269bda', '#FF4560', '#fab62e'],
     dataLabels: { enabled: false },
     stroke: {
-      width: [4, 4, 2],
+      width: [1, 1, 2],
       curve: 'straight',
       dashArray: [0, 0, 0]
     },
@@ -165,9 +168,11 @@ const EmployeeChart = ({ data }) => {
       const totalEmployees = sortedData.map(item => item.subscriber_cnt);
 
       const maxNewQuit = Math.max(...newEmployees, ...quitEmployees);
+      const minTotal = Math.min(...totalEmployees);
       const maxTotal = Math.max(...totalEmployees);
-      const newQuitAxisProps = calculateYAxisProps(maxNewQuit);
-      const totalAxisProps = calculateQuitMaxYAxisProps(maxTotal);
+      const newQuitAxisProps = calculateYAxisProps(maxTotal, maxNewQuit);
+      const totalMinAxisProps = calculateQuitMinYAxisProps(minTotal);
+      const totalMaxAxisProps = calculateQuitMaxYAxisProps(maxTotal);
 
       setChartOptions(prevOptions => ({
         ...prevOptions,
@@ -183,8 +188,8 @@ const EmployeeChart = ({ data }) => {
           },
           {
             ...prevOptions.yaxis[1],
-            min: 0,
-            max: totalAxisProps,
+            min: totalMinAxisProps,
+            max: totalMaxAxisProps,
           }
         ],
         responsive: [
@@ -205,7 +210,7 @@ const EmployeeChart = ({ data }) => {
                 {
                   ...prevOptions.responsive[0].options.yaxis[1],
                   min: 0,
-                  max: totalAxisProps,
+                  max: totalMaxAxisProps,
                 }
               ],
             }
@@ -214,8 +219,8 @@ const EmployeeChart = ({ data }) => {
       }));
 
       setChartSeries([
-        { name: "입사자", type: 'line', data: newEmployees },
-        { name: "퇴사자", type: 'line', data: quitEmployees },
+        { name: "입사자", type: 'bar', data: newEmployees },
+        { name: "퇴사자", type: 'bar', data: quitEmployees },
         { name: "전체인원", type: 'line', data: totalEmployees }
       ]);
     }

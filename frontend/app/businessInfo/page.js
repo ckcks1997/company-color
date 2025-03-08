@@ -58,7 +58,6 @@ export default function BusinessInfo() {
     if (name) {
       try {
         const data = await api.fetchDartData(name)
-        console.log(data)
         setDartData(data)
       } catch (error) {
         console.error('Error fetching dart data:', error)
