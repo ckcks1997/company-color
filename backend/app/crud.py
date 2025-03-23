@@ -3,7 +3,7 @@ from fastapi import HTTPException
 
 from sqlmodel import Session, select
 from elasticsearch import Elasticsearch
-from sqlalchemy import and_
+from sqlalchemy import and_,  not_
 
 from app.auth.jwt import get_token_data
 from app.models import GukminYungumData, Users, InfoReply, Corpcode
@@ -33,7 +33,10 @@ async def get_rank_info(db: Session, ymonth: str, type: str):
 
     query = (
         select(GukminYungumData)
-        .filter(GukminYungumData.created_dt == ymonth)
+        .filter(
+            GukminYungumData.created_dt == ymonth,
+            not_(GukminYungumData.company_nm.like('쿠팡풀필먼트 %'))  # 쿠팡물류센터 제외
+        )
         .order_by(order_column.desc())
         .limit(50)
     )
