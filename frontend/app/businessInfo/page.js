@@ -69,7 +69,7 @@ export default function BusinessInfo() {
   useEffect(() => {
     setIsLoading(true)
     fetchBusinessData()
-    fetchReplyData()
+    //fetchReplyData()
     window.scrollTo(0, 0)
   }, [hash])
 
@@ -208,33 +208,33 @@ export default function BusinessInfo() {
           </CardBody>
         </Card>
       </Box>
-      <Box maxWidth="1000px" margin="auto" p={5} pt={0}>
-        <Card>
-          <CardBody>
-            <Text>댓글</Text>
-            {localStorage.getItem('access_token') ? (
-              <Flex marginTop={2}>
-                <Input
-                  placeholder={"내용을 입력하세요."}
-                  value={reply}
-                  onChange={(e) => setReply(e.target.value)}
-                />
-                <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>
-              </Flex>
-            ) : (
-              <Text color="gray.500" mt={2}>댓글을 작성하려면 로그인이 필요합니다.</Text>
-            )}
-            <Box display='flex' flexDirection='column'>
-              {replyData.map((val, index) => (
-                <Box key={val.idx} display='inline' p={3}>
-                  <Text>익명 {index + 1}</Text>
-                  <Text>{val.reply}</Text>
-                </Box>
-              ))}
-            </Box>
-          </CardBody>
-        </Card>
-      </Box>
+      {/*<Box maxWidth="1000px" margin="auto" p={5} pt={0}>*/}
+      {/*  <Card>*/}
+      {/*    <CardBody>*/}
+      {/*      <Text>댓글</Text>*/}
+      {/*      {localStorage.getItem('access_token') ? (*/}
+      {/*        <Flex marginTop={2}>*/}
+      {/*          <Input*/}
+      {/*            placeholder={"내용을 입력하세요."}*/}
+      {/*            value={reply}*/}
+      {/*            onChange={(e) => setReply(e.target.value)}*/}
+      {/*          />*/}
+      {/*          <Button marginLeft={1} onClick={() => saveReply()}>등록</Button>*/}
+      {/*        </Flex>*/}
+      {/*      ) : (*/}
+      {/*        <Text color="gray.500" mt={2}>댓글을 작성하려면 로그인이 필요합니다.</Text>*/}
+      {/*      )}*/}
+      {/*      <Box display='flex' flexDirection='column'>*/}
+      {/*        {replyData.map((val, index) => (*/}
+      {/*          <Box key={val.idx} display='inline' p={3}>*/}
+      {/*            <Text>익명 {index + 1}</Text>*/}
+      {/*            <Text>{val.reply}</Text>*/}
+      {/*          </Box>*/}
+      {/*        ))}*/}
+      {/*      </Box>*/}
+      {/*    </CardBody>*/}
+      {/*  </Card>*/}
+      {/*</Box>*/}
     </Box>
   );
 }
