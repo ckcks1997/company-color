@@ -12,7 +12,7 @@ API_KEY = os.getenv("DART_KEY")
 
 @router.get("/search_business", response_model=PaginatedResponse)
 async def search_business(db: SessionDep, params: SearchParams = Depends()):
-    total_count, results = crud.search_companies_elastic(params)
+    total_count, results = await crud.search_companies_elastic(params)
     total_pages = (total_count + params.items_per_page - 1) // params.items_per_page
 
     return PaginatedResponse(
@@ -32,6 +32,7 @@ async def get_business_info(hash: str, db: SessionDep):
 
     return results
 
+
 @router.get("/get_rank_info", response_model=list[GukminYungumData])
 async def get_business_info(ymonth: str, type:str, db: SessionDep):
     results = None
@@ -39,6 +40,7 @@ async def get_business_info(ymonth: str, type:str, db: SessionDep):
         results = await crud.get_rank_info(db, ymonth, type)
 
     return results
+
 
 @router.get("/get_dart_info", response_model=list)
 async def get_dart_info(name: str, db: SessionDep):

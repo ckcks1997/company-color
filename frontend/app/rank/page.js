@@ -80,7 +80,7 @@ function Result() {
 
   return (
     <Box p={{ base: 3, md: 8 }} maxWidth="1200px" margin="0 auto">
-      <Heading mb={6} fontSize={{ base: "xl", md: "2xl" }} textAlign={{ base: "center", md: "left" }}>
+      <Heading mb={6} fontSize={{ base: "xl", md: "2xl" }} textAlign="left" >
         월별 입/퇴사자 수 순위 TOP 50
       </Heading>
 
@@ -186,7 +186,11 @@ function Result() {
                     </Td>
                   )}
                   {visibleColumns.includes('이름') && (
-                    <Td fontWeight={index < 5 ? "bold" : "normal"}>{item.company_nm}</Td>
+                    <Td fontWeight={index < 5 ? "bold" : "normal"}>
+                      <Text maxW={{ base: "150px", md: "100%" }} >
+                        {item.company_nm}
+                      </Text>
+                    </Td>
                   )}
                   {visibleColumns.includes('지역') && (
                     <Td>

@@ -99,7 +99,7 @@ async def get_dart_info(db: Session, corp_name: str):
     return db.exec(query).all()
 
 
-def search_companies_elastic(params: SearchParams):
+async def search_companies_elastic(params: SearchParams):
     must_conditions = []
     must_not_conditions = []
     # 지역 선택시
