@@ -25,6 +25,22 @@ async def get_business_info(db: Session, hash: str):
     return db.exec(query).all()
 
 
+async def get_rank_info(db: Session, ymonth: str, type: str):
+    order_column = (
+        GukminYungumData.subscriber_quit if type == 'quit'
+        else GukminYungumData.subscriber_new
+    )
+
+    query = (
+        select(GukminYungumData)
+        .filter(GukminYungumData.created_dt == ymonth)
+        .order_by(order_column.desc())
+        .limit(50)
+    )
+
+    return db.exec(query).all()
+
+
 async def get_or_create_user(db: Session, user_info: dict):
     social_key = str(user_info["id"])
     stmt = select(Users).where(Users.SOCIAL_KEY == social_key)

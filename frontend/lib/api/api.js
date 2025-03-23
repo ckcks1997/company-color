@@ -32,6 +32,19 @@ export const api = {
     }
   },
 
+  // 검색 결과 조회
+  fetchRankResult: async (ymonth, searchType) => {
+    try {
+      let url = `${baseURL}/get_rank_info?ymonth=${ymonth}&type=${searchType}`
+
+      const response = await fetch(url)
+      return response.json()
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  },
+
   fetchReplyData: async (hash) => {
     try {
       const response = await fetch(`${baseURL}/reply?hash=${hash}`)

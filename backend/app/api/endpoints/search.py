@@ -32,6 +32,13 @@ async def get_business_info(hash: str, db: SessionDep):
 
     return results
 
+@router.get("/get_rank_info", response_model=list[GukminYungumData])
+async def get_business_info(ymonth: str, type:str, db: SessionDep):
+    results = None
+    if hash:
+        results = await crud.get_rank_info(db, ymonth, type)
+
+    return results
 
 @router.get("/get_dart_info", response_model=list)
 async def get_dart_info(name: str, db: SessionDep):

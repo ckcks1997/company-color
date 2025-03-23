@@ -70,12 +70,8 @@ function Navbar() {
         <Spacer />
         <Box display="flex" gap={4}>
           <NextLink href="/">검색</NextLink>
+          <NextLink href="/rank">통계</NextLink>
           <NextLink href="/siteInfo">정보</NextLink>
-          {isLoggedIn ? (
-            <Box as="button" onClick={handleLogout}>로그아웃</Box>
-          ) : (
-            <Box as="button" onClick={handleKakaoLogin}>로그인</Box>
-          )}
           <NextLink href="https://github.com/ckcks1997/company-color" target="_blank">
             <Image
               src="/images/git.png"
