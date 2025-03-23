@@ -14,4 +14,4 @@ RUN poetry install --no-root
 COPY . .
 
 # FastAPI 실행
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--app-dir", "/app", "--env-file", "/app/app/.env.prod"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--app-dir", "/app", "--env-file", "/app/.env.prod"]
