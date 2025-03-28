@@ -1,8 +1,11 @@
 [tool.poetry]
-name = "company-color"
+name = "business-info-api"
 version = "1.0.0"
-description = ""
+description = "국민연금 가입 회사 정보 검색 및 댓글 API"
 authors = ["lch <ckcks1997@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -33,12 +36,55 @@ watchfiles = "^0.24.0"
 websockets = "^13.1"
 pydantic-settings = "^2.4.0"
 httpx = "0.28.1"
-python-jose = "^3.3.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 elasticsearch = "^8.17.0"
 concurrent-log-handler = "^0.9.25"
 requests = "^2.32.3"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.1"
+pytest-cov = "^4.1.0"
+black = "^23.7.0"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+ruff = "^0.0.286"
+pre-commit = "^3.3.3"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+select = ["E", "F", "B", "I", "N", "UP", "ANN", "C4", "RUF", "SIM", "TCH"]
+ignore = ["ANN101", "ANN102", "ANN401", "E203"]
+
+[tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+asyncio_mode = "auto"

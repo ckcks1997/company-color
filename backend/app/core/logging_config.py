@@ -1,76 +1,75 @@
 import logging
-from logging.handlers import RotatingFileHandler
-import os
+import sys
 from datetime import datetime
+from pathlib import Path
+import os
+from logging.handlers import TimedRotatingFileHandler
 
+# 로그 디렉터리 생성
+#C:/Users/Owner/PycharmProjects/company-color/backend
+log_dir = Path("app/app/logs")
+log_dir.mkdir(exist_ok=True)
 
-LOG_DIR = "logs"
-LOG_LEVEL = logging.INFO
-MAX_BYTES = 10_000_000
-BACKUP_COUNT = 5
-
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
-
+# 현재 날짜로 로그 파일명 생성
 current_date = datetime.now().strftime("%Y-%m-%d")
-LOG_FILENAME = f"{LOG_DIR}/app_{current_date}.log"
+log_file = log_dir / f"app_{current_date}.log"
 
-log_format = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+# 로거 설정
+logger = logging.getLogger("app")
+logger.setLevel(logging.INFO)
+
+# 로그 포맷 설정
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s"
 )
 
+# 콘솔 핸들러
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(formatter)
+console_handler.setLevel(logging.INFO)
 
-def get_file_handler():
-    file_handler = RotatingFileHandler(
-        LOG_FILENAME,
-        maxBytes=MAX_BYTES,
-        backupCount=BACKUP_COUNT,
-        encoding='utf-8'
-    )
-    file_handler.setFormatter(log_format)
-    return file_handler
+# 파일 핸들러 (일별 로그 파일 생성)
+file_handler = TimedRotatingFileHandler(
+    filename=log_file,
+    when="midnight",
+    interval=1,
+    backupCount=30,  # 30일치 로그 유지
+    encoding="utf-8",
+)
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.INFO)
 
+# 핸들러 추가
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
 
-def get_console_handler():
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_format)
-    return console_handler
-
-
-def get_logger(name: str):
-    logger = logging.getLogger(name)
-    logger.setLevel(LOG_LEVEL)
-
-    # 기존 핸들러 제거
-    if logger.handlers:
-        logger.handlers.clear()
-
-    # 핸들러 추가
-    logger.addHandler(get_file_handler())
-    logger.addHandler(get_console_handler())
-
-    # 상위 로거로 전파 방지
-    logger.propagate = False
-
-    return logger
-
-
-# SQLAlchemy 로거 설정
+# SQLAlchemy 로깅 설정
 def setup_sql_logging():
-    sql_logger = logging.getLogger('sqlalchemy.engine')
-    sql_logger.setLevel(LOG_LEVEL)
+    """SQLAlchemy 로깅 설정"""
+    from app.core.config import settings
+    
+    if settings["SQL_DEBUG"]:
+        logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+        logging.getLogger("sqlalchemy.pool").setLevel(logging.INFO)
+    else:
+        # 오류만 로깅
+        logging.getLogger("sqlalchemy.engine").setLevel(logging.ERROR)
+        logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
 
-    if sql_logger.handlers:
-        sql_logger.handlers.clear()
+# HTTPX 로깅 설정
+httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.WARNING)
+httpx_logger.addHandler(console_handler)
+httpx_logger.addHandler(file_handler)
 
-    sql_logger.addHandler(get_file_handler())
-    sql_logger.addHandler(get_console_handler())
-    sql_logger.propagate = False
+# Elasticsearch 로깅 설정 
+elasticsearch_logger = logging.getLogger("elasticsearch")
+elasticsearch_logger.setLevel(logging.WARNING)
+elasticsearch_logger.addHandler(console_handler)
+elasticsearch_logger.addHandler(file_handler)
 
+# 기본 핸들러 제거 (중복 로깅 방지)
+logging.getLogger().handlers = []
 
-# 기본 로거 설정
-logger = get_logger(__name__)
-
-# SQL 로깅 설정 적용
-setup_sql_logging()
+# 시작 로그 출력
+logger.info("=== Application starting ===")

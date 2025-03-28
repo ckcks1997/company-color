@@ -1,11 +1,50 @@
-# Test your FastAPI endpoints
+# FastAPI 엔드포인트 테스트 파일
+# REST Client 플러그인을 사용해 테스트할 수 있습니다.
 
-GET http://127.0.0.1:8000/
+@baseUrl = http://localhost:8001
+@apiPrefix = /api/v1
+
+### 서버 상태 확인
+GET {{baseUrl}}/health
 Accept: application/json
 
-###
-
-GET http://127.0.0.1:8000/search_business?business_name=한솔
+### 회사 검색 API
+GET {{baseUrl}}{{apiPrefix}}/search_business?business_name=한솔&page=1&items_per_page=10
 Accept: application/json
 
-###
+### 회사 상세 정보 조회 API
+GET {{baseUrl}}{{apiPrefix}}/get_business_info?hash=sample-hash-value
+Accept: application/json
+
+### 순위 정보 조회 API
+GET {{baseUrl}}{{apiPrefix}}/get_rank_info?ymonth=202401&type=new
+Accept: application/json
+
+### DART 공시 정보 조회 API
+GET {{baseUrl}}{{apiPrefix}}/get_dart_info?name=삼성전자
+Accept: application/json
+
+### 카카오 로그인 URL 조회
+GET {{baseUrl}}{{apiPrefix}}/auth/login/kakao
+Accept: application/json
+
+### 카카오 OAuth 콜백 테스트 (실제로는 카카오에서 리다이렉트됨)
+# GET {{baseUrl}}{{apiPrefix}}/auth/oauth?code=sample-code
+# Accept: application/json
+
+### JWT 토큰으로 댓글 조회
+@token = your-jwt-token
+GET {{baseUrl}}{{apiPrefix}}/reply?hash=sample-hash-value
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 댓글 등록
+POST {{baseUrl}}{{apiPrefix}}/reply
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "access_token": "{{token}}",
+  "hash": "sample-hash-value",
+  "value": "이 회사에 대한 새로운 댓글입니다."
+}
