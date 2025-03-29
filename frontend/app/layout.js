@@ -5,6 +5,7 @@ import {Suspense} from 'react';
 import {ClockLoader} from "react-spinners";
 import './globals.css'
 import Script from 'next/script';
+import AdsenseLoader from '@/components/AdsenseLoader';
 
 export const metadata = {
   title: 'COMPANY COLOR',
@@ -80,6 +81,13 @@ export default function RootLayout({children}) {
             gtag('config', 'G-YDV11GRYRB');
           `}
         </Script>
+        <Script
+          id="google-adsense"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2021212784953265"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Script id="structured-data" type="application/ld+json">
           {`
             {
@@ -106,6 +114,7 @@ export default function RootLayout({children}) {
             <main>{children}</main>
           </Suspense>
           <Footer/>
+          <AdsenseLoader />
         </Providers>
       </body>
     </html>

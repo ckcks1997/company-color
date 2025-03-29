@@ -57,11 +57,11 @@ function Navbar() {
   }, []);
 
   return (
-    <Box py={4} position="sticky" bottom="0" width="100%">
+    <Box px={3} py={4} position="sticky" bottom="0" width="100%">
       <Flex maxW="1150px" mx="auto" alignItems="center">
         <Box onClick={() => router.push('/')}>
           <Flex alignItems="center">
-            <Image src="/favicon-64x64.png" alt="logo" maxH='30px' ml={2}/>
+            <Image src="/favicon-64x64.png" alt="logo" maxH='30px'/>
             <Box fontWeight="bold" ml={1}>
               <span>COMPANY</span> <span style={{color: '#2b6cb0'}}>COLOR</span>
             </Box>
@@ -72,14 +72,6 @@ function Navbar() {
           <NextLink href="/">검색</NextLink>
           <NextLink href="/rank">통계</NextLink>
           <NextLink href="/siteInfo">정보</NextLink>
-          <NextLink href="https://github.com/ckcks1997/company-color" target="_blank">
-            <Image
-              src="/images/git.png"
-              alt="Git logo"
-              maxWidth="25px"
-              style={{opacity: 0.5}}
-            />
-          </NextLink>
         </Box>
       </Flex>
     </Box>

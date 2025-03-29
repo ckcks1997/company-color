@@ -23,6 +23,14 @@ const nextConfig = {
           key: 'X-XSS-Protection',
           value: '1; mode=block',
         },
+        {
+          key: 'Cross-Origin-Resource-Policy',
+          value: 'cross-origin',
+        },
+        {
+          key: 'Cross-Origin-Embedder-Policy',
+          value: 'credentialless',
+        },
       ],
     },
   ],
