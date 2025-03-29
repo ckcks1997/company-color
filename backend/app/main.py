@@ -1,45 +1,87 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+import time
 from app.core.exceptions import (
     CustomHTTPException,
     http_exception_handler,
     generic_exception_handler
 )
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import search, oauth, reply
-from app.core.config import db_settings
-from app.core.logging_config import setup_sql_logging
+from app.api.router import router as api_router
+from app.core.config import settings
+from app.core.logging_config import logger, setup_sql_logging
+from app.core.database import connect_database, disconnect_database
 from dotenv import load_dotenv
+import uvicorn
 
+# 환경 변수 로드
 load_dotenv()
 
 # 환경 변수로 운영 환경 여부 확인
-IS_PRODUCTION = db_settings.ENVIRONMENT == "production"
+IS_PRODUCTION = settings["ENVIRONMENT"] == "production"
 
 # 운영환경에서 swagger 비활성화
 docs_url = None if IS_PRODUCTION else "/docs"
 redoc_url = None if IS_PRODUCTION else "/redoc"
 
+# SQL 로깅 설정
 setup_sql_logging()
 
-app = FastAPI(docs_url=docs_url, redoc_url=redoc_url)
+# FastAPI 애플리케이션 생성
+app = FastAPI(
+    title="비즈니스 정보 API",
+    description="국민연금 가입 회사 정보 및 댓글 서비스를 제공하는 API",
+    version="1.0.0",
+    docs_url=docs_url, 
+    redoc_url=redoc_url
+)
 
-# 예외 핸들러
+# 미들웨어: 요청 처리 시간 측정
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+# 예외 핸들러 등록
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(CustomHTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
+# CORS 미들웨어 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(origin) for origin in db_settings.ALLOW_ORIGINS.split(',')],
+    allow_origins=[str(origin) for origin in settings["ALLOW_ORIGINS"].split(',')],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(search.router)
-app.include_router(oauth.router)
-app.include_router(reply.router)
+# API 라우터 등록
+app.include_router(api_router)
 
+# 상태 확인 엔드포인트
+@app.get("/health")
+async def health_check():
+    """서버 상태 확인 엔드포인트"""
+    return {"status": "ok", "environment": settings["ENVIRONMENT"]}
+
+# 애플리케이션 시작 시 이벤트
+@app.on_event("startup")
+async def startup_event():
+    """애플리케이션 시작 시 실행할 작업"""
+    logger.info("애플리케이션 시작")
+    await connect_database()
+
+# 애플리케이션 종료 시 이벤트
+@app.on_event("shutdown")
+async def shutdown_event():
+    """애플리케이션 종료 시 실행할 작업"""
+    logger.info("애플리케이션 종료")
+    await disconnect_database()
+
+# 애플리케이션 직접 실행 시
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
