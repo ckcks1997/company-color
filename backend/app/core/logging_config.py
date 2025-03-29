@@ -7,7 +7,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 # 로그 디렉터리 생성
 #C:/Users/Owner/PycharmProjects/company-color/backend
-log_dir = Path("app/app/logs")
+log_dir = Path("/app/app/logs")
 log_dir.mkdir(exist_ok=True)
 
 # 현재 날짜로 로그 파일명 생성
