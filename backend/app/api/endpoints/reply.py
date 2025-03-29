@@ -17,13 +17,6 @@ async def post_reply(reply: Reply, db: SessionDep):
     Returns:
         등록된 댓글 정보
     """
-    if not reply.access_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="인증이 필요합니다",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
-        
     if not reply.hash:
         raise BusinessException(detail="회사 해시값이 필요합니다")
         

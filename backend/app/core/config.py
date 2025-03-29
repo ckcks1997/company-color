@@ -21,26 +21,11 @@ class EnvVars:
     # 환경 설정
     ENVIRONMENT = "ENVIRONMENT"
     ALLOW_ORIGINS = "ALLOW_ORIGINS"
-    SECRET_KEY = "SECRET_KEY"
-    ALGORITHM = "ALGORITHM"
-    ACCESS_TOKEN_EXPIRE_MINUTES = "ACCESS_TOKEN_EXPIRE_MINUTES"
     
     # Elasticsearch 설정
     ELASTIC_HOST = "ELASTIC_HOST"
     ELASTIC_USERNAME = "ELASTIC_USERNAME"
     ELASTIC_PASSWORD = "ELASTIC_PASSWORD"
-    
-    # Kakao OAuth 설정
-    KAKAO_CLIENT_ID = "KAKAO_CLIENT_ID"
-    KAKAO_WEB_CLIENT_ID = "KAKAO_WEB_CLIENT_ID"
-    KAKAO_CLIENT_SECRET = "KAKAO_CLIENT_SECRET"
-    KAKAO_REDIRECT_URI = "KAKAO_REDIRECT_URI"
-    
-    # Redis 설정
-    REDIS_HOST = "REDIS_HOST"
-    REDIS_PORT = "REDIS_PORT"
-    REDIS_DB = "REDIS_DB"
-    REDIS_PASSWORD = "REDIS_PASSWORD"
     
     # DART API 설정
     DART_KEY = "DART_KEY"
@@ -48,6 +33,8 @@ class EnvVars:
     # 로깅 설정
     LOG_LEVEL = "LOG_LEVEL"
     SQL_DEBUG = "SQL_DEBUG"
+    LOG_DIR = "LOG_DIR"
+    LOG_RETENTION_DAYS = "LOG_RETENTION_DAYS"
 
 @lru_cache()
 def get_settings() -> Dict[str, Any]:
@@ -66,27 +53,20 @@ def get_settings() -> Dict[str, Any]:
         # 환경 설정
         "ENVIRONMENT": os.getenv(EnvVars.ENVIRONMENT, "development"),
         "ALLOW_ORIGINS": os.getenv(EnvVars.ALLOW_ORIGINS, "http://localhost:3000"),
-        "SECRET_KEY": os.getenv(EnvVars.SECRET_KEY, "secret-key-for-dev-only"),
-        "ALGORITHM": os.getenv(EnvVars.ALGORITHM, "HS256"),
-        "ACCESS_TOKEN_EXPIRE_MINUTES": os.getenv(EnvVars.ACCESS_TOKEN_EXPIRE_MINUTES, "1440"),
         
         # Elasticsearch 설정
         "ELASTIC_HOST": os.getenv(EnvVars.ELASTIC_HOST, "http://localhost:9200"),
         "ELASTIC_USERNAME": os.getenv(EnvVars.ELASTIC_USERNAME, "elastic"),
         "ELASTIC_PASSWORD": os.getenv(EnvVars.ELASTIC_PASSWORD, ""),
-        
-        # Kakao OAuth 설정
-        "KAKAO_CLIENT_ID": os.getenv(EnvVars.KAKAO_CLIENT_ID, ""),
-        "KAKAO_WEB_CLIENT_ID": os.getenv(EnvVars.KAKAO_WEB_CLIENT_ID, ""),
-        "KAKAO_CLIENT_SECRET": os.getenv(EnvVars.KAKAO_CLIENT_SECRET, ""),
-        "KAKAO_REDIRECT_URI": os.getenv(EnvVars.KAKAO_REDIRECT_URI, ""),
-        
+
         # DART API 설정
         "DART_KEY": os.getenv(EnvVars.DART_KEY, ""),
         
         # 로깅 설정
         "LOG_LEVEL": os.getenv(EnvVars.LOG_LEVEL, "INFO"),
         "SQL_DEBUG": os.getenv(EnvVars.SQL_DEBUG, "False").lower() == "true",
+        "LOG_DIR": os.getenv(EnvVars.LOG_DIR, "/app/app/logs"),
+        "LOG_RETENTION_DAYS": int(os.getenv(EnvVars.LOG_RETENTION_DAYS, "30")),
     }
 
 # 설정 인스턴스 생성

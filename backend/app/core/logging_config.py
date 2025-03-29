@@ -4,10 +4,10 @@ from datetime import datetime
 from pathlib import Path
 import os
 from logging.handlers import TimedRotatingFileHandler
+from app.core.config import settings
 
 # 로그 디렉터리 생성
-#C:/Users/Owner/PycharmProjects/company-color/backend
-log_dir = Path("/app/app/logs")
+log_dir = Path(settings["LOG_DIR"])
 log_dir.mkdir(exist_ok=True)
 
 # 현재 날짜로 로그 파일명 생성
@@ -16,7 +16,7 @@ log_file = log_dir / f"app_{current_date}.log"
 
 # 로거 설정
 logger = logging.getLogger("app")
-logger.setLevel(logging.INFO)
+logger.setLevel(getattr(logging, settings["LOG_LEVEL"]))
 
 # 로그 포맷 설정
 formatter = logging.Formatter(
@@ -26,18 +26,18 @@ formatter = logging.Formatter(
 # 콘솔 핸들러
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setFormatter(formatter)
-console_handler.setLevel(logging.INFO)
+console_handler.setLevel(getattr(logging, settings["LOG_LEVEL"]))
 
 # 파일 핸들러 (일별 로그 파일 생성)
 file_handler = TimedRotatingFileHandler(
     filename=log_file,
     when="midnight",
     interval=1,
-    backupCount=30,  # 30일치 로그 유지
+    backupCount=settings["LOG_RETENTION_DAYS"],  # 설정된 일수만큼 로그 유지
     encoding="utf-8",
 )
 file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.INFO)
+file_handler.setLevel(getattr(logging, settings["LOG_LEVEL"]))
 
 # 핸들러 추가
 logger.addHandler(console_handler)
@@ -46,8 +46,6 @@ logger.addHandler(file_handler)
 # SQLAlchemy 로깅 설정
 def setup_sql_logging():
     """SQLAlchemy 로깅 설정"""
-    from app.core.config import settings
-    
     if settings["SQL_DEBUG"]:
         logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
         logging.getLogger("sqlalchemy.pool").setLevel(logging.INFO)

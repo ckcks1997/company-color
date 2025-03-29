@@ -4,21 +4,6 @@ from datetime import datetime
 
 T = TypeVar('T')
 
-class Token(BaseModel):
-    """인증 토큰 모델"""
-    access_token: str
-    token_type: str
-    expires_in: int = Field(..., description="토큰 만료 시간(초)")
-    user_id: int = Field(..., description="사용자 ID")
-
-
-class TokenData(BaseModel):
-    """토큰 데이터 모델"""
-    sub: str
-    type: str
-    exp: datetime
-
-
 class SearchParams(BaseModel):
     """검색 매개변수 모델"""
     business_name: str = Field(..., description="검색할 회사명", min_length=1)
@@ -55,7 +40,6 @@ class SearchResponse(BaseModel):
 
 class Reply(BaseModel):
     """댓글 모델"""
-    access_token: Optional[str] = Field(None, description="인증 토큰")
     hash: Optional[str] = Field(None, description="회사 해시값")
     value: Optional[str] = Field(None, description="댓글 내용", min_length=1, max_length=1000)
 
