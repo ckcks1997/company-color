@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from elasticsearch import Elasticsearch
-from sqlalchemy import not_
+from sqlalchemy import not_, or_
 from app.dtos import SearchParams, SearchResponse
 from app.models import GukminYungumData, Corpcode
 from app.core.config import settings
@@ -38,7 +38,13 @@ async def get_rank_info(db: Session, ymonth: str, type: str):
         select(GukminYungumData)
         .filter(
             GukminYungumData.created_dt == ymonth,
-            not_(GukminYungumData.company_nm.like('쿠팡풀필먼트%'))  # 쿠팡물류센터 제외
+            not_(
+                or_(
+                    GukminYungumData.company_nm.like('쿠팡풀필먼트%'),  # 쿠팡물류센터 제외
+                    GukminYungumData.company_nm.like('중앙경찰학교(신임)')  # 특수 케이스 제외
+                )
+            )
+
         )
         .order_by(order_column.desc())
         .limit(50)

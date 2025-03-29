@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install poetry
 
 # Poetry 설정 파일 복사 및 의존성 설치
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root
+COPY pyproject.toml ./
+RUN poetry lock && poetry install --no-root
+
 
 # 애플리케이션 코드 복사
 COPY . .

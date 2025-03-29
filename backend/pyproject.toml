@@ -9,7 +9,7 @@ packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.115.8"
+fastapi = "^0.115.12"
 uvicorn = {extras = ["standard"], version = "^0.34.0"}
 aiomysql = "0.2.0"
 annotated-types = "0.7.0"
