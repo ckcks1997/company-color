@@ -38,7 +38,7 @@ async def get_rank_info(db: Session, ymonth: str, type: str):
         select(GukminYungumData)
         .filter(
             GukminYungumData.created_dt == ymonth,
-            not_(GukminYungumData.company_nm.like('쿠팡풀필먼트 %'))  # 쿠팡물류센터 제외
+            not_(GukminYungumData.company_nm.like('쿠팡풀필먼트%'))  # 쿠팡물류센터 제외
         )
         .order_by(order_column.desc())
         .limit(50)

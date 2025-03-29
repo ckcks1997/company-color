@@ -30,8 +30,9 @@ const EmployeeChart = ({ data }) => {
     return roundedMin;
   };
 
-    const calculateQuitMaxYAxisProps = (maxValue) => {
+  const calculateQuitMaxYAxisProps = (maxValue) => {
     let roundedMax = 0;
+    if (!maxValue || maxValue <= 0) return 10;
     if (maxValue <= 10) roundedMax = 12;
     else if (maxValue <= 30) roundedMax = 40;
     else if (maxValue <= 100) roundedMax = Math.ceil(maxValue / 10) * 10 * 1.1;
@@ -161,15 +162,15 @@ const EmployeeChart = ({ data }) => {
 
   useEffect(() => {
     if (Array.isArray(data) && data.length > 0) {
-      const sortedData = data.sort((a, b) => new Date(a.created_dt) - new Date(b.created_dt));
-      const months = sortedData.map(item => item.created_dt);
-      const newEmployees = sortedData.map(item => item.subscriber_new);
-      const quitEmployees = sortedData.map(item => item.subscriber_quit);
-      const totalEmployees = sortedData.map(item => item.subscriber_cnt);
+      const sortedData = [...data].sort((a, b) => new Date(a.created_dt) - new Date(b.created_dt));
+      const months = sortedData.map(item => item.created_dt || '');
+      const newEmployees = sortedData.map(item => item.subscriber_new || 0);
+      const quitEmployees = sortedData.map(item => item.subscriber_quit || 0);
+      const totalEmployees = sortedData.map(item => item.subscriber_cnt || 0);
 
-      const maxNewQuit = Math.max(...newEmployees, ...quitEmployees);
-      const minTotal = Math.min(...totalEmployees);
-      const maxTotal = Math.max(...totalEmployees);
+      const maxNewQuit = Math.max(...newEmployees, ...quitEmployees, 1); // 최소 1로 설정
+      const minTotal = Math.min(...totalEmployees, 0); // 최소 0으로 설정
+      const maxTotal = Math.max(...totalEmployees, 1); // 최소 1로 설정
       const newQuitAxisProps = calculateYAxisProps(maxTotal, maxNewQuit);
       const totalMinAxisProps = calculateQuitMinYAxisProps(minTotal);
       const totalMaxAxisProps = calculateQuitMaxYAxisProps(maxTotal);
