@@ -6,12 +6,6 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   
-  // 페이지 별 성능 최적화 설정
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-  },
-  
   // 보안 헤더 설정
   headers: async () => [
     {
