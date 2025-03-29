@@ -31,17 +31,12 @@ COPY . .
 # 로그 디렉터리 생성
 RUN mkdir -p /app/app/logs && chmod 777 /app/app/logs
 
-# 비프로덕션 유저 생성 및 권한 설정
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
-USER appuser
-
 # 상태 확인
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # 포트 설정
-EXPOSE 8001
+EXPOSE 8000
 
 # FastAPI 실행
 CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--app-dir", "/app", "--env-file", "/app/.env.prod"]
