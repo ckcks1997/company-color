@@ -1,68 +1,36 @@
 'use client'
 
-import {useRouter, useSearchParams} from 'next/navigation'
-import {useState, useEffect} from 'react';
-import {Box, Heading, SimpleGrid, Text, Flex, Input,
-  Button, VStack, HStack, Badge, Select, InputGroup, InputRightElement, IconButton
+import { useSearchParams } from 'next/navigation'
+import { useState } from 'react';
+import { Box, Heading, VStack, Flex, Input, Select,
+  InputGroup, InputRightElement, IconButton
 } from '@chakra-ui/react';
-import {ClockLoader} from "react-spinners";
-import {Search} from 'lucide-react';
-import {regions} from "@/constants/regions.js";
-import api from "@/lib/api/api.js";
+import { Search } from 'lucide-react';
+import { regions } from "@/constants/regions.js";
+import { useRouter } from 'next/navigation';
+import SearchResultList from './SearchResultList';
 
-function Result() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+export default function Result() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [searchResult, setSearchResult] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('business_name') || '')
-  const [selectedRegion, setSelectedRegion] = useState(searchParams.get('location') || '')
-
-  useEffect(() => {
-    async function fetchData() {
-      const businessName = searchParams.get('business_name')
-      const location = searchParams.get('location')
-      const page = searchParams.get('page')
-
-      if (businessName) {
-        setIsLoading(true)
-        try {
-          const data = await api.fetchSearchResult(businessName, location, page)
-          setSearchResult(data)
-        } catch (error) {
-          console.error('Error fetching search results:', error)
-        } finally {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    fetchData()
-  }, [searchParams])
-
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('business_name') || '');
+  const [selectedRegion, setSelectedRegion] = useState(searchParams.get('location') || '');
+  
+  // 현재 URL에서 파라미터 추출
+  const businessName = searchParams.get('business_name');
+  const location = searchParams.get('location');
+  const page = parseInt(searchParams.get('page') || '1', 10);
 
   const handleSearch = () => {
-    if (!searchTerm.trim()) return
+    if (!searchTerm.trim()) return;
 
-    const params = new URLSearchParams()
-    params.append('business_name', searchTerm)
+    const params = new URLSearchParams();
+    params.append('business_name', searchTerm);
     if (selectedRegion !== '') {
-      params.append('location', selectedRegion)
+      params.append('location', selectedRegion);
     }
-    router.push(`/result?${params.toString()}`)
-  }
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= searchResult.total_pages) {
-      const searchParams = new URLSearchParams(location.search);
-      searchParams.set('page', newPage.toString());
-      router.push(`/result?${searchParams.toString()}`);
-    }
-  };
-
-  const clickResult = (hash) => {
-    router.push(`/businessInfo?hash=${hash}`, {state: {fromSearch: true}});
+    router.push(`/result?${params.toString()}`);
   };
 
   return (
@@ -122,62 +90,14 @@ function Result() {
           </Flex>
         </Box>
 
-        {isLoading ? (
-          <Flex justify="center" align="center" height="200px">
-            <ClockLoader color="#3182CE"/>
-          </Flex>
-        ) : searchResult.items?.length > 0 ? (
-          <>
-            <SimpleGrid columns={[1, null, 2]} spacing={6}>
-              {searchResult.items.map((value) => (
-                <Box
-                  key={value.hash}
-                  borderWidth={1}
-                  borderRadius="lg"
-                  p={6}
-                  boxShadow="md"
-                  bg="white"
-                  transition="all 0.3s"
-                  _hover={{transform: 'translateY(-5px)', boxShadow: 'lg'}}
-                  onClick={() => clickResult(value.hash)}
-                  cursor="pointer"
-                >
-                  <VStack align="stretch" spacing={3}>
-                    <Heading size="md" color="blue.600">{value.company_nm}</Heading>
-                    <Flex alignItems="center" justifyContent="space-between">
-                      <Badge colorScheme="blue">{value.location}</Badge>
-                      <Text fontSize="0.8rem" color="gray.600">전체 가입자 수: {value.subscriber} 명</Text>
-                    </Flex>
-                    <Text fontSize="0.9rem" color="gray.600">{value.address}</Text>
-                  </VStack>
-                </Box>
-              ))}
-            </SimpleGrid>
-            <HStack justify="center" mt={6}>
-              <Button
-                onClick={() => handlePageChange(searchResult.page - 1)}
-                isDisabled={searchResult.page === 1}
-              >
-                이전
-              </Button>
-              <Text>{searchResult.page} / {searchResult.total_pages}</Text>
-              <Button
-                onClick={() => handlePageChange(searchResult.page + 1)}
-                isDisabled={searchResult.page === searchResult.total_pages}
-              >
-                다음
-              </Button>
-            </HStack>
-            <Text textAlign="center" color="gray.600">
-              총 {searchResult.total_count}개의 결과
-            </Text>
-          </>
-        ) : (
-          <Text textAlign="center" fontSize="lg" color="gray.600">검색 결과가 없습니다.</Text>
+        {businessName && (
+          <SearchResultList 
+            businessName={businessName} 
+            location={location} 
+            page={page} 
+          />
         )}
       </VStack>
     </Box>
   );
 }
-
-export default Result;
