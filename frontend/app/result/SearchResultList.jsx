@@ -7,7 +7,6 @@ import {
   HStack, Button, Spinner
 } from '@chakra-ui/react';
 import { useSearchResults } from '@/lib/hooks/useSearchResults';
-import GoogleAd from '@/components/GoogleAd';
 
 export default function SearchResultList({ businessName, location, page }) {
   const router = useRouter();
@@ -57,52 +56,30 @@ export default function SearchResultList({ businessName, location, page }) {
   return (
     <>
       <SimpleGrid columns={[1, null, 2]} spacing={6}>
-        {searchResult.items.map((value, index) => (
-          <React.Fragment key={value.hash}>
-            {/* 4번째 아이템 후에 광고 삽입 (최대 한 번만) */}
-            {index === 4 && (
-              <Box gridColumn="1 / -1" width="100%" my={4} id="ad-container-mid">
-                {/*<GoogleAd */}
-                {/*  slot="4919952478"*/}
-                {/*  format="auto"*/}
-                {/*  responsive={true}*/}
-                {/*  style={{ display: 'block', textAlign: 'center' }}*/}
-                {/*/>*/}
-              </Box>
-            )}
-            <Box
-              borderWidth={1}
-              borderRadius="lg"
-              p={6}
-              boxShadow="md"
-              bg="white"
-              transition="all 0.3s"
-              _hover={{transform: 'translateY(-5px)', boxShadow: 'lg'}}
-              onClick={() => handleResultClick(value.hash)}
-              cursor="pointer"
-            >
-              <VStack align="stretch" spacing={3}>
-                <Heading size="md" color="blue.600">{value.company_nm}</Heading>
-                <Flex alignItems="center" justifyContent="space-between">
-                  <Badge colorScheme="blue">{value.location}</Badge>
-                  <Text fontSize="0.8rem" color="gray.600">전체 가입자 수: {value.subscriber} 명</Text>
-                </Flex>
-                <Text fontSize="0.9rem" color="gray.600">{value.address}</Text>
-              </VStack>
-            </Box>
-          </React.Fragment>
+        {searchResult.items.map((value) => (
+          <Box
+            key={value.hash}
+            borderWidth={1}
+            borderRadius="lg"
+            p={6}
+            boxShadow="md"
+            bg="white"
+            transition="all 0.3s"
+            _hover={{transform: 'translateY(-5px)', boxShadow: 'lg'}}
+            onClick={() => handleResultClick(value.hash)}
+            cursor="pointer"
+          >
+            <VStack align="stretch" spacing={3}>
+              <Heading size="md" color="blue.600">{value.company_nm}</Heading>
+              <Flex alignItems="center" justifyContent="space-between">
+                <Badge colorScheme="blue">{value.location}</Badge>
+                <Text fontSize="0.8rem" color="gray.600">전체 가입자 수: {value.subscriber} 명</Text>
+              </Flex>
+              <Text fontSize="0.9rem" color="gray.600">{value.address}</Text>
+            </VStack>
+          </Box>
         ))}
       </SimpleGrid>
-      
-      {/* 결과 목록 하단 광고 */}
-      <Box width="100%" my={6} id="ad-container-bottom">
-        {/*<GoogleAd */}
-        {/*  slot="4919952478"*/}
-        {/*  format="autorelaxed"*/}
-        {/*  responsive={true}*/}
-        {/*  style={{ display: 'block', textAlign: 'center' }}*/}
-        {/*/>*/}
-      </Box>
       
       <HStack justify="center" mt={6}>
         <Button
