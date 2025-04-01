@@ -1,60 +1,29 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton,
-  Heading, Divider, Link
-} from '@chakra-ui/react';
+import React, {useState} from 'react';
+import { useRouter } from 'next/navigation'
+
+import { Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { regions } from "../constants/regions.js";
-import MainRankTable from '../components/MainRankTable';
-import api from '../lib/api/api';
 
 function Home() {
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
-  const [rankData, setRankData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [ymonth, setYmonth] = useState('');
 
-  const router = useRouter();
-
-  useEffect(() => {
-    // 전전월 데이터를 가져오기 위한 날짜 계산
-    const today = new Date();
-    today.setMonth(today.getMonth() - 2);
-    const defaultDate = today.toISOString().slice(0, 7);
-    setYmonth(defaultDate);
-
-    // 입사자 순위 데이터 가져오기
-    const fetchRankData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await api.fetchRankResult(defaultDate, 'new');
-        setRankData(data);
-      } catch (err) {
-        console.error('Error fetching rank data:', err);
-        setError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRankData();
-  }, []);
+  const router = useRouter()
 
   const handleSearch = () => {
     if (!searchTerm.trim()) return;
 
-    const params = new URLSearchParams();
-    params.append('business_name', searchTerm);
+    const params = new URLSearchParams()
+    params.append('business_name', searchTerm)
     if (selectedRegion !== '') {
-      params.append('location', selectedRegion);
+      params.append('location', selectedRegion)
     }
-    router.push(`/result?${params.toString()}`);
-  };
+    router.push(`/result?${params.toString()}`)
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -66,9 +35,9 @@ function Home() {
     <Flex
       direction="column"
       minHeight="calc(100vh - 112px)"
+      justifyContent="center"
       alignItems="center"
       p={8}
-      gap={8}
     >
       <Box
         width="100%"
@@ -141,35 +110,6 @@ function Home() {
               </option>
             ))}
           </Select>
-        </Flex>
-      </Box>
-
-      {/* 통계 순위 섹션 */}
-      <Box width="100%" maxWidth="1200px">
-        <Flex justify="space-between" align="center" mb={4}>
-          <Heading size="md">신규 입사자 상위 기업 TOP 10</Heading>
-          <Text fontSize="sm" color="gray.500">
-            {ymonth && `${ymonth} 기준`}
-          </Text>
-        </Flex>
-        <Divider mb={6} />
-        
-        <MainRankTable 
-          rankData={rankData} 
-          isLoading={isLoading} 
-          error={error} 
-        />
-        
-        <Flex justify="flex-end" mt={4}>
-          <Link 
-            href="/rank" 
-            color="blue.500" 
-            fontSize="sm" 
-            fontWeight="medium"
-            _hover={{ textDecoration: 'underline' }}
-          >
-            더 많은 기업 순위 보기 →
-          </Link>
         </Flex>
       </Box>
     </Flex>
