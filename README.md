@@ -7,6 +7,7 @@
   - 기업의 현재 인원 규모<br>
   - 최근 입사자 및 퇴사자 동향<br>
   - 예상 평균 연봉 데이터<br>
+  - DART 데이터 조회<br>
 
 이를 통해 구직자들은 관심 있는 기업의 현황을 파악하고, <br>
 보다 정확한 정보를 바탕으로 취업 전략을 수립할 수 있습니다.<br>
@@ -28,13 +29,13 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
   - fastAPI 0.115.x
   
 - 서버 정보
-  - VM: Oracle Cloud
+  - VM: ~~Azure~~ Oracle Cloud
   - 웹 서버: Nginx (최신 버전)
   - DB: 
     - MariaDB 11.4
-    - Elasticsearch
+    - Elasticsearch 8.17.x
   - 도메인: Namecheap
-  - SSL: ZeroSSL
+  - SSL: ~~ZeroSSL~~ Let's Encrypt
 
 
 
