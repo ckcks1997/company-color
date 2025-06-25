@@ -1,15 +1,15 @@
 [tool.poetry]
 name = "business-info-api"
 version = "1.0.0"
-description = "국민연금 가입 회사 정보 검색 및 댓글 API"
-authors = ["lch <ckcks1997@gmail.com>"]
+description = "국민연금 가입 회사 정보 검색 API"
+authors = [""]
 readme = "README.md"
 license = "MIT"
 packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.115.12"
+fastapi = "^0.115.13"
 uvicorn = {extras = ["standard"], version = "^0.34.0"}
 aiomysql = "0.2.0"
 annotated-types = "0.7.0"
