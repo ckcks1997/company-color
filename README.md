@@ -3,7 +3,7 @@
 ---
 
 ![deviceMockup](https://github.com/user-attachments/assets/85f99092-7ffa-4326-9f2c-74c7264a3638)
-<a href='https://companycolor.site'>COMPANY COLOR</a> 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
+<a href='https://companycolor.xyz'>COMPANY COLOR</a> 사이트는 신뢰할 수 있는 국민연금 데이터를 기반으로 기업 정보를 제공합니다.<br>
   - 기업의 현재 인원 규모<br>
   - 최근 입사자 및 퇴사자 동향<br>
   - 예상 평균 연봉 데이터<br>
@@ -19,7 +19,7 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 - 국민연금을 납부하지 않는 사업자의 경우 조회되지 않거나 실제 인원보다 적게 표시될 수 있습니다.<br>
 <br>
 
-<a href='https://companycolor.site'>사이트 바로가기</a>
+<a href='https://companycolor.xyz'>사이트 바로가기</a>
 
 ### 기술 stack
 

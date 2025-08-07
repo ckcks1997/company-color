@@ -1,119 +1,141 @@
 'use client'
 
-import React, {useState} from 'react';
-import { useRouter } from 'next/navigation'
-
-import { Flex, Input, Box, Select, Text, InputGroup, InputRightElement, IconButton} from '@chakra-ui/react';
-import { FaSearch } from 'react-icons/fa';
-import { regions } from "../constants/regions.js";
+import React, {useState, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {
+    Flex, Input, Box, Select, Text,
+    InputGroup, InputRightElement, IconButton
+} from '@chakra-ui/react';
+import {FaSearch} from 'react-icons/fa';
+import {regions} from "../constants/regions.js";
 
 function Home() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
+    const [isSiteDomain, setIsSiteDomain] = useState(false);
+    const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
+    // 마운트 후에 호스트네임 체크
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const host = window.location.hostname;
+            if (host === 'companycolor.site') {
+                setIsSiteDomain(true);
+            }
+        }
+    }, []);
 
-  const router = useRouter()
+    const handleSearch = () => {
+        if (!searchTerm.trim()) return;
 
-  const handleSearch = () => {
-    if (!searchTerm.trim()) return;
+        const params = new URLSearchParams();
+        params.append('business_name', searchTerm);
+        if (selectedRegion !== '') {
+            params.append('location', selectedRegion);
+        }
+        router.push(`/result?${params.toString()}`);
+    };
 
-    const params = new URLSearchParams()
-    params.append('business_name', searchTerm)
-    if (selectedRegion !== '') {
-      params.append('location', selectedRegion)
-    }
-    router.push(`/result?${params.toString()}`)
-  }
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
+    return (
+        <Flex
+            direction="column"
+            minHeight="calc(100vh - 112px)"
+            justifyContent="center"
+            alignItems="center"
+            p={8}
+        >
+            {isSiteDomain && (
+                <Text
+                    fontSize="l"
+                    align="center"
+                    color="#333"
+                    mb={4}
+                >
+                    중요공지: 8/26일 이후 도메인이 companycolor.site 에서 companycolor.xyz로 변경됩니다.
+                </Text>
+            )}
 
-  return (
-    <Flex
-      direction="column"
-      minHeight="calc(100vh - 112px)"
-      justifyContent="center"
-      alignItems="center"
-      p={8}
-    >
-      <Box
-        width="100%"
-        maxWidth="500px"
-        minHeight="400px"
-        padding="20px"
-        alignContent="center"
-        borderRadius="16px"
-        background="url('/images/main_bg.jpg') no-repeat center center"
-        backgroundSize="cover"
-      >
-        <Flex mb={4} alignItems='center' direction='column'>
-          <Text
-            fontSize='xl'
-            align='center'
-            color='white'
-            textShadow='0 2px 4px rgba(0,0,0,1)'
-          >
-            약 850만+ 기업 데이터로 인사 트렌드를 한눈에
-          </Text>
-          <Text
-            align='center'
-            fontWeight={200}
-            color='white'
-            textShadow='0 2px 4px rgba(0,0,0,1)'
-          >
-            무료로 기업의 인원 현황과 입/퇴사율을 파악하세요!
-          </Text>
+            <Box
+                width="100%"
+                maxWidth="500px"
+                minHeight="400px"
+                padding="20px"
+                alignContent="center"
+                borderRadius="16px"
+                background="url('/images/main_bg.jpg') no-repeat center center"
+                backgroundSize="cover"
+            >
+                <Flex mb={4} alignItems="center" direction="column">
+                    <Text
+                        fontSize="xl"
+                        align="center"
+                        color="white"
+                        textShadow="0 2px 4px rgba(0,0,0,1)"
+                    >
+                        약 850만+ 기업 데이터로 인사 트렌드를 한눈에
+                    </Text>
+                    <Text
+                        align="center"
+                        fontWeight={200}
+                        color="white"
+                        textShadow="0 2px 4px rgba(0,0,0,1)"
+                    >
+                        무료로 기업의 인원 현황과 입/퇴사율을 파악하세요!
+                    </Text>
+                </Flex>
+                <Flex mb={4} direction={{base: 'column', md: 'row'}}>
+                    <InputGroup size="md">
+                        <Input
+                            type="search"
+                            enterKeyHint="search"
+                            background="rgba(255,255,255,0.95)"
+                            borderRadius="full"
+                            placeholder="회사명을 입력하세요"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            fontSize="16px"
+                            pr="4.5rem"
+                        />
+                        <InputRightElement width="3.5rem">
+                            <IconButton
+                                h="1.75rem"
+                                size="sm"
+                                onClick={handleSearch}
+                                icon={<FaSearch/>}
+                                aria-label="검색"
+                                borderRadius="full"
+                                background="transparent"
+                            />
+                        </InputRightElement>
+                    </InputGroup>
+                    <Select
+                        size="md"
+                        width={{base: "100%", md: "210px"}}
+                        mt={{base: 2, md: 0}}
+                        ml={{base: 0, md: 2}}
+                        value={selectedRegion}
+                        onChange={(e) => setSelectedRegion(e.target.value)}
+                        background="rgba(255,255,255,0.95)"
+                        borderRadius="full"
+                        fontSize="16px"
+                    >
+                        {regions.map((region) => (
+                            <option key={region.value} value={region.value}>
+                                {region.key}
+                            </option>
+                        ))}
+                    </Select>
+                </Flex>
+            </Box>
         </Flex>
-        <Flex mb={4} direction={{ base: 'column', md: 'row' }}>
-          <InputGroup size="md">
-            <Input
-              type="search"
-              enterKeyHint="search"
-              background={'rgba(255,255,255,0.95)'}
-              borderRadius="full"
-              placeholder="회사명을 입력하세요"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleKeyPress}
-              fontSize="16px"
-              pr="4.5rem"
-            />
-            <InputRightElement width="3.5rem">
-              <IconButton
-                h="1.75rem"
-                size="sm"
-                onClick={handleSearch}
-                icon={<FaSearch />}
-                aria-label="검색"
-                borderRadius="full"
-                background="transparent"
-              />
-            </InputRightElement>
-          </InputGroup>
-          <Select
-            size="md"
-            width={{ base: "100%", md: "210px" }}
-            mt={{ base: 2, md: 0 }}
-            ml={{ base: 0, md: 2 }}
-            value={selectedRegion}
-            onChange={(e) => setSelectedRegion(e.target.value)}
-            background={'rgba(255,255,255,0.95)'}
-            borderRadius="full"
-            fontSize="16px"
-          >
-            {regions.map((region) => (
-              <option key={region.value} value={region.value}>
-                {region.key}
-              </option>
-            ))}
-          </Select>
-        </Flex>
-      </Box>
-    </Flex>
-  );
+    );
 }
 
 export default Home;
