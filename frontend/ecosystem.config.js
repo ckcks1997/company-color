@@ -2,9 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'nextjs-app',
-      script: 'npm',
-      args: 'start',
+      script: 'server.js',
       cwd: '/app',
+      exec_mode: 'cluster',
+      instances: 'max',
       env: {
         NODE_ENV: 'production',
       },
