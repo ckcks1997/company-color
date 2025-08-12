@@ -1,26 +1,31 @@
-# 빌드 스테이지
-FROM node:20-alpine AS builder
-
+# --- build ---
+FROM node:24-slim AS builder
 WORKDIR /app
+
 COPY package*.json ./
-COPY .env* ./
-COPY ecosystem.config.js ./
 RUN npm install
+
 COPY . .
+# 빌드 타임 환경 반영
+ARG ENV_NODE=production
+RUN rm -rf ./.env.local
+COPY ./.env.$ENV_NODE ./.env.production
+
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# 실행 스테이지
-FROM node:20-alpine
-
+# --- runtime ---
+FROM node:24-slim
 WORKDIR /app
-COPY --from=builder /app/.next ./.next
+
+# standalone 런타임과 정적 파일만 복사
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/ecosystem.config.js ./
 COPY --from=builder /app/.env* ./
 
-RUN npm install --production && \
-    npm install -g pm2
-
+ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["pm2-runtime", "start", "ecosystem.config.js"]
+
+# Node 서버 실행
+CMD ["node", "server.js"]
