@@ -3,10 +3,15 @@ import React from 'react';
 import {SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, Flex} from '@chakra-ui/react';
 import InfoPopover from "./InfoPopover.jsx";
 
-const BusinessStats = ({latestBusinessData, totalNew, totalQuit, newPercentChange, quitPercentChange, quitRate}) => {
+const BusinessStats = ({latestBusinessData, totalNew, totalQuit, newPercentChange, quitPercentChange, quitRate, selectedPeriod}) => {
   // 안전하게 값을 표시하기 위한 도우미 함수
   const safeNumber = (value) => {
     return value !== undefined && value !== null ? value.toLocaleString() : '0';
+  };
+
+  // 기간에 따른 텍스트 반환
+  const getPeriodText = () => {
+    return selectedPeriod === 24 ? '24개월' : '12개월';
   };
 
   // 계산값이 유효한지 확인하고 표시하는 함수
@@ -24,7 +29,7 @@ const BusinessStats = ({latestBusinessData, totalNew, totalQuit, newPercentChang
         <StatNumber>{safeNumber(latestBusinessData?.subscriber_cnt)}</StatNumber>
       </Stat>
       <Stat>
-        <StatLabel>당월 / 12개월 입사자 수</StatLabel>
+        <StatLabel>당월 / {getPeriodText()} 입사자 수</StatLabel>
         <StatNumber>{safeNumber(latestBusinessData?.subscriber_new)}/{safeNumber(totalNew)}</StatNumber>
         <StatHelpText>
           <StatArrow type={(newPercentChange || 0) >= 0 ? 'increase' : 'decrease'}/>
@@ -32,7 +37,7 @@ const BusinessStats = ({latestBusinessData, totalNew, totalQuit, newPercentChang
         </StatHelpText>
       </Stat>
       <Stat>
-        <StatLabel>당월 / 12개월 퇴사자 수</StatLabel>
+        <StatLabel>당월 / {getPeriodText()} 퇴사자 수</StatLabel>
         <StatNumber>{safeNumber(latestBusinessData?.subscriber_quit)}/{safeNumber(totalQuit)}</StatNumber>
         <StatHelpText>
           <StatArrow type={(quitPercentChange || 0) >= 0 ? 'increase' : 'decrease'}/>
@@ -43,7 +48,7 @@ const BusinessStats = ({latestBusinessData, totalNew, totalQuit, newPercentChang
         <Flex alignItems="center">
           <StatLabel>퇴사율</StatLabel>
           <InfoPopover
-            content="퇴사율 = (12개월 퇴사자 수 / 전체 가입자 수) * 100"
+            content={`퇴사율 = (${getPeriodText()} 퇴사자 수 / 전체 가입자 수) * 100`}
           />
         </Flex>
         <StatNumber>{quitRate || 0}%</StatNumber>

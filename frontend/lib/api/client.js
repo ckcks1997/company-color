@@ -61,9 +61,10 @@ export async function postReply(hash, value) {
 /**
  * 클라이언트 측에서의 비즈니스 데이터 조회 (SWR/React Query와 함께 사용)
  */
-export async function fetchBusinessData(hash) {
+export async function fetchBusinessData(hash, period=12) {
   try {
-    const response = await fetch(`${API_BASE_URL}/get_business_info?hash=${hash}`);
+    const periodParam = period === 24 ? '2y' : period;
+    const response = await fetch(`${API_BASE_URL}/get_business_info?hash=${hash}&period=${periodParam}`);
     if (!response.ok) {
       throw new Error('Failed to fetch business data');
     }

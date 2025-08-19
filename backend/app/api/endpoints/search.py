@@ -41,7 +41,7 @@ async def search_business(db: SessionDep, params: SearchParams = Depends()):
 
 
 @router.get("/get_business_info", response_model=List[GukminYungumData], summary="회사 상세 정보")
-async def get_business_info(hash: str, db: SessionDep):
+async def get_business_info(db: SessionDep, hash: str, period: Optional[str] = None):
     """
     특정 회사의 국민연금 상세 정보 조회
     
@@ -53,7 +53,7 @@ async def get_business_info(hash: str, db: SessionDep):
     if not hash:
         raise HTTPException(status_code=400, detail="회사 해시값이 필요합니다")
         
-    results = await crud.get_business_info(db, hash)
+    results = await crud.get_business_info(db, hash, period)
     
     if not results:
         raise NotFoundException(detail=f"해당 해시값({hash})의 정보를 찾을 수 없습니다")
