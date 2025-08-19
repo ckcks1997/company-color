@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://companycolor.site/sitemap.xml 
+Sitemap: https://companycolor.xyz/sitemap.xml

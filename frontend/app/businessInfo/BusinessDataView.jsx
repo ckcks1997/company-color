@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { 
   Box, Heading, Text, VStack, Card, CardBody, CardHeader,
-  Divider, Center, Spinner
+  Divider, Center, Spinner, Button, HStack
 } from '@chakra-ui/react';
 import EmployeeChart from "./EmployeeChart";
 import BounceText from "./BounceText";
@@ -13,7 +13,8 @@ import { useBusinessData } from '@/lib/hooks/useBusinessData';
 import { api } from '@/lib/api/api';
 
 export default function BusinessDataView({ hash }) {
-  const { data: businessData, isLoading, error } = useBusinessData(hash);
+  const [selectedPeriod, setSelectedPeriod] = useState(12);
+  const { data: businessData, isLoading, error } = useBusinessData(hash, selectedPeriod);
   const [dartData, setDartData] = useState([]);
   const [latestBusinessData, setLatestBusinessData] = useState({});
   const [quitRate, setQuitRate] = useState(0);
@@ -98,11 +99,14 @@ export default function BusinessDataView({ hash }) {
 
   useEffect(() => {
     if (latestBusinessData?.subscriber_cnt && totalQuit) {
-      // 퇴사율 계산
-      const rate = (totalQuit / latestBusinessData.subscriber_cnt) * 100;
+      // 퇴사율 계산 (2년 기간일 때는 연간 퇴사율로 환산)
+      let rate = (totalQuit / latestBusinessData.subscriber_cnt) * 100;
+      if (selectedPeriod === 24) {
+        rate = rate / 2; // 2년 데이터를 연간 평균으로 환산
+      }
       setQuitRate(Number(rate.toFixed(2)) || 0);
 
-      // 배경색 설정
+      // 배경색 설정 (연간 퇴사율 기준)
       const newBgColor = getBgColor(rate, latestBusinessData.subscriber_cnt);
       setTimeout(() => {
         setBgColor(newBgColor);
@@ -110,7 +114,7 @@ export default function BusinessDataView({ hash }) {
     } else {
       setQuitRate(0);
     }
-  }, [latestBusinessData, totalQuit]);
+  }, [latestBusinessData, totalQuit, selectedPeriod]);
 
   const getBgColor = (rate, totalSubscriber) => {
     if (!totalSubscriber || totalSubscriber < 20) return '';
@@ -160,9 +164,35 @@ export default function BusinessDataView({ hash }) {
       <Box maxWidth="1000px" margin="auto" p={5}>
         <Card>
           <CardHeader>
-            <Heading size='lg' color="blue.600">{latestBusinessData?.company_nm || '회사명 없음'}</Heading>
-            <Text color="gray.500">최근 업데이트: {latestBusinessData?.created_dt || '-'}</Text>
-            <Text color="gray.500">최초 등록일(추정 설립일): {latestBusinessData?.applied_date || '-'}</Text>
+            <VStack spacing={4} align="start">
+              <Box>
+                <Heading size='lg' color="blue.600">{latestBusinessData?.company_nm || '회사명 없음'}</Heading>
+                <Text color="gray.500">최근 업데이트: {latestBusinessData?.created_dt || '-'}</Text>
+                <Text color="gray.500">최초 등록일(추정 설립일): {latestBusinessData?.applied_date || '-'}</Text>
+              </Box>
+              
+              <Box>
+                <Text fontSize="sm" color="gray.600" mb={2}>조회 기간 선택</Text>
+                <HStack spacing={3}>
+                  <Button
+                    size="sm"
+                    variant={selectedPeriod === 12 ? "solid" : "outline"}
+                    colorScheme="blue"
+                    onClick={() => setSelectedPeriod(12)}
+                  >
+                    1년
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={selectedPeriod === 24 ? "solid" : "outline"}
+                    colorScheme="blue"
+                    onClick={() => setSelectedPeriod(24)}
+                  >
+                    2년
+                  </Button>
+                </HStack>
+              </Box>
+            </VStack>
           </CardHeader>
 
           <CardBody>
@@ -174,6 +204,7 @@ export default function BusinessDataView({ hash }) {
                 newPercentChange={newPercentChange}
                 quitPercentChange={quitPercentChange}
                 quitRate={quitRate}
+                selectedPeriod={selectedPeriod}
               />
               <Divider />
 

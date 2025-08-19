@@ -12,15 +12,19 @@ es = Elasticsearch(
 )
 
 
-async def get_business_info(db: Session, hash: str):
+async def get_business_info(db: Session, hash: str, period: str):
     """특정 해시값을 가진 회사의 국민연금 정보"""
     if not hash:
         return []
-        
+
+    search_range = 12
+    if period is not None and period == '2y':
+        search_range = 24
+
     query = (select(GukminYungumData)
              .filter(GukminYungumData.hash == hash)
              .order_by(GukminYungumData.created_dt.desc())
-             .limit(12))
+             .limit(search_range))
     return db.exec(query).all()
 
 
