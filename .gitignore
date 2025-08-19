@@ -1,6 +1,7 @@
 /backend/sqlite
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -8,12 +9,28 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Backend logs
+backend/logs/
+backend/app/logs/
+
+# Cache directories
+backend/app/__pycache__/
+backend/app/**/__pycache__/
+__pycache__/
+
+# HTTP test files
+*.http
+
 node_modules
 dist
 dist-ssr
 *.local
+# 환경변수 파일
 .env
+.env.local
 .env.prod
+.env.production
+.env.docker
 /frontend/.next
 
 # Editor directories and files

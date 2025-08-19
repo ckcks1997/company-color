@@ -1,10 +1,32 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === 'development'
+
+// 번들 분석기 설정
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 const nextConfig = {
+  reactStrictMode: false,
+    output: 'standalone',
   // 이미지 최적화 설정
   images: {
-    domains: ['companycolor.xyz'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'companycolor.xyz',
+      },
+      {
+        protocol: 'https', 
+        hostname: '*.companycolor.xyz',
+      }
+    ],
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000, // 1년
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
   // 보안 헤더 설정
@@ -72,12 +94,11 @@ const nextConfig = {
       },
     ];
   },
-  
-  // 출력 설정
-  output: 'standalone',
-  
-  // 빌드 시 소스맵 비활성화하여 빌드 속도 향상
-  productionBrowserSourceMaps: false,
+  // 압축 설정
+  compress: true,
+
+  // 정적 파일 최적화
+  trailingSlash: false,
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

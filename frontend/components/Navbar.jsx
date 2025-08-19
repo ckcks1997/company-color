@@ -1,51 +1,34 @@
 'use client'
 
-import {Box, Flex, Spacer, Link, Image} from '@chakra-ui/react';
+import {Box, Flex, Spacer, Image} from '@chakra-ui/react';
 import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
-import {useEffect, useState} from "react";
-import {api, authApi} from "../lib/api/api.js"
+import {useEffect, useCallback} from "react";
+import {authApi} from "../lib/api/api.js"
 import useLoadingStore from "../lib/store/loadingStore.js";
 import usePageStore from "../lib/store/pageStore.js";
 
 function Navbar() {
 
   const router = useRouter()
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { setLoading } = useLoadingStore();
-  const { previousLocation, setPreviousLocation,  clearPreviousLocation } = usePageStore()
+  const { previousLocation } = usePageStore()
 
-  const handleKakaoLogin = async() => {
-    authApi.goKakaoLogin()
-  }
-
-  const handleLogout = async() => {
-    authApi.logout();
-    window.location.reload();
-  }
-
-  const handleKakaoCallback = async (code) => {
+  const handleKakaoCallback = useCallback(async (code) => {
     console.log(previousLocation)
     //await navigate(previousLocation);
     setLoading(true); // 로딩 시작
     try {
       let result = await authApi.getAccessToken(code);
       console.log(result)
-      setIsLoggedIn(true);
     } catch (error) {
       console.error('kakao backend 인증 실패', error);
       authApi.logout();
     } finally {
       setLoading(false); // 로딩 종료
     }
-  };
+  }, [previousLocation, setLoading]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, []);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -54,7 +37,7 @@ function Navbar() {
     if (code) {
       handleKakaoCallback(code);
     }
-  }, []);
+  }, [handleKakaoCallback]);
 
   return (
     <Box py={4} position="sticky" bottom="0" width="100%">

@@ -37,7 +37,40 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // 에러 처리 로직
+    // 에러 처리
+    if (error.response) {
+      // 서버 응답이 있는 경우
+      const { status, data } = error.response;
+      
+      switch (status) {
+        case 400:
+          console.error('잘못된 요청:', data.detail || '요청 형식을 확인해주세요');
+          break;
+        case 401:
+          console.error('인증 오류:', '로그인이 필요합니다');
+          // 토큰 제거
+          localStorage.removeItem('access_token');
+          break;
+        case 403:
+          console.error('권한 오류:', '접근 권한이 없습니다');
+          break;
+        case 404:
+          console.error('리소스 없음:', data.detail || '요청한 정보를 찾을 수 없습니다');
+          break;
+        case 500:
+          console.error('서버 오류:', data.detail || '서버에 문제가 발생했습니다');
+          break;
+        default:
+          console.error('오류 발생:', data.detail || '알 수 없는 오류가 발생했습니다');
+      }
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답이 없는 경우
+      console.error('네트워크 오류:', '서버에 연결할 수 없습니다');
+    } else {
+      // 요청 설정 중 오류가 발생한 경우
+      console.error('요청 오류:', error.message);
+    }
+    
     return Promise.reject(error);
   }
 );
