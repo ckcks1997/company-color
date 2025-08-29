@@ -1,5 +1,4 @@
 'use client'
-import React from 'react';
 import { SimpleGrid, Box, Text } from '@chakra-ui/react';
 
 const DartData = ({ data }) => {

@@ -25,19 +25,31 @@ async def search_business(db: SessionDep, params: SearchParams = Depends()):
     Returns:
         검색 결과 및 페이지네이션 정보
     """
-    if not params.business_name:
-        raise HTTPException(status_code=400, detail="검색어를 입력해주세요")
-        
-    total_count, results = await crud.search_companies_elastic(params)
-    total_pages = (total_count + params.items_per_page - 1) // params.items_per_page if total_count > 0 else 0
+    try:
+        if not params.business_name or not params.business_name.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="검색어를 입력해주세요"
+            )
+            
+        total_count, results = await crud.search_companies_elastic(params)
+        total_pages = (total_count + params.items_per_page - 1) // params.items_per_page if total_count > 0 else 0
 
-    return PaginatedResponse(
-        items=results,
-        total_count=total_count,
-        page=params.page,
-        items_per_page=params.items_per_page,
-        total_pages=total_pages
-    )
+        return PaginatedResponse(
+            items=results,
+            total_count=total_count,
+            page=params.page,
+            items_per_page=params.items_per_page,
+            total_pages=total_pages
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"회사 검색 중 오류 발생: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        )
 
 
 @router.get("/get_business_info", response_model=List[GukminYungumData], summary="회사 상세 정보")
@@ -50,15 +62,27 @@ async def get_business_info(db: SessionDep, hash: str, period: Optional[str] = N
     Returns:
         회사의 국민연금 데이터 목록
     """
-    if not hash:
-        raise HTTPException(status_code=400, detail="회사 해시값이 필요합니다")
+    try:
+        if not hash or not hash.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="회사 해시값이 필요합니다"
+            )
+            
+        results = await crud.get_business_info(db, hash, period)
         
-    results = await crud.get_business_info(db, hash, period)
-    
-    if not results:
-        raise NotFoundException(detail=f"해당 해시값({hash})의 정보를 찾을 수 없습니다")
-        
-    return results
+        if not results:
+            raise NotFoundException(detail=f"해당 해시값({hash})의 정보를 찾을 수 없습니다")
+            
+        return results
+    except (HTTPException, NotFoundException):
+        raise
+    except Exception as e:
+        logger.error(f"회사 정보 조회 중 오류 발생: hash={hash}, error={str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="회사 정보 조회 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        )
 
 
 @router.get("/get_rank_info", response_model=List[GukminYungumData], summary="순위 정보")

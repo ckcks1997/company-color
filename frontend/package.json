@@ -4,36 +4,37 @@
   "version": "0.2.0",
   "scripts": {
     "dev": "next dev -p 4000",
-    "build": "next build --no-lint",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
-    "@chakra-ui/react": "^2.10.5",
+    "@chakra-ui/react": "^2.10.9",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@tanstack/react-query": "^5.84.1",
-    "apexcharts": "^4.7.0",
+    "@tanstack/react-query": "^5.85.5",
+    "apexcharts": "^5.3.3",
     "axios": "^1.11.0",
-    "framer-motion": "^11.18.2",
-    "lucide-react": "^0.536.0",
-    "next": "^15.4",
-    "npm-check-updates": "^18.0.2",
+    "framer-motion": "^12.23.12",
+    "lucide-react": "^0.540.0",
+    "next": "^15.5.0",
+    "react": "^19",
     "react-apexcharts": "^1.7.0",
     "react-dom": "^19",
     "react-error-boundary": "^6.0.0",
     "react-icons": "^5.5.0",
     "react-spinners": "^0.17.0",
     "swiper": "^11.2.10",
-    "zustand": "^5.0.7"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "^5.84.1",
+    "@next/bundle-analyzer": "^15.5.0",
+    "@tanstack/react-query-devtools": "^5.85.5",
     "@types/react": "^19",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20"
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "npm-check-updates": "^18.0.2"
   }
 }

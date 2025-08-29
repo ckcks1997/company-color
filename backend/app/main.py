@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
 import time
 from app.core.exceptions import (
     CustomHTTPException,
@@ -27,13 +28,25 @@ redoc_url = None if IS_PRODUCTION else "/redoc"
 # SQL 로깅 설정
 setup_sql_logging()
 
+# Lifespan 이벤트 핸들러
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 애플리케이션 시작 시
+    logger.info("애플리케이션 시작")
+    await connect_database()
+    yield
+    # 애플리케이션 종료 시
+    logger.info("애플리케이션 종료")
+    await disconnect_database()
+
 # FastAPI 애플리케이션 생성
 app = FastAPI(
     title="비즈니스 정보 API",
     description="국민연금 가입 회사 정보 및 댓글 서비스를 제공하는 API",
     version="1.0.0",
     docs_url=docs_url, 
-    redoc_url=redoc_url
+    redoc_url=redoc_url,
+    lifespan=lifespan
 )
 
 # 미들웨어: 요청 처리 시간 측정
@@ -68,20 +81,14 @@ async def health_check():
     """서버 상태 확인 엔드포인트"""
     return {"status": "ok", "environment": settings["ENVIRONMENT"]}
 
-# 애플리케이션 시작 시 이벤트
-@app.on_event("startup")
-async def startup_event():
-    """애플리케이션 시작 시 실행할 작업"""
-    logger.info("애플리케이션 시작")
-    await connect_database()
-
-# 애플리케이션 종료 시 이벤트
-@app.on_event("shutdown")
-async def shutdown_event():
-    """애플리케이션 종료 시 실행할 작업"""
-    logger.info("애플리케이션 종료")
-    await disconnect_database()
-
 # 애플리케이션 직접 실행 시
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
+    # 프로덕션 환경에서는 reload=False 사용
+    is_development = settings["ENVIRONMENT"] == "development"
+    uvicorn.run(
+        "app.main:app", 
+        host="0.0.0.0", 
+        port=8001, 
+        reload=is_development,
+        access_log=is_development
+    )

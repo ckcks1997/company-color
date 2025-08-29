@@ -1,6 +1,6 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic'
+import { useEffect, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -14,12 +14,12 @@ const EmployeeChart = ({ data }) => {
     setIsBrowser(true);
   }, []);
 
-  const calculateYAxisProps = (maxTotal, maxQuit) => {
+  const calculateYAxisProps = useCallback((maxTotal, maxQuit) => {
     let roundedMax = 0;
     roundedMax = calculateQuitMaxYAxisProps(maxTotal) / 5;
     if (maxQuit > roundedMax) return maxQuit;
     return roundedMax;
-  };
+  }, []);
 
   const calculateQuitMinYAxisProps = (minValue) => {
     let roundedMin = 0;
@@ -225,7 +225,7 @@ const EmployeeChart = ({ data }) => {
         { name: "전체인원", type: 'line', data: totalEmployees }
       ]);
     }
-  }, [data]);
+  }, [data, calculateYAxisProps]);
 
   if (!isBrowser) return null;
   if (!Array.isArray(data) || data.length === 0) {

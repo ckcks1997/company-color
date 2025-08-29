@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Box, Heading, Flex, Input, IconButton, ButtonGroup, Button,
+  Box, Heading, Input, IconButton, ButtonGroup, Button,
   Stack, HStack
 } from '@chakra-ui/react';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import RankTable from './RankTable';
 
 export default function Rank() {
