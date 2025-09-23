@@ -96,6 +96,7 @@ export default function RootLayout({children}) {
             }
           `}
         </Script>
+        <meta name="naver-site-verification" content="64e45423b47966980449eb5d8c459ed5fc549f7f" />
       </head>
       <body>
         <Providers>
