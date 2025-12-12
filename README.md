@@ -25,15 +25,15 @@ COMPANY COLOR 사이트와 함께 더 스마트한 구직 활동을 시작하세
 
 ---
 - FRONT/BACKEND 
-  - Next 15 + React 19
-  - fastAPI 0.115.x
+  - Next 16 + React 19
+  - fastAPI
   
 - 서버 정보
   - VM: ~~Azure~~ Oracle Cloud
   - 웹 서버: Nginx (최신 버전)
   - DB: 
-    - MariaDB 11.4
-    - Elasticsearch 8.17.x
+    - MariaDB 11.8
+    - Elasticsearch 9
   - 도메인: Namecheap
   - SSL: ~~ZeroSSL~~ Let's Encrypt
 

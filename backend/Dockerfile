@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app

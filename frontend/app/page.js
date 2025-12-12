@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {
     Flex, Input, Box, Select, Text,
@@ -12,18 +12,7 @@ import {regions} from "../constants/regions.js";
 function Home() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRegion, setSelectedRegion] = useState(regions[0].value);
-    const [isSiteDomain, setIsSiteDomain] = useState(false);
     const router = useRouter();
-
-    // 마운트 후에 호스트네임 체크
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const host = window.location.hostname;
-            if (host === 'companycolor.site') {
-                setIsSiteDomain(true);
-            }
-        }
-    }, []);
 
     const handleSearch = () => {
         if (!searchTerm.trim()) return;
@@ -50,17 +39,6 @@ function Home() {
             alignItems="center"
             p={8}
         >
-            {isSiteDomain && (
-                <Text
-                    fontSize="l"
-                    align="center"
-                    color="#333"
-                    mb={4}
-                >
-                    중요공지: 8/26일 이후 도메인이 companycolor.site 에서 companycolor.xyz로 변경됩니다.
-                </Text>
-            )}
-
             <Box
                 width="100%"
                 maxWidth="500px"
