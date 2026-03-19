@@ -4,22 +4,33 @@ from sqlalchemy import not_, or_
 from app.dtos import SearchParams, SearchResponse
 from app.models import GukminYungumData, Corpcode
 from app.core.config import settings
+from app.core.logging_config import logger
+from app.core.constants import (
+    DEFAULT_SEARCH_PERIOD, EXTENDED_SEARCH_PERIOD,
+    RANK_RESULT_LIMIT, RANK_EXCLUDED_COMPANY_PATTERNS,
+    DART_CORP_SEARCH_LIMIT, COMPANY_NAME_STRIP_PATTERNS,
+    ES_MIN_SCORE, ES_INDEX_NAME,
+)
 
 es = Elasticsearch(
     [settings["ELASTIC_HOST"]],
-    http_auth=(settings["ELASTIC_USERNAME"], settings["ELASTIC_PASSWORD"]),
+    basic_auth=(settings["ELASTIC_USERNAME"], settings["ELASTIC_PASSWORD"]),
     verify_certs=False,
+    ssl_show_warn=False,
 )
+
+
+def normalize_company_name(name: str) -> str:
+    """회사명 정규화 (법인 접두/접미사 제거)"""
+    name = name.strip()
+    for pattern in COMPANY_NAME_STRIP_PATTERNS:
+        name = name.replace(pattern, "")
+    return name
 
 
 async def get_business_info(db: Session, hash: str, period: str):
     """특정 해시값을 가진 회사의 국민연금 정보"""
-    if not hash:
-        return []
-
-    search_range = 12
-    if period is not None and period == '2y':
-        search_range = 24
+    search_range = EXTENDED_SEARCH_PERIOD if period == '2y' else DEFAULT_SEARCH_PERIOD
 
     query = (select(GukminYungumData)
              .filter(GukminYungumData.hash == hash)
@@ -30,28 +41,23 @@ async def get_business_info(db: Session, hash: str, period: str):
 
 async def get_rank_info(db: Session, ymonth: str, type: str):
     """특정 년월 및 타입에 따른 국민연금 가입자 순위"""
-    if not ymonth or not type:
-        return []
-        
     order_column = (
         GukminYungumData.subscriber_quit if type == 'quit'
         else GukminYungumData.subscriber_new
+    )
+
+    excluded_conditions = or_(
+        *[GukminYungumData.company_nm.like(pattern) for pattern in RANK_EXCLUDED_COMPANY_PATTERNS]
     )
 
     query = (
         select(GukminYungumData)
         .filter(
             GukminYungumData.created_dt == ymonth,
-            not_(
-                or_(
-                    GukminYungumData.company_nm.like('쿠팡풀필먼트%'),  # 쿠팡물류센터 제외
-                    GukminYungumData.company_nm.like('중앙경찰학교(신임)')  # 특수 케이스 제외
-                )
-            )
-
+            not_(excluded_conditions)
         )
         .order_by(order_column.desc())
-        .limit(50)
+        .limit(RANK_RESULT_LIMIT)
     )
 
     return db.exec(query).all()
@@ -59,26 +65,19 @@ async def get_rank_info(db: Session, ymonth: str, type: str):
 
 async def get_dart_info(db: Session, corp_name: str):
     """회사명으로 DART 정보 검색"""
-    if not corp_name:
-        return []
-        
-    # 회사명 전처리
-    corp_name = corp_name.strip().replace("(주)", "").replace("주식회사", "")
-    
+    corp_name = normalize_company_name(corp_name)
+
     query = (select(Corpcode)
              .filter(Corpcode.corp_name == corp_name)
-             .limit(12))
+             .limit(DART_CORP_SEARCH_LIMIT))
     return db.exec(query).all()
 
 
 async def search_companies_elastic(params: SearchParams):
     """Elasticsearch를 사용하여 회사 정보 검색"""
-    if not params.business_name:
-        return 0, []
-        
     must_conditions = []
     must_not_conditions = []
-    
+
     # 지역 선택시
     if params.location:
         must_conditions.append({
@@ -86,7 +85,7 @@ async def search_companies_elastic(params: SearchParams):
                 "Location": params.location
             }
         })
-        
+
     # 가입자 0인 데이터 제외
     must_not_conditions.append({
         "term": {
@@ -154,11 +153,11 @@ async def search_companies_elastic(params: SearchParams):
 
     try:
         response = es.search(
-            index="company_color_search_idx",
+            index=ES_INDEX_NAME,
             body={
                 "query": query,
                 "sort": sort,
-                "min_score": 3.0,
+                "min_score": ES_MIN_SCORE,
                 "from": (params.page - 1) * params.items_per_page,
                 "size": params.items_per_page
             }
@@ -175,6 +174,5 @@ async def search_companies_elastic(params: SearchParams):
 
         return total_count, results
     except Exception as e:
-        from app.core.logging_config import logger
         logger.error(f"Elasticsearch search error: {str(e)}")
         return 0, []

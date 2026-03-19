@@ -17,12 +17,6 @@ async def post_reply(reply: Reply, db: SessionDep):
     Returns:
         등록된 댓글 정보
     """
-    if not reply.hash:
-        raise BusinessException(detail="회사 해시값이 필요합니다")
-        
-    if not reply.value or not reply.value.strip():
-        raise BusinessException(detail="댓글 내용을 입력해주세요")
-        
     try:
         await save_reply(db, reply)
         logger.info(f"댓글 등록 성공: hash={reply.hash}")

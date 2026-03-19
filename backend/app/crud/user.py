@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlmodel import Session, select
-from fastapi import HTTPException
 from app.models import Users
 from app.core.logging_config import logger
+from app.core.exceptions import BusinessException
 
 async def get_or_create_user(db: Session, user_info: dict):
     """
@@ -20,7 +20,7 @@ async def get_or_create_user(db: Session, user_info: dict):
     """
     if not user_info or "id" not in user_info:
         logger.error("Invalid user_info received from social login")
-        raise HTTPException(status_code=400, detail="Invalid user information")
+        raise BusinessException(detail="Invalid user information")
         
     social_key = str(user_info["id"])
     stmt = select(Users).where(Users.SOCIAL_KEY == social_key)
@@ -56,4 +56,4 @@ async def get_or_create_user(db: Session, user_info: dict):
     except Exception as e:
         db.rollback()
         logger.error(f"Error creating/updating user: {str(e)}")
-        raise HTTPException(status_code=500, detail="Database error")
+        raise

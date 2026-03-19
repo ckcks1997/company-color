@@ -7,7 +7,7 @@ import os
 # hash 업데이트
 #UPDATE GUKMIN_YUNGUM_DATA
 #SET hash = MD5(CONCAT(COMPANY_NM, '|', BUSINESS_NUM, '|', BUSINESS_LOCATION))
-#where hash = null;
+#where hash is null;
 
 # elastic 데이터 세팅
 # INSERT IGNORE INTO COMPANY_INFO
@@ -21,10 +21,11 @@ import os
 # FROM GUKMIN_YUNGUM_DATA;
 
 # 불필요한 데이터 삭제
-#delete from COMPANY_INFO WHERE COMPANY_NM like '%(일용%';
-#delete from COMPANY_INFO WHERE COMPANY_NM like '%/일용%';
-#delete from COMPANY_INFO WHERE COMPANY_NM like '%(상용%';
-#delete from COMPANY_INFO WHERE COMPANY_NM like '%/상용%';
+#delete from COMPANY_INFO WHERE COMPANY_NM like '%(일용%' or  COMPANY_NM like '%/일용%' or  COMPANY_NM like '%/ 일용%'
+#or COMPANY_NM like '%-일용%'
+#OR  COMPANY_NM like '%(상용%' or COMPANY_NM like '%/상용%'  or COMPANY_NM like '%/건설일용%'
+#or COMPANY_NM like '%-건설일용%' or COMPANY_NM like '% 건설일용%' or COMPANY_NM like '%(건설일용%'
+;
 
 # SQLite -> Maria 이동 관련 코드
 def sqlite_connect(db_file):

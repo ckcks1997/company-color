@@ -1,8 +1,8 @@
 import httpx
-from fastapi import HTTPException
 from typing import List, Dict, Any, Optional
 from app.core.logging_config import logger
 from app.core.config import settings
+from app.core.constants import DART_DEFAULT_START_DATE, DART_FILTER_KEYWORDS, DART_PAGE_COUNT
 
 class DartClient:
     """DART 오픈 API 클라이언트"""
@@ -14,7 +14,7 @@ class DartClient:
             raise ValueError("DART API 키가 설정되지 않았습니다.")
         self.base_url = "https://opendart.fss.or.kr/api"
         
-    async def get_disclosure_list(self, corp_code: str, start_date: str = "20230101") -> List[Dict[str, Any]]:
+    async def get_disclosure_list(self, corp_code: str, start_date: str = DART_DEFAULT_START_DATE) -> List[Dict[str, Any]]:
         """
         특정 기업의 공시 목록을 가져옵니다.
         
@@ -34,7 +34,7 @@ class DartClient:
             "corp_code": corp_code,
             "bgn_de": start_date,
             "page_no": 1,
-            "page_count": 100
+            "page_count": DART_PAGE_COUNT
         }
         
         try:
@@ -77,6 +77,6 @@ class DartClient:
             필터링된 공시 문서 리스트
         """
         if not keywords:
-            keywords = ["감사", "해산", "분기보고서", "연1회공시"]
+            keywords = DART_FILTER_KEYWORDS
             
         return [doc for doc in documents if any(keyword in doc.get("report_nm", "") for keyword in keywords)]
