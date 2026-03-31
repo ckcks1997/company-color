@@ -22,9 +22,9 @@ es = Elasticsearch(
 
 def normalize_company_name(name: str) -> str:
     """회사명 정규화 (법인 접두/접미사 제거)"""
-    name = name.strip()
     for pattern in COMPANY_NAME_STRIP_PATTERNS:
         name = name.replace(pattern, "")
+    name = name.strip()
     return name
 
 
