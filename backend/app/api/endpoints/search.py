@@ -52,7 +52,7 @@ async def get_business_info(db: SessionDep, hash: str, period: Optional[str] = N
     특정 회사의 국민연금 상세 정보 조회
 
     - **hash**: 회사 고유 해시값 (필수)
-    - **period**: 조회 기간 (선택, '2y'로 설정 시 24개월, 기본값은 12개월)
+    - **period**: 조회 기간 (선택, '2y'=24개월, '3y'=36개월, 기본값=12개월)
 
     Returns:
         회사의 국민연금 데이터 목록

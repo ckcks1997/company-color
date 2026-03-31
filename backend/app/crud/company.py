@@ -6,7 +6,7 @@ from app.models import GukminYungumData, Corpcode
 from app.core.config import settings
 from app.core.logging_config import logger
 from app.core.constants import (
-    DEFAULT_SEARCH_PERIOD, EXTENDED_SEARCH_PERIOD,
+    DEFAULT_SEARCH_PERIOD, EXTENDED_SEARCH_PERIOD, MAX_SEARCH_PERIOD,
     RANK_RESULT_LIMIT, RANK_EXCLUDED_COMPANY_PATTERNS,
     DART_CORP_SEARCH_LIMIT, COMPANY_NAME_STRIP_PATTERNS,
     ES_MIN_SCORE, ES_INDEX_NAME,
@@ -30,7 +30,12 @@ def normalize_company_name(name: str) -> str:
 
 async def get_business_info(db: Session, hash: str, period: str):
     """특정 해시값을 가진 회사의 국민연금 정보"""
-    search_range = EXTENDED_SEARCH_PERIOD if period == '2y' else DEFAULT_SEARCH_PERIOD
+    if period == '3y':
+        search_range = MAX_SEARCH_PERIOD
+    elif period == '2y':
+        search_range = EXTENDED_SEARCH_PERIOD
+    else:
+        search_range = DEFAULT_SEARCH_PERIOD
 
     query = (select(GukminYungumData)
              .filter(GukminYungumData.hash == hash)
