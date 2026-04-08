@@ -96,7 +96,7 @@ export async function postReply(hash, value) {
  */
 export async function fetchBusinessData(hash, period=12) {
   try {
-    const periodParam = period === 24 ? '2y' : period;
+    const periodParam = period === 36 ? '3y' : period === 24 ? '2y' : period;
     const response = await fetch(`${API_BASE_URL}/get_business_info?hash=${hash}&period=${periodParam}`);
     if (!response.ok) {
       throw new Error('Failed to fetch business data');

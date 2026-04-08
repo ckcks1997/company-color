@@ -1,3 +1,7 @@
+import logging
+import traceback
+from datetime import datetime
+
 from fastapi import HTTPException, status, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -68,11 +72,9 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     Returns:
         JSONResponse: 표준화된 오류 응답
     """
-    from datetime import datetime
-    
     error_code = getattr(exc, "error_code", None)
     status_code = exc.status_code
-    
+
     # 로깅
     log_level = logging.WARNING if status_code < 500 else logging.ERROR
     logger.log(
@@ -107,9 +109,6 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
     Returns:
         JSONResponse: 표준화된 오류 응답
     """
-    from datetime import datetime
-    import traceback
-    
     # 로깅
     logger.error(
         f"Unhandled exception: {str(exc)} - Path: {request.url.path}\n{traceback.format_exc()}"
@@ -127,7 +126,3 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=response.dict(exclude_none=True)
     )
-
-
-# 의존성 설정
-import logging

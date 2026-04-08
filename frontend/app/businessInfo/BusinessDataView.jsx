@@ -99,10 +99,12 @@ export default function BusinessDataView({ hash }) {
 
   useEffect(() => {
     if (latestBusinessData?.subscriber_cnt && totalQuit) {
-      // 퇴사율 계산 (2년 기간일 때는 연간 퇴사율로 환산)
+      // 퇴사율 계산 (2년/3년 기간일 때는 연간 퇴사율로 환산)
       let rate = (totalQuit / latestBusinessData.subscriber_cnt) * 100;
       if (selectedPeriod === 24) {
         rate = rate / 2; // 2년 데이터를 연간 평균으로 환산
+      } else if (selectedPeriod === 36) {
+        rate = rate / 3; // 3년 데이터를 연간 평균으로 환산
       }
       setQuitRate(Number(rate.toFixed(2)) || 0);
 
@@ -189,6 +191,14 @@ export default function BusinessDataView({ hash }) {
                     onClick={() => setSelectedPeriod(24)}
                   >
                     2년
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={selectedPeriod === 36 ? "solid" : "outline"}
+                    colorScheme="blue"
+                    onClick={() => setSelectedPeriod(36)}
+                  >
+                    3년
                   </Button>
                 </HStack>
               </Box>

@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch, helpers
 import time
 
 es = Elasticsearch(
-    ['https://127.0.0.1:9200'],
+    ['http://127.0.0.1:9200'],
     timeout=30,  # 30초 타임아웃
     max_retries=1,
     retry_on_timeout=True,
@@ -101,6 +101,8 @@ def recreate_index():
         index=INDEX_NAME,
         body={
             "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 0,
                 "analysis": {
                     "char_filter": {
                         "remove_corp": {
