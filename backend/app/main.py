@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import router as api_router
 from app.core.config import settings
 from app.core.logging_config import logger, setup_sql_logging
-from app.core.database import connect_database, disconnect_database
 from dotenv import load_dotenv
 import uvicorn
 
@@ -31,13 +30,9 @@ setup_sql_logging()
 # Lifespan 이벤트 핸들러
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 애플리케이션 시작 시
     logger.info("애플리케이션 시작")
-    await connect_database()
     yield
-    # 애플리케이션 종료 시
     logger.info("애플리케이션 종료")
-    await disconnect_database()
 
 # FastAPI 애플리케이션 생성
 app = FastAPI(
