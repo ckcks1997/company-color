@@ -3,3 +3,4 @@ from .tGukminYungumData import GukminYungumData
 from .tUsers import Users
 from .tCoprcode import Corpcode
 from .tInfoReply import InfoReply
+from .tFavorites import Favorites

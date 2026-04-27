@@ -58,10 +58,16 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(CustomHTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
-# CORS 미들웨어 설정
+# CORS 미들웨어 설정 — 공백/빈 항목을 안전하게 정리
+_allowed_origins = [
+    origin.strip()
+    for origin in settings["ALLOW_ORIGINS"].split(",")
+    if origin.strip()
+]
+logger.info(f"CORS allow_origins = {_allowed_origins}")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(origin) for origin in settings["ALLOW_ORIGINS"].split(',')],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

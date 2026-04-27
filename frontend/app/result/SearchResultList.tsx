@@ -14,6 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useSearchResults } from '@/lib/hooks/useSearchResults'
+import FavoriteToggle from '@/components/FavoriteToggle'
 
 interface SearchResultListProps {
   businessName: string
@@ -92,9 +93,12 @@ export default function SearchResultList({
             cursor="pointer"
           >
             <VStack align="stretch" spacing={3}>
-              <Heading size="md" color="blue.600">
-                {value.company_nm}
-              </Heading>
+              <Flex alignItems="center" justifyContent="space-between">
+                <Heading size="md" color="blue.600">
+                  {value.company_nm}
+                </Heading>
+                <FavoriteToggle hash={value.hash} companyNm={value.company_nm} />
+              </Flex>
               <Flex alignItems="center" justifyContent="space-between">
                 <Badge colorScheme="blue">{value.location}</Badge>
                 <Text fontSize="0.8rem" color="gray.600">

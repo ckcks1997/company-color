@@ -19,6 +19,7 @@ import EmployeeChart from './EmployeeChart'
 import BounceText from './BounceText'
 import BusinessStats from './BusinessStats'
 import DartData from './DartData'
+import FavoriteToggle from '@/components/FavoriteToggle'
 import { useBusinessData } from '@/lib/hooks/useBusinessData'
 import { useDartData } from '@/lib/hooks/useDartData'
 import type { BusinessDataItem } from '@/lib/api/types'
@@ -170,9 +171,18 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
           <CardHeader>
             <VStack spacing={4} align="start">
               <Box>
-                <Heading size="lg" color="blue.600">
-                  {latestBusinessData?.company_nm || '회사명 없음'}
-                </Heading>
+                <HStack spacing={2} align="center">
+                  <Heading size="lg" color="blue.600">
+                    {latestBusinessData?.company_nm || '회사명 없음'}
+                  </Heading>
+                  {latestBusinessData?.hash && (
+                    <FavoriteToggle
+                      hash={latestBusinessData.hash}
+                      companyNm={latestBusinessData.company_nm}
+                      size="md"
+                    />
+                  )}
+                </HStack>
                 <Text color="gray.500">
                   최근 업데이트: {latestBusinessData?.created_dt || '-'}
                 </Text>

@@ -9,6 +9,7 @@ COPY . .
 # 빌드 타임 환경 반영
 ARG ENV_NODE=production
 RUN rm -rf ./.env.local
+RUN rm -rf ./.env.development
 COPY ./.env.$ENV_NODE ./.env.production
 
 ENV NEXT_TELEMETRY_DISABLED=1
