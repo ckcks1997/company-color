@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   Box,
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -20,6 +19,7 @@ import BounceText from './BounceText'
 import BusinessStats from './BusinessStats'
 import DartData from './DartData'
 import FavoriteToggle from '@/components/FavoriteToggle'
+import PeriodSwitch from '@/components/PeriodSwitch'
 import { useBusinessData } from '@/lib/hooks/useBusinessData'
 import { useDartData } from '@/lib/hooks/useDartData'
 import type { BusinessDataItem } from '@/lib/api/types'
@@ -27,6 +27,12 @@ import type { BusinessDataItem } from '@/lib/api/types'
 interface BusinessDataViewProps {
   hash: string
 }
+
+const PERIOD_OPTIONS = [
+  { value: 12, label: '1년' },
+  { value: 24, label: '2년' },
+  { value: 36, label: '3년' },
+] as const
 
 const calculatePercentChange = (
   current: number | null | undefined,
@@ -45,7 +51,7 @@ const calculatePercentChange = (
 
 const getBgColor = (rate: number, totalSubscriber: number | null | undefined): string => {
   if (!totalSubscriber || totalSubscriber < 20) return 'gray.50'
-  if (rate < 15) return 'blue.400'
+  if (rate < 15) return 'blue.100'
   if (rate < 20) return 'green.100'
   if (rate < 30) return 'orange.100'
   if (rate < 50) return 'red.200'
@@ -66,7 +72,13 @@ const getBgGradientColor = (
 
 export default function BusinessDataView({ hash }: BusinessDataViewProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<number>(12)
-  const { data: businessData, isLoading, error } = useBusinessData(hash, selectedPeriod)
+  const {
+    data: businessData,
+    isLoading,
+    isFetching,
+    isPlaceholderData,
+    error,
+  } = useBusinessData(hash, selectedPeriod)
 
   // 정렬된 데이터와 최신 행은 businessData 에서 직접 derive
   const sortedData = useMemo<BusinessDataItem[]>(() => {
@@ -83,7 +95,9 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
   )
 
   // DART 데이터는 회사명을 키로 React Query 가 캐싱
-  const { data: dartData = [] } = useDartData(latestBusinessData?.company_nm)
+  const { data: dartData = [], isLoading: isDartLoading } = useDartData(
+    latestBusinessData?.company_nm
+  )
 
   // 새 회사로 진입했을 때 페이지 상단으로 스크롤 (외부 시스템 동기화)
   useEffect(() => {
@@ -163,11 +177,23 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
       bg={bgColor}
       bgGradient={bgGradientColor}
       minHeight="calc(100vh - 62px)"
-      transition="all 2s ease"
+      transition="all 0.5s ease"
     >
       {quitRate > 100 && <BounceText />}
-      <Box maxWidth="1000px" margin="auto" p={5}>
-        <Card>
+      <Box
+        maxWidth="1000px"
+        margin="auto"
+        p={5}
+        // placeholder 데이터(이전 period 결과)를 보여주는 동안 살짝 dim — 새 데이터로 교체될
+        opacity={isPlaceholderData ? 0.6 : 1}
+        transition="opacity 0.2s ease"
+        pointerEvents={isFetching && isPlaceholderData ? 'none' : 'auto'}
+      >
+        <Card
+          bg="whiteAlpha.800"
+          borderRadius="2xl"
+          boxShadow="0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(250, 250, 250, 0.2)"
+        >
           <CardHeader>
             <VStack spacing={4} align="start">
               <Box>
@@ -195,32 +221,11 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
                 <Text fontSize="sm" color="gray.600" mb={2}>
                   조회 기간 선택
                 </Text>
-                <HStack spacing={3}>
-                  <Button
-                    size="sm"
-                    variant={selectedPeriod === 12 ? 'solid' : 'outline'}
-                    colorScheme="blue"
-                    onClick={() => setSelectedPeriod(12)}
-                  >
-                    1년
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={selectedPeriod === 24 ? 'solid' : 'outline'}
-                    colorScheme="blue"
-                    onClick={() => setSelectedPeriod(24)}
-                  >
-                    2년
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={selectedPeriod === 36 ? 'solid' : 'outline'}
-                    colorScheme="blue"
-                    onClick={() => setSelectedPeriod(36)}
-                  >
-                    3년
-                  </Button>
-                </HStack>
+                <PeriodSwitch
+                  options={PERIOD_OPTIONS}
+                  value={selectedPeriod}
+                  onChange={setSelectedPeriod}
+                />
               </Box>
             </VStack>
           </CardHeader>
@@ -258,10 +263,14 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
                 <Heading size="md" mb={4}>
                   DART 문서 조회
                 </Heading>
-                {dartData && dartData.length > 0 ? (
+                {isDartLoading || !latestBusinessData?.company_nm ? (
+                  <Center py={8}>
+                    <Spinner color="blue.500" thickness="3px" size="md" />
+                  </Center>
+                ) : dartData.length > 0 ? (
                   <DartData data={dartData} />
                 ) : (
-                  <Text>DART 문서 데이터가 없습니다.</Text>
+                  <Text color="gray.500">DART 문서 데이터가 없습니다.</Text>
                 )}
               </Box>
             </VStack>

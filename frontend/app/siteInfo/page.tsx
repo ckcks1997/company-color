@@ -76,7 +76,11 @@ COMPANY COLOR은(는) 수집한 개인정보를 다음의 목적을 위해 활�
           padding={{ base: 6, md: 30 }}
           margin="0 auto"
           borderRadius="16px"
-          background="white"
+          bg="whiteAlpha.800"
+          backdropFilter="blur(14px)"
+          border="1px solid"
+          borderColor="whiteAlpha.500"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
         >
           <Text fontWeight="700" fontSize="1.4rem" mb="2">
             COMPANY COLOR 란?
@@ -96,7 +100,11 @@ COMPANY COLOR은(는) 수집한 개인정보를 다음의 목적을 위해 활�
           padding={{ base: 6, md: 30 }}
           margin="0 auto"
           borderRadius="16px"
-          background="white"
+          bg="whiteAlpha.800"
+          backdropFilter="blur(14px)"
+          border="1px solid"
+          borderColor="whiteAlpha.500"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
         >
           <Text fontWeight="700" fontSize="1.4rem" mb="2">
             사이트의 기능
@@ -116,7 +124,11 @@ COMPANY COLOR은(는) 수집한 개인정보를 다음의 목적을 위해 활�
           padding={{ base: 6, md: 30 }}
           margin="0 auto"
           borderRadius="16px"
-          background="white"
+          bg="whiteAlpha.800"
+          backdropFilter="blur(14px)"
+          border="1px solid"
+          borderColor="whiteAlpha.500"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
         >
           <Text fontWeight="700" fontSize="1.4rem" mb="2">
             데이터 업데이트 주기
@@ -136,7 +148,11 @@ COMPANY COLOR은(는) 수집한 개인정보를 다음의 목적을 위해 활�
           padding={{ base: 6, md: 30 }}
           margin="0 auto"
           borderRadius="16px"
-          background="white"
+          bg="whiteAlpha.800"
+          backdropFilter="blur(14px)"
+          border="1px solid"
+          borderColor="whiteAlpha.500"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
         >
           <Text fontWeight="700" fontSize="1.4rem" mb="2">
             개인정보 취급방침

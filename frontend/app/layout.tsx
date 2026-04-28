@@ -1,6 +1,7 @@
 import { Providers } from '@/components/Providers'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import AuroraBackground from '@/components/AuroraBackground'
 import { Suspense, type ReactNode } from 'react'
 import { ClockLoader } from 'react-spinners'
 import './globals.css'
@@ -110,7 +111,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </head>
       <body>
         <Providers>
-          <header>
+          <AuroraBackground />
+          <header style={{ position: 'relative', zIndex: 10 }}>
             <Navbar />
           </header>
           <Suspense
@@ -120,7 +122,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               </div>
             }
           >
-            <main>{children}</main>
+            <main style={{ position: 'relative', zIndex: 1 }}>{children}</main>
           </Suspense>
           <Footer />
         </Providers>

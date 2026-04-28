@@ -82,19 +82,24 @@ export default function SearchResultList({
         {searchResult.items.map((value) => (
           <Box
             key={value.hash}
-            borderWidth={1}
-            borderRadius="lg"
-            p={6}
-            boxShadow="md"
             bg="white"
-            transition="all 0.3s"
-            _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
+            borderWidth={1}
+            borderColor="gray.200"
+            borderRadius="2xl"
+            boxShadow="0 1px 2px rgba(0, 0, 0, 0.04)"
+            p={6}
+            transition="all 0.25s ease"
+            _hover={{
+              transform: 'translateY(-3px)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+              borderColor: 'gray.300',
+            }}
             onClick={() => handleResultClick(value.hash)}
             cursor="pointer"
           >
             <VStack align="stretch" spacing={3}>
               <Flex alignItems="center" justifyContent="space-between">
-                <Heading size="md" color="blue.600">
+                <Heading size="md" color="blue.700">
                   {value.company_nm}
                 </Heading>
                 <FavoriteToggle hash={value.hash} companyNm={value.company_nm} />
@@ -120,7 +125,7 @@ export default function SearchResultList({
         >
           이전
         </Button>
-        <Text>
+        <Text color="gray.700">
           {searchResult.page} / {searchResult.total_pages}
         </Text>
         <Button

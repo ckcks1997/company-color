@@ -47,90 +47,109 @@ export default function MyPage() {
     )
   }
 
+  const itemBoxStyle = {
+    borderWidth: 1,
+    borderColor: 'whiteAlpha.600',
+    borderRadius: 'md',
+    p: 4,
+    bg: 'whiteAlpha.700',
+    backdropFilter: 'blur(10px)',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    _hover: { bg: 'whiteAlpha.900', transform: 'translateY(-2px)' },
+  } as const
+
   return (
     <Box maxWidth="1000px" mx="auto" p={6}>
-      <Heading size="lg" mb={6}>
+      <Heading
+        size="lg"
+        mb={6}
+        color="white"
+        textShadow="0 2px 8px rgba(0,0,0,0.6)"
+      >
         {user?.nickname ? `${user.nickname} 님의 마이페이지` : '마이페이지'}
       </Heading>
 
-      <Tabs variant="enclosed" colorScheme="blue">
-        <TabList>
-          <Tab>즐겨찾기</Tab>
-          <Tab>내 댓글</Tab>
-        </TabList>
+      <Box
+        bg="whiteAlpha.800"
+        backdropFilter="blur(14px)"
+        border="1px solid"
+        borderColor="whiteAlpha.500"
+        borderRadius="lg"
+        boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
+        p={4}
+      >
+        <Tabs variant="enclosed" colorScheme="blue">
+          <TabList>
+            <Tab>즐겨찾기</Tab>
+            <Tab>내 댓글</Tab>
+          </TabList>
 
-        <TabPanels>
-          <TabPanel>
-            {favoritesLoading ? (
-              <Center py={10}>
-                <Spinner />
-              </Center>
-            ) : !favorites || favorites.items.length === 0 ? (
-              <Text color="gray.500">아직 즐겨찾기에 추가한 회사가 없습니다.</Text>
-            ) : (
-              <VStack spacing={3} align="stretch">
-                {favorites.items.map((item) => (
-                  <Box
-                    key={item.hash}
-                    borderWidth={1}
-                    borderRadius="md"
-                    p={4}
-                    cursor="pointer"
-                    _hover={{ bg: 'gray.50' }}
-                    onClick={() => router.push(`/businessInfo?hash=${item.hash}`)}
-                  >
-                    <Stack direction="row" align="center" justify="space-between">
-                      <Box>
-                        <Text fontWeight="bold">{item.company_nm || '(이름 없음)'}</Text>
+          <TabPanels>
+            <TabPanel>
+              {favoritesLoading ? (
+                <Center py={10}>
+                  <Spinner />
+                </Center>
+              ) : !favorites || favorites.items.length === 0 ? (
+                <Text color="gray.600">아직 즐겨찾기에 추가한 회사가 없습니다.</Text>
+              ) : (
+                <VStack spacing={3} align="stretch">
+                  {favorites.items.map((item) => (
+                    <Box
+                      key={item.hash}
+                      {...itemBoxStyle}
+                      onClick={() => router.push(`/businessInfo?hash=${item.hash}`)}
+                    >
+                      <Stack direction="row" align="center" justify="space-between">
+                        <Box>
+                          <Text fontWeight="bold">{item.company_nm || '(이름 없음)'}</Text>
+                          <Text fontSize="xs" color="gray.500">
+                            {new Date(item.created_at).toLocaleDateString('ko-KR')} 추가
+                          </Text>
+                        </Box>
+                        <FavoriteToggle hash={item.hash} companyNm={item.company_nm} />
+                      </Stack>
+                    </Box>
+                  ))}
+                </VStack>
+              )}
+            </TabPanel>
+
+            <TabPanel>
+              {repliesQuery.isLoading ? (
+                <Center py={10}>
+                  <Spinner />
+                </Center>
+              ) : !repliesQuery.data || repliesQuery.data.length === 0 ? (
+                <Text color="gray.600">아직 작성한 댓글이 없습니다.</Text>
+              ) : (
+                <VStack spacing={3} align="stretch">
+                  {repliesQuery.data.map((reply) => (
+                    <Box
+                      key={reply.idx}
+                      {...itemBoxStyle}
+                      onClick={() => router.push(`/businessInfo?hash=${reply.hash}`)}
+                    >
+                      <Stack direction="row" align="center" justify="space-between" mb={2}>
+                        <Badge colorScheme="blue" fontSize="xs">
+                          {reply.hash.slice(0, 12)}…
+                        </Badge>
                         <Text fontSize="xs" color="gray.500">
-                          {new Date(item.created_at).toLocaleDateString('ko-KR')} 추가
+                          {reply.created_at
+                            ? new Date(reply.created_at).toLocaleDateString('ko-KR')
+                            : ''}
                         </Text>
-                      </Box>
-                      <FavoriteToggle hash={item.hash} companyNm={item.company_nm} />
-                    </Stack>
-                  </Box>
-                ))}
-              </VStack>
-            )}
-          </TabPanel>
-
-          <TabPanel>
-            {repliesQuery.isLoading ? (
-              <Center py={10}>
-                <Spinner />
-              </Center>
-            ) : !repliesQuery.data || repliesQuery.data.length === 0 ? (
-              <Text color="gray.500">아직 작성한 댓글이 없습니다.</Text>
-            ) : (
-              <VStack spacing={3} align="stretch">
-                {repliesQuery.data.map((reply) => (
-                  <Box
-                    key={reply.idx}
-                    borderWidth={1}
-                    borderRadius="md"
-                    p={4}
-                    cursor="pointer"
-                    _hover={{ bg: 'gray.50' }}
-                    onClick={() => router.push(`/businessInfo?hash=${reply.hash}`)}
-                  >
-                    <Stack direction="row" align="center" justify="space-between" mb={2}>
-                      <Badge colorScheme="blue" fontSize="xs">
-                        {reply.hash.slice(0, 12)}…
-                      </Badge>
-                      <Text fontSize="xs" color="gray.500">
-                        {reply.created_at
-                          ? new Date(reply.created_at).toLocaleDateString('ko-KR')
-                          : ''}
-                      </Text>
-                    </Stack>
-                    <Text>{reply.reply}</Text>
-                  </Box>
-                ))}
-              </VStack>
-            )}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+                      </Stack>
+                      <Text>{reply.reply}</Text>
+                    </Box>
+                  ))}
+                </VStack>
+              )}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
     </Box>
   )
 }

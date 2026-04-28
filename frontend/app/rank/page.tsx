@@ -39,7 +39,13 @@ export default function Rank() {
 
   return (
     <Box p={{ base: 3, md: 8 }} maxWidth="1200px" margin="0 auto">
-      <Heading mb={6} fontSize={{ base: 'xl', md: '2xl' }} textAlign="left">
+      <Heading
+        mb={6}
+        fontSize={{ base: 'xl', md: '2xl' }}
+        textAlign="left"
+        color="white"
+        textShadow="0 2px 8px rgba(0,0,0,0.6)"
+      >
         월별 입/퇴사자 수 순위 TOP 50
       </Heading>
 
@@ -49,6 +55,8 @@ export default function Rank() {
             icon={<ChevronLeft size={18} />}
             onClick={() => changeMonth(-1)}
             aria-label="Previous month"
+            bg="whiteAlpha.800"
+            _hover={{ bg: 'whiteAlpha.900' }}
           />
           <Input
             type="month"
@@ -59,11 +67,15 @@ export default function Rank() {
             max={maxDate}
             lang="ko-KR"
             width={{ base: '100%', md: '200px' }}
+            bg="whiteAlpha.800"
+            backdropFilter="blur(8px)"
           />
           <IconButton
             icon={<ChevronRight size={18} />}
             onClick={() => changeMonth(1)}
             aria-label="Next month"
+            bg="whiteAlpha.800"
+            _hover={{ bg: 'whiteAlpha.900' }}
           />
         </HStack>
 

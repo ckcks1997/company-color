@@ -20,12 +20,14 @@ const DartData = ({ data }: DartDataProps) => {
         <Box
           key={value.rcept_no || index}
           borderWidth={1}
-          borderRadius="lg"
+          borderColor="gray.100"
+          borderRadius="2xl"
           p={6}
-          boxShadow="md"
-          bg="white"
-          transition="all 0.3s"
-          _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg', bg: 'gray.50' }}
+          boxShadow="0 1px 2px rgba(0, 0, 0, 0.04)"
+          bg="whiteAlpha.700"
+          backdropFilter="blur(10px)"
+          transition="all 0.25s ease"
+          _hover={{ transform: 'translateY(-3px)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',   bg: 'whiteAlpha.900' }}
           cursor="pointer"
           onClick={() => handleClick(value.rcept_no)}
         >

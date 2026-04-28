@@ -32,10 +32,10 @@ export default function RankTable({ ymonth, searchType }: RankTableProps) {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const tableSize = useBreakpointValue({ base: 'sm', md: 'md' })
 
-  const headerBg = useColorModeValue('blue.50', 'blue.900')
-  const stripedBg = useColorModeValue('gray.50', 'gray.700')
-  const hoverBg = useColorModeValue('blue.50', 'blue.700')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const headerBg = useColorModeValue('blue.100', 'blue.900')
+  const stripedBg = useColorModeValue('whiteAlpha.500', 'gray.700')
+  const hoverBg = useColorModeValue('blue.100', 'blue.700')
+  const borderColor = useColorModeValue('whiteAlpha.500', 'gray.700')
 
   const getVisibleColumns = (): string[] => {
     if (isMobile) {
@@ -66,23 +66,29 @@ export default function RankTable({ ymonth, searchType }: RankTableProps) {
 
   if (error) {
     return (
-      <Text textAlign="center" color="red.500">
+      <Text textAlign="center" color="red.300" textShadow="0 2px 6px rgba(0,0,0,0.6)">
         데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.
       </Text>
     )
   }
 
   if (!rankData || !Array.isArray(rankData) || rankData.length === 0) {
-    return <Text textAlign="center">해당 월의 순위 데이터가 없습니다.</Text>
+    return (
+      <Text textAlign="center" color="white" textShadow="0 2px 6px rgba(0,0,0,0.6)">
+        해당 월의 순위 데이터가 없습니다.
+      </Text>
+    )
   }
 
   return (
     <TableContainer
       overflowX="auto"
-      borderRadius="md"
-      boxShadow="sm"
+      borderRadius="lg"
+      boxShadow="0 8px 24px rgba(0, 0, 0, 0.15)"
       border="1px solid"
       borderColor={borderColor}
+      bg="whiteAlpha.800"
+      backdropFilter="blur(14px)"
     >
       <Table
         variant="simple"
