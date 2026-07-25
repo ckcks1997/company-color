@@ -21,11 +21,19 @@ import os
 # FROM GUKMIN_YUNGUM_DATA;
 
 # 불필요한 데이터 삭제
-#delete from COMPANY_INFO WHERE COMPANY_NM like '%(일용%' or  COMPANY_NM like '%/일용%' or  COMPANY_NM like '%/ 일용%'
-#or COMPANY_NM like '%-일용%'
-#OR  COMPANY_NM like '%(상용%' or COMPANY_NM like '%/상용%'  or COMPANY_NM like '%/건설일용%'
-#or COMPANY_NM like '%-건설일용%' or COMPANY_NM like '% 건설일용%' or COMPANY_NM like '%(건설일용%'
-;
+# delete from GUKMIN_YUNGUM_DATA WHERE COMPANY_NM like '%(일용%' or  COMPANY_NM like '%/일용%' or  COMPANY_NM like '%/ 일용%'
+# or COMPANY_NM like '%-일용%'
+# OR  COMPANY_NM like '%(상용%' or COMPANY_NM like '%/상용%'  or COMPANY_NM like '%/건설일용%'
+# or COMPANY_NM like '%-건설일용%' or COMPANY_NM like '% 건설일용%' or COMPANY_NM like '%(건설일용%'
+# or COMPANY_NM like '%(활동%'
+# or COMPANY_NM like '%아파트입대의%'
+# or COMPANY_NM like '%관리사무소%'
+# or COMPANY_NM like '%입주자대표%'
+# or COMPANY_NM like '%건축사사무소%'
+# or COMPANY_NM like '%초등학교%'
+# or COMPANY_NM like '%중학교%'
+# or COMPANY_NM like '%고등학교%'
+# ;
 
 # SQLite -> Maria 이동 관련 코드
 def sqlite_connect(db_file):

@@ -8,7 +8,7 @@ from app.core.config import settings
 
 # 로그 디렉터리 생성
 log_dir = Path(settings["LOG_DIR"])
-log_dir.mkdir(exist_ok=True)
+log_dir.mkdir(parents=True, exist_ok=True)
 
 # 현재 날짜로 로그 파일명 생성
 current_date = datetime.now().strftime("%Y-%m-%d")

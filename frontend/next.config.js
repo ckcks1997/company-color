@@ -14,11 +14,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'companycolor.xyz',
+        hostname: 'companycolor.site',
       },
       {
         protocol: 'https', 
-        hostname: '*.companycolor.xyz',
+        hostname: '*.companycolor.site',
       }
     ],
     formats: ['image/avif', 'image/webp'],
@@ -44,7 +44,7 @@ const nextConfig = {
             "img-src 'self' blob: data: https: https://www.google-analytics.com",
             isDev
                 ? "connect-src 'self' http://localhost:* http://127.0.0.1:8001 ws: wss: https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com"
-                : "connect-src 'self' https://companycolor.xyz https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+                : "connect-src 'self' https://companycolor.site https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
             "frame-src 'none'",
             "object-src 'none'",
             "base-uri 'self'",

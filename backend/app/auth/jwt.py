@@ -1,126 +1,112 @@
+"""JWT 토큰 생성/검증 유틸리티.
+
+access 토큰 (짧음) 과 refresh 토큰 (길음) 을 분리해 발급한다.
+payload 의 ``token_type`` 클레임으로 둘을 구분한다.
 """
-JWT 인증 관련 유틸리티 모듈
-"""
+from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Optional
+
 from fastapi import HTTPException, status
-from jose import jwt, JWTError
-from datetime import datetime, timedelta
+from jose import JWTError, jwt
+
 from app.core.config import settings
 from app.core.logging_config import logger
-from typing import Dict, Optional
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """
-    JWT 액세스 토큰을 생성합니다.
-    
-    Args:
-        data: 토큰에 인코딩할 데이터
-        expires_delta: 토큰 만료 시간(기본값: 설정 값)
-        
-    Returns:
-        생성된 JWT 토큰
-    """
-    to_encode = data.copy()
-    
-    # 만료 시간 설정
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=int(settings["ACCESS_TOKEN_EXPIRE_MINUTES"]))
-        
-    to_encode.update({"exp": expire})
-    to_encode.update({"iat": datetime.utcnow()})  # 발급 시간
-    
-    try:
-        encoded_jwt = jwt.encode(
-            to_encode, 
-            settings["SECRET_KEY"], 
-            algorithm=settings["ALGORITHM"]
-        )
-        return encoded_jwt
-    except Exception as e:
-        logger.error(f"JWT 토큰 생성 오류: {str(e)}")
+ACCESS_TOKEN_TYPE = "access"
+REFRESH_TOKEN_TYPE = "refresh"
+
+
+def _ensure_secret() -> str:
+    secret = settings["SECRET_KEY"]
+    if not secret:
+        logger.error("SECRET_KEY 가 설정되지 않았습니다 — JWT 발급/검증이 실패합니다.")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="토큰 생성 중 오류가 발생했습니다."
+            detail="서버 설정 오류 (SECRET_KEY 누락)",
+        )
+    return secret
+
+
+def _create_token(data: Dict[str, Any], token_type: str, expires_delta: timedelta) -> str:
+    secret = _ensure_secret()
+    now = datetime.now(timezone.utc)
+    payload = {
+        **data,
+        "iat": now,
+        "exp": now + expires_delta,
+        "token_type": token_type,
+    }
+    try:
+        return jwt.encode(payload, secret, algorithm=settings["JWT_ALGORITHM"])
+    except Exception as e:
+        logger.error(f"JWT 인코딩 오류: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="토큰 생성 중 오류가 발생했습니다.",
         )
 
 
-def get_token_data(token: str) -> Dict:
-    """
-    JWT 토큰을 디코딩하여 데이터를 추출합니다.
-    
+def create_access_token(
+    data: Dict[str, Any], expires_delta: Optional[timedelta] = None
+) -> str:
+    """짧은 수명의 access 토큰 발급."""
+    delta = expires_delta or timedelta(
+        minutes=int(settings["ACCESS_TOKEN_EXPIRE_MINUTES"])
+    )
+    return _create_token(data, ACCESS_TOKEN_TYPE, delta)
+
+
+def create_refresh_token(
+    data: Dict[str, Any], expires_delta: Optional[timedelta] = None
+) -> str:
+    """긴 수명의 refresh 토큰 발급."""
+    delta = expires_delta or timedelta(days=int(settings["REFRESH_TOKEN_EXPIRE_DAYS"]))
+    return _create_token(data, REFRESH_TOKEN_TYPE, delta)
+
+
+def decode_token(token: str, expected_type: Optional[str] = None) -> Dict[str, Any]:
+    """JWT 디코딩 + 만료/타입 검증.
+
     Args:
-        token: JWT 토큰
-        
-    Returns:
-        디코딩된 토큰 데이터
-        
+        token: 검증할 토큰 문자열.
+        expected_type: ``access`` 또는 ``refresh`` 로 토큰 종류를 강제할 때 지정.
+
     Raises:
-        HTTPException: 토큰이 유효하지 않거나 만료된 경우
+        HTTPException(401): 토큰이 없거나, 만료됐거나, 서명/타입이 유효하지 않을 때.
     """
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="인증이 필요합니다.",
-            headers={"WWW-Authenticate": "Bearer"},
         )
-        
-    try:
-        decoded_jwt = jwt.decode(
-            token, 
-            settings["SECRET_KEY"], 
-            algorithms=[settings["ALGORITHM"]]
-        )
-        
-        # 토큰 만료 확인
-        exp_timestamp = decoded_jwt.get('exp')
-        if not exp_timestamp:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="유효하지 않은 토큰 형식입니다.",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-            
-        exp_datetime = datetime.fromtimestamp(exp_timestamp)
-        now = datetime.utcnow()
 
-        if now >= exp_datetime:
-            logger.warning(f"만료된 토큰 사용 시도: sub={decoded_jwt.get('sub', 'unknown')}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="토큰이 만료되었습니다.",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-            
-        return decoded_jwt
-        
+    secret = _ensure_secret()
+    try:
+        payload = jwt.decode(token, secret, algorithms=[settings["JWT_ALGORITHM"]])
     except JWTError as e:
-        logger.warning(f"JWT 디코딩 오류: {str(e)}")
+        logger.info(f"JWT 디코딩 실패: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="유효하지 않은 인증 정보입니다.",
-            headers={"WWW-Authenticate": "Bearer"},
         )
-    except Exception as e:
-        logger.error(f"토큰 처리 중 예상치 못한 오류: {str(e)}")
+
+    if expected_type is not None and payload.get("token_type") != expected_type:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="인증 처리 중 오류가 발생했습니다."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="유효하지 않은 토큰 종류입니다.",
         )
 
+    return payload
 
-def validate_access_token(token: str) -> Dict:
-    """
-    JWT 토큰의 유효성을 검사합니다.
-    (하위 호환성 유지를 위한 함수)
-    
-    Args:
-        token: JWT 토큰
-        
-    Returns:
-        디코딩된 토큰 데이터
-        
-    Raises:
-        HTTPException: 토큰이 유효하지 않거나 만료된 경우
-    """
-    return get_token_data(token)
+
+# --- 하위 호환 ---
+def get_token_data(token: str) -> Dict[str, Any]:
+    """기존 코드 호환: access 토큰을 디코딩."""
+    return decode_token(token, expected_type=ACCESS_TOKEN_TYPE)
+
+
+def validate_access_token(token: str) -> Dict[str, Any]:
+    """기존 코드 호환."""
+    return decode_token(token, expected_type=ACCESS_TOKEN_TYPE)

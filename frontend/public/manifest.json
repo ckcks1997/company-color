@@ -1,9 +1,9 @@
 {
   "name": "COMPANY COLOR",
-  "short_name": "회사색깔",
+  "short_name": "COMPANY COLOR",
   "description": "기업의 현재 인원 규모, 입퇴사 동향, 예상 평균 연봉 데이터를 제공하는 서비스",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#ffffff",
   "theme_color": "#3182CE",
   "icons": [

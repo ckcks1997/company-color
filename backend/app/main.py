@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import router as api_router
 from app.core.config import settings
 from app.core.logging_config import logger, setup_sql_logging
-from app.core.database import connect_database, disconnect_database
 from dotenv import load_dotenv
 import uvicorn
 
@@ -31,13 +30,9 @@ setup_sql_logging()
 # Lifespan 이벤트 핸들러
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 애플리케이션 시작 시
     logger.info("애플리케이션 시작")
-    await connect_database()
     yield
-    # 애플리케이션 종료 시
     logger.info("애플리케이션 종료")
-    await disconnect_database()
 
 # FastAPI 애플리케이션 생성
 app = FastAPI(
@@ -63,10 +58,16 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(CustomHTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
-# CORS 미들웨어 설정
+# CORS 미들웨어 설정 — 공백/빈 항목을 안전하게 정리
+_allowed_origins = [
+    origin.strip()
+    for origin in settings["ALLOW_ORIGINS"].split(",")
+    if origin.strip()
+]
+logger.info(f"CORS allow_origins = {_allowed_origins}")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(origin) for origin in settings["ALLOW_ORIGINS"].split(',')],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
