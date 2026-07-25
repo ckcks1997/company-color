@@ -102,7 +102,7 @@ def get_settings() -> Dict[str, Any]:
         # 빈 문자열 또는 미설정 시 COOKIE_DOMAIN 분기에서 same-site 쿠키만 사용.
         "FRONTEND_URL": os.getenv(EnvVars.FRONTEND_URL, "http://localhost:4000"),
         # 쿠키 도메인 — 백/프 도메인이 같으면 비워 둠 (자동으로 host 기준 same-site 쿠키).
-        # 다른 서브도메인을 공유하려면 ".companycolor.xyz" 처럼 설정.
+        # 다른 서브도메인을 공유하려면 ".companycolor.site" 처럼 설정.
         "COOKIE_DOMAIN": os.getenv(EnvVars.COOKIE_DOMAIN, ""),
     }
 

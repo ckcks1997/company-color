@@ -23,7 +23,7 @@ export default function SearchStructuredData() {
             '@type': 'Organization',
             name: `${businessName}`,
             description: `${businessName} 기업의 인원 규모, 입퇴사 현황, 예상 평균 연봉 정보`,
-            url: `https://companycolor.xyz/result?business_name=${encodeURIComponent(businessName)}`,
+            url: `https://companycolor.site/result?business_name=${encodeURIComponent(businessName)}`,
           },
         },
       ],
