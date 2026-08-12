@@ -38,6 +38,27 @@ class SearchResponse(BaseModel):
     subscriber: int = Field(..., description="가입자 수")
 
 
+class SitemapSummary(BaseModel):
+    """sitemap 분할 계획에 필요한 메타 정보"""
+    total_count: int = Field(..., description="전체 회사 수")
+    min_id: int = Field(..., description="COMPANY_INFO 최소 id")
+    max_id: int = Field(..., description="COMPANY_INFO 최대 id")
+
+
+class SitemapCompanyItem(BaseModel):
+    """sitemap 용 회사 항목 (URL 생성에 필요한 최소 필드만)"""
+    id: int = Field(..., description="커서로 사용할 COMPANY_INFO id")
+    hash: str = Field(..., description="상세 페이지 경로에 쓰이는 고유 해시값")
+
+
+class SitemapCompaniesResponse(BaseModel):
+    """sitemap 용 회사 목록 응답"""
+    items: List[SitemapCompanyItem]
+    next_cursor: Optional[int] = Field(
+        None, description="다음 페이지 조회에 쓸 after_id. 마지막 페이지면 null"
+    )
+
+
 class Reply(BaseModel):
     """댓글 모델"""
     hash: Optional[str] = Field(None, description="회사 해시값")

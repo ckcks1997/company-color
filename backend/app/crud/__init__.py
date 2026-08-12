@@ -1,4 +1,11 @@
-from app.crud.company import get_business_info, get_rank_info, get_dart_info, search_companies_elastic
+from app.crud.company import (
+    get_business_info,
+    get_company_id_bounds,
+    get_dart_info,
+    get_rank_info,
+    list_company_hashes,
+    search_companies_elastic,
+)
 from app.crud.user import get_or_create_user, get_user_by_id
 from app.crud.reply import save_reply, get_reply_by_hash, get_replies_by_user
 from app.crud.favorite import (
@@ -11,8 +18,10 @@ from app.crud.favorite import (
 
 __all__ = [
     'get_business_info',
+    'get_company_id_bounds',
     'get_rank_info',
     'get_dart_info',
+    'list_company_hashes',
     'search_companies_elastic',
     'get_or_create_user',
     'get_user_by_id',

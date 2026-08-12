@@ -49,7 +49,7 @@ export default function SearchResultList({
   }
 
   const handleResultClick = (hash: string) => {
-    router.push(`/businessInfo?hash=${hash}`)
+    router.push(`/company/${hash}`)
   }
 
   if (isLoading) {

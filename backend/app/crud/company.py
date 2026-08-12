@@ -1,8 +1,9 @@
+from typing import Optional
 from sqlmodel import Session, select
 from elasticsearch import Elasticsearch
-from sqlalchemy import not_, or_
+from sqlalchemy import func, not_, or_
 from app.dtos import SearchParams, SearchResponse
-from app.models import GukminYungumData, Corpcode
+from app.models import CompanyInfo, GukminYungumData, Corpcode
 from app.core.config import settings
 from app.core.logging_config import logger
 from app.core.constants import (
@@ -65,6 +66,36 @@ async def get_rank_info(db: Session, ymonth: str, type: str):
         .limit(RANK_RESULT_LIMIT)
     )
 
+    return db.exec(query).all()
+
+
+async def get_company_id_bounds(db: Session):
+    """sitemap 분할에 필요한 COMPANY_INFO 의 id 범위와 전체 건수.
+
+    id 는 PK 라 MIN/MAX/COUNT 모두 인덱스만으로 처리된다.
+    """
+    row = db.exec(
+        select(
+            func.min(CompanyInfo.id),
+            func.max(CompanyInfo.id),
+            func.count(CompanyInfo.id),
+        )
+    ).one()
+    min_id, max_id, total_count = row
+    return (min_id or 0), (max_id or 0), (total_count or 0)
+
+
+async def list_company_hashes(
+    db: Session, after_id: int, limit: int, max_id: Optional[int] = None
+):
+    """sitemap 용 회사 해시 목록 (PK 커서 페이징).
+
+    OFFSET 대신 ``id > after_id`` 커서를 쓰므로 뒤쪽 페이지에서도 비용이 일정하다.
+    """
+    query = select(CompanyInfo.id, CompanyInfo.hash).filter(CompanyInfo.id > after_id)
+    if max_id is not None:
+        query = query.filter(CompanyInfo.id <= max_id)
+    query = query.order_by(CompanyInfo.id).limit(limit)
     return db.exec(query).all()
 
 

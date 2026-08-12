@@ -198,7 +198,7 @@ export default function BusinessDataView({ hash }: BusinessDataViewProps) {
             <VStack spacing={4} align="start">
               <Box>
                 <HStack spacing={2} align="center">
-                  <Heading size="lg" color="blue.600">
+                  <Heading as="h1" size="lg" color="blue.600">
                     {latestBusinessData?.company_nm || '회사명 없음'}
                   </Heading>
                   {latestBusinessData?.hash && (

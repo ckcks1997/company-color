@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
  * 데이터 위주의 페이지(검색결과/상세) 에서는 GPU/배터리 부담을 없애고
  * 시각적으로도 산만함을 줄인다.
  */
-const STATIC_BG_PATHS = ['/result', '/businessInfo']
+const STATIC_BG_PATHS = ['/result', '/company']
 
 /**
  * Aurora Drift — 메인 페이지의 풀스크린 WebGL 배경.
@@ -89,7 +89,7 @@ void main(){
 const STATIC_GRADIENT_BG =
   'radial-gradient(ellipse at 50% 70%, #0a1430 0%, #04081a 50%, #02030a 100%)'
 
-// 데이터 페이지(/result, /businessInfo) 의 흰 배경.
+// 데이터 페이지(/result, /company) 의 흰 배경.
 const STATIC_LIGHT_BG = '#f2f2f6'
 
 const canvasStyle: React.CSSProperties = {

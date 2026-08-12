@@ -85,15 +85,10 @@ const nextConfig = {
     },
   ],
   
-  // 재작성 규칙
-  rewrites: async () => {
-    return [
-      {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
-      },
-    ];
-  },
+  // 기업 상세 URL(/businessInfo?hash= → /company/[hash]) 의 영구 리다이렉트는
+  // app/businessInfo/page.tsx 에서 처리한다.
+  // next.config.js 의 redirects 는 원본 쿼리스트링을 목적지에 그대로 덧붙여
+  // /company/<hash>?hash=<hash> 같은 중복 URL 을 만들기 때문이다.
   // 압축 설정
   compress: true,
 

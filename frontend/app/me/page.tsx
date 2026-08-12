@@ -99,7 +99,7 @@ export default function MyPage() {
                     <Box
                       key={item.hash}
                       {...itemBoxStyle}
-                      onClick={() => router.push(`/businessInfo?hash=${item.hash}`)}
+                      onClick={() => router.push(`/company/${item.hash}`)}
                     >
                       <Stack direction="row" align="center" justify="space-between">
                         <Box>
@@ -129,7 +129,7 @@ export default function MyPage() {
                     <Box
                       key={reply.idx}
                       {...itemBoxStyle}
-                      onClick={() => router.push(`/businessInfo?hash=${reply.hash}`)}
+                      onClick={() => router.push(`/company/${reply.hash}`)}
                     >
                       <Stack direction="row" align="center" justify="space-between" mb={2}>
                         <Badge colorScheme="blue" fontSize="xs">

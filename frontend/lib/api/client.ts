@@ -6,6 +6,7 @@
  */
 
 import apiClient from './axios'
+import { API_BASE_URL } from './constants'
 import type {
   BusinessDataItem,
   PaginatedResponse,
@@ -14,8 +15,6 @@ import type {
   ReplyPostResponse,
   SearchResultItem,
 } from './types'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1'
 
 /**
  * 댓글 등록 — 로그인 필요. 비로그인 사용자는 401 을 받는다.

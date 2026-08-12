@@ -48,7 +48,7 @@ export default function RankTable({ ymonth, searchType }: RankTableProps) {
 
   const handleRowClick = (hash: string | undefined) => {
     if (hash) {
-      router.push(`/businessInfo?hash=${hash}`)
+      router.push(`/company/${hash}`)
     }
   }
 

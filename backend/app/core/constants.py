@@ -16,6 +16,10 @@ DART_DEFAULT_START_DATE = "20230101"
 DART_FILTER_KEYWORDS = ["감사", "해산", "분기보고서", "연1회공시"]
 DART_PAGE_COUNT = 100
 
+# sitemap 관련
+SITEMAP_DEFAULT_PAGE_SIZE = 1000
+SITEMAP_MAX_PAGE_SIZE = 5000
+
 # Elasticsearch 관련
 ES_MIN_SCORE = 3.0
 ES_INDEX_NAME = "company_color_search_idx"
